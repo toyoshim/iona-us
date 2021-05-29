@@ -1,6 +1,6 @@
 CFLAGS  = -V -mmcs51 --model-large --xram-size 0x1800 --xram-loc 0x0000 --code-size 0xf000 --stack-auto
 CC      = sdcc
-FLASHER = ../CH55x_python_flasher/chflasher.py
+FLASHER = ./CH55x_python_flasher/chflasher.py
 TARGET  = iona
 OBJS	= main.rel ch559.rel client.rel JVSIO_c.rel
 

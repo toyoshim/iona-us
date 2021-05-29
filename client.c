@@ -94,13 +94,13 @@ void sense_client(struct JVSIO_SenseClient* client) {
 
 static void led_begin(struct JVSIO_LedClient *client) {
   client;
-  pinMode(1, 7, OUTPUT);
-  digitalWrite(1, 7, LOW);
+  pinMode(1, 6, OUTPUT);
+  digitalWrite(1, 6, LOW);
 }
 
 static void led_set(struct JVSIO_LedClient *client, bool ready) {
   client;
-  digitalWrite(1, 7, ready ? HIGH : LOW);
+  digitalWrite(1, 6, ready ? HIGH : LOW);
 }
 
 void led_client(struct JVSIO_LedClient* client) {

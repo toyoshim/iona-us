@@ -1,3 +1,6 @@
 [submodule "jvsio"]
 	path = jvsio
 	url = git@github.com:toyoshim/jvsio.git
+[submodule "chlib"]
+	path = chlib
+	url = git@github.com:toyoshim/chlib.git

@@ -4,7 +4,7 @@
 
 #include "client.h"
 
-#include "ch559.h"
+#include "chlib/ch559.h"
 #include "jvsio/JVSIO_c.h"
 
 static int data_available(struct JVSIO_DataClient* client) {

@@ -13,11 +13,14 @@ run: $(TARGET).bin
 clean:
 	rm -f *.asm *.lst *.rel *.rst *.sym $(TARGET).bin $(TARGET).ihx $(TARGET).lk $(TARGET).map $(TARGET).mem
 
-%.rel: %.c jvsio/JVSIO_c.h *.h
+%.rel: %.c jvsio/JVSIO_c.h chlib/*.h *.h
 	$(CC) -c $(CFLAGS) $<
 
+ch559.rel: chlib/ch559.c chlib/*.h
+	$(CC) -c $(CFLAGS) -I chlib $<
+
 JVSIO_c.rel: jvsio/JVSIO_c.c jvsio/JVSIO_c.h *.h
-	$(CC) -c $(CFLAGS) $<
+	$(CC) -c $(CFLAGS) -I chlib $<
 
 $(TARGET).ihx: $(OBJS) 
 	$(CC) $(CFLAGS) $(OBJS) -o $@

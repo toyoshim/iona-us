@@ -3,7 +3,9 @@
 // in the LICENSE file.
 
 #include "chlib/ch559.h"
+#include "client.h"
 #include "jvsio/JVSIO_c.h"
+#include "soft485.h"
 
 #define VER "1.10g"
 
@@ -105,9 +107,9 @@ void main() {
   initialize();
   Serial.println(id);
 
-  //data_client(&data);
-  //sense_client(&sense);
-  //led_client(&led);
+  data_client(&data);
+  sense_client(&sense);
+  led_client(&led);
 
   struct JVSIO_Lib* io = JVSIO_open(&data, &sense, &led, 1);
   io->begin(io);

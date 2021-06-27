@@ -5,6 +5,8 @@
 #include "client.h"
 
 #include "chlib/ch559.h"
+#include "chlib/pwm1.h"
+#include "chlib/rs485.h"
 #include "jvsio/JVSIO_c.h"
 
 static int data_available(struct JVSIO_DataClient* client) {

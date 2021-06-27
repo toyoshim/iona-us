@@ -8,6 +8,10 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "chlib/interrupt.h"
+
+extern void soft485_int() __interrupt INT_NO_TMR0 __using 0;
+
 void soft485_init();
 void soft485_send(uint8_t val);
 bool soft485_ready();

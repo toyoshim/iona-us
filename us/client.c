@@ -5,6 +5,8 @@
 #include "client.h"
 
 #include "chlib/ch559.h"
+#include "chlib/io.h"
+#include "chlib/led.h"
 #include "chlib/pwm1.h"
 #include "jvsio/JVSIO_c.h"
 #include "soft485.h"
@@ -74,6 +76,7 @@ static void sense_begin(struct JVSIO_SenseClient* client) {
 
 static void sense_set(struct JVSIO_SenseClient* client, bool ready) {
   client;
+  P5_IN |= bP4_DRV;
   pwm1_enable(!ready);
 }
 
@@ -98,13 +101,13 @@ void sense_client(struct JVSIO_SenseClient* client) {
 
 static void led_begin(struct JVSIO_LedClient *client) {
   client;
-  pinMode(1, 6, OUTPUT);
-  digitalWrite(1, 6, LOW);
+  led_init(1, 5, LOW);
+  led_mode(L_BLINK_TWICE);
 }
 
 static void led_set(struct JVSIO_LedClient *client, bool ready) {
   client;
-  digitalWrite(1, 6, ready ? HIGH : LOW);
+  led_mode(ready ? L_ON : L_FASTER_BLINK);
 }
 
 void led_client(struct JVSIO_LedClient* client) {

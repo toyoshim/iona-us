@@ -3,6 +3,7 @@
 // in the LICENSE file.
 
 #include "chlib/ch559.h"
+#include "chlib/led.h"
 #include "client.h"
 #include "jvsio/JVSIO_c.h"
 #include "soft485.h"
@@ -17,9 +18,14 @@ static struct JVSIO_LedClient led;
 
 static int8_t coin_index_bias = 0;
 
+static void debug_putc(uint8_t val) {}
+
 static void loop(struct JVSIO_Lib* io) {
+  void (*original_putc)() = Serial.putc;
+  Serial.putc = debug_putc;
   uint8_t len;
   uint8_t* data = io->getNextCommand(io, &len, 0);
+  Serial.putc = original_putc;
   if (!data)
     return;
 
@@ -115,6 +121,8 @@ void main() {
   io->begin(io);
   Serial.println("boot");
 
-  for (;;)
+  for (;;) {
+    led_poll();
     loop(io);
+  }
 }

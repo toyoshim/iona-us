@@ -2,12 +2,14 @@ CFLAGS  = -V -mmcs51 --model-large --xram-size 0x1800 --xram-loc 0x0000 --code-s
 CC      = sdcc
 FLASHER = ../CH55x_python_flasher/chflasher.py
 TARGET  = iona
-OBJS	= main.rel client.rel soft485.rel ch559.rel pwm1.rel JVSIO_c.rel
+OBJS	= main.rel client.rel soft485.rel ch559.rel led.rel pwm1.rel timer3.rel JVSIO_c.rel
 
 all: $(TARGET).bin
 
-run: $(TARGET).bin
+program: $(TARGET).bin
 	$(FLASHER) -w -f $(TARGET).bin
+
+run: program
 	$(FLASHER) -s
 
 clean:

@@ -8,9 +8,9 @@
 #include "chlib/io.h"
 
 static bool receiving = true;
-static uint8_t count = 20;
+static volatile uint8_t count = 20;
 static uint8_t data[] = { 0, 1, 0, 0, 0, 0, 0, 1, 0, 1 };  // start, 'A', stop
-static uint8_t tx_buffer[8];
+static volatile uint8_t tx_buffer[8];
 static volatile uint8_t tx_wr_ptr = 0;
 static volatile uint8_t tx_rd_ptr = 0;
 
@@ -29,9 +29,11 @@ void soft485_int() __interrupt INT_NO_TMR0 __using 0 {
   }
   if (data[count >> 1]) {
     P4_0 = 1;
+    //P4_1 = 0;
     P1_1 = 0;  // XXX: proto
   } else {
     P4_0 = 0;
+    //P4_1 = 1;
     P1_1 = 1;  // XXX: proto
   }
   count++;
@@ -49,7 +51,6 @@ void soft485_init() {
 
   // no parity, stop bit 1-bit, no interrupts by default
   SER1_LCR |= bLCR_WORD_SZ0 | bLCR_WORD_SZ1;  // data length 8-bits
-  SER1_FCR = bFCR_FIFO_EN;  // Enable FIFO
 
   // Timer0 mode 2, 8-bit auto
   TMOD = (TMOD | bT0_M1) & ~bT0_M0;
@@ -58,6 +59,8 @@ void soft485_init() {
   TH0 = 48;  // 115200 x2
   ET0 = 1;
   EA = 1;
+
+  soft485_input();
 }
 
 void soft485_send(uint8_t val) {
@@ -79,7 +82,12 @@ uint8_t soft485_recv() {
 }
 
 void soft485_input() {
+  // Wait until data in the FIFO gets empty.
+  while (tx_wr_ptr != tx_rd_ptr);
+  while (count != 20);
+
   pinMode(4, 0, INPUT_PULLUP);
+  //pinMode(4, 1, INPUT_PULLUP);
   pinMode(1, 1, INPUT_PULLUP);  // XXX: proto
   SER1_FCR = bFCR_R_FIFO_CLR;  // Clear FIFO
   SER1_FCR = bFCR_FIFO_EN;  // Enable FIFO
@@ -90,8 +98,10 @@ void soft485_input() {
 void soft485_output() {
   SER1_FCR = 0;  // Disable FIFO
   digitalWrite(4, 0, HIGH);
+  //digitalWrite(4, 1, LOW);
   digitalWrite(1, 1, LOW);  // XXX: proto
   pinMode(4, 0, OUTPUT);
+  //pinMode(4, 1, OUTPUT);
   pinMode(1, 1, OUTPUT);  // XXX: proto
   TL0 = 0;
   count = 20;

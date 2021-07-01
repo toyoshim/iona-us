@@ -102,7 +102,7 @@ void sense_client(struct JVSIO_SenseClient* client) {
 static void led_begin(struct JVSIO_LedClient *client) {
   client;
   led_init(1, 5, LOW);
-  led_mode(L_BLINK_TWICE);
+  led_mode(L_BLINK);
 }
 
 static void led_set(struct JVSIO_LedClient *client, bool ready) {

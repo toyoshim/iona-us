@@ -5,6 +5,7 @@
 #include "chlib/ch559.h"
 #include "chlib/led.h"
 #include "client.h"
+#include "hid.h"
 #include "jvsio/JVSIO_c.h"
 #include "soft485.h"
 
@@ -18,9 +19,9 @@ static struct JVSIO_LedClient led;
 
 static int8_t coin_index_bias = 0;
 
-static void debug_putc(uint8_t val) {}
+static void debug_putc(uint8_t val) { val; }
 
-static void loop(struct JVSIO_Lib* io) {
+static void jvs_poll(struct JVSIO_Lib* io) {
   void (*original_putc)() = Serial.putc;
   Serial.putc = debug_putc;
   uint8_t len;
@@ -111,6 +112,7 @@ static void loop(struct JVSIO_Lib* io) {
 
 void main() {
   initialize();
+  delay(30);
   Serial.println(id);
 
   data_client(&data);
@@ -119,10 +121,14 @@ void main() {
 
   struct JVSIO_Lib* io = JVSIO_open(&data, &sense, &led, 1);
   io->begin(io);
-  Serial.println("boot");
+  Serial.println("JVS I/O ready");
+
+  hid_init();
+  Serial.println("USB Host ready");
 
   for (;;) {
+    hid_poll();
     led_poll();
-    loop(io);
+    jvs_poll(io);
   }
 }

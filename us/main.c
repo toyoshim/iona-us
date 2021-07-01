@@ -110,6 +110,13 @@ static void jvs_poll(struct JVSIO_Lib* io) {
   }
 }
 
+static void report(
+    uint8_t hub, const struct hub_info* info, const uint8_t* data) {
+  hub;
+  info;
+  data;
+}
+
 void main() {
   initialize();
   delay(30);
@@ -123,7 +130,9 @@ void main() {
   io->begin(io);
   Serial.println("JVS I/O ready");
 
-  hid_init();
+  struct hid hid;
+  hid.report = report;
+  hid_init(&hid);
   Serial.println("USB Host ready");
 
   for (;;) {

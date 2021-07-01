@@ -14,6 +14,10 @@ static struct hub_info hub_info[2];
 
 static void disconnected(uint8_t hub) {
   hub_info[hub].state = HID_STATE_DISCONNECTED;
+  hub_info[hub].hid_report_size = 0;
+  if (!hid->report)
+    return;
+  hid->report(hub, &hub_info[hub], 0);
 }
 
 static void check_configuration_desc(uint8_t hub, const uint8_t* data) {
@@ -120,6 +124,7 @@ static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
           REPORT1("M:Input");
           if (usage_page == 0x01 && usage == 0x39 &&
               report_size == 4) { // Hat switch
+            hub_info[hub].dpad = hub_info[hub].hid_report_size;
           } else if (usage_page == 0xff00 && usage == 0x20 &&
                      report_size == 6) {  // PS4 counter
             hub_info[hub].type = HID_TYPE_PS4;
@@ -189,6 +194,8 @@ static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
     Serial.printf("button %d: %d\n", i, hub_info[hub].button[i]);
 #endif
   hub_info[hub].state = HID_STATE_READY;
+  if (hub_info[hub].type != HID_TYPE_UNKNOWN)
+    led_oneshot(L_PULSE_ONCE);
 }
 
 static void in(uint8_t hub, const uint8_t* data) {
@@ -199,7 +206,7 @@ static void in(uint8_t hub, const uint8_t* data) {
 
 void hid_init(struct hid* new_hid) {
   hid = new_hid;
-  host.flags = USE_HUB1;  // | USE_HUB0;
+  host.flags = USE_HUB1 | USE_HUB0;
   host.disconnected = disconnected;
   host.check_device_desc = 0;
   host.check_configuration_desc = check_configuration_desc;
@@ -219,5 +226,5 @@ void hid_poll() {
       size++;
     usb_host_in(hub, hub_info[hub].hid_ep, size);
   }
-  hub++;
+  hub = (hub + 1) & 1;
 }

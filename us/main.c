@@ -18,6 +18,9 @@ static struct JVSIO_SenseClient sense;
 static struct JVSIO_LedClient led;
 
 static int8_t coin_index_bias = 0;
+static uint8_t sw[5] = { 0, 0, 0, 0, 0 };
+static uint8_t coin_sw[2] = { 0, 0 };
+static uint8_t coin[2] = { 0, 0 };
 
 static void debug_putc(uint8_t val) { val; }
 
@@ -45,7 +48,7 @@ static void jvs_poll(struct JVSIO_Lib* io) {
 
     io->pushReport(io, 0x01);  // sw
     io->pushReport(io, 0x02);  // players
-    io->pushReport(io, 0x0C);  // buttons
+    io->pushReport(io, 0x10);  // buttons
     io->pushReport(io, 0x00);
 
     io->pushReport(io, 0x02);  // coin
@@ -68,11 +71,11 @@ static void jvs_poll(struct JVSIO_Lib* io) {
    case kCmdSwInput:
     io->pushReport(io, kReportOk);
     if (data[1] == 2 && data[2] == 2) {
-      io->pushReport(io, 0);
-      io->pushReport(io, 0);
-      io->pushReport(io, 0);
-      io->pushReport(io, 0);
-      io->pushReport(io, 0);
+      io->pushReport(io, sw[0]);
+      io->pushReport(io, sw[1]);
+      io->pushReport(io, sw[2]);
+      io->pushReport(io, sw[3]);
+      io->pushReport(io, sw[4]);
     } else {
       Serial.println("Err CmdSwInput");
     }
@@ -82,7 +85,7 @@ static void jvs_poll(struct JVSIO_Lib* io) {
     if (data[1] <= 2) {
       for (uint8_t i = 0; i < data[1]; ++i) {
         io->pushReport(io, (0 << 6) | 0);
-        io->pushReport(io, 0);
+        io->pushReport(io, coin[i]);
       }
     } else {
       Serial.println("Err CmdCoinInput");
@@ -102,6 +105,10 @@ static void jvs_poll(struct JVSIO_Lib* io) {
     // so that it offsets.
     if (data[1] == 0)
       coin_index_bias = 1;
+    if (*data == kCmdCoinSub)
+      coin[data[1] + coin_index_bias - 1] -= data[2];
+    else
+      coin[data[1] + coin_index_bias - 1] += data[2];
     io->pushReport(io, kReportOk);
     break;
    case kCmdDriverOutput:
@@ -110,15 +117,94 @@ static void jvs_poll(struct JVSIO_Lib* io) {
   }
 }
 
+static inline bool button_check(uint16_t index, const uint8_t* data) {
+  if (index == 0xffff)
+    return false;
+  uint8_t byte = index >> 3;
+  uint8_t bit = index & 7;
+  return data[byte] & (1 << bit);
+}
+
 static void report(
     uint8_t hub, const struct hub_info* info, const uint8_t* data) {
-  hub;
-  info;
-  data;
+  if (info->state != HID_STATE_READY) {
+    sw[1 + hub * 2 + 0] = 0;
+    sw[1 + hub * 2 + 1] = 0;
+    return;
+  }
+  if (info->report_id)
+    data++;
+  uint8_t u = 0, d = 0, l = 0, r = 0;
+  if (info->axis[0] != 0xffff && info->axis_size[0] == 8) {
+    uint8_t x = data[info->axis[0] >> 3];
+    if (x < 64) l = 1;
+    else if (x > 192) r = 1;
+  }
+  if (info->axis[1] != 0xffff && info->axis_size[1] == 8) {
+    uint8_t y = data[info->axis[1] >> 3];
+    if (y < 64) u = 1;
+    else if (y > 192) d = 1;
+  }
+  if (info->dpad != 0xffff) {
+    uint8_t byte = info->dpad >> 3;
+    uint8_t bit = info->dpad & 7;
+    uint8_t hat = (data[byte] >> bit) & 0xf;
+    switch (hat) {
+      case 0:
+        u = 1;
+        break;
+      case 1:
+        u = 1;
+        r = 1;
+        break;
+      case 2:
+        r = 1;
+        break;
+      case 3:
+        r = 1;
+        d = 1;
+        break;
+      case 4:
+        d = 1;
+        break;
+      case 5:
+        d = 1;
+        l = 1;
+        break;
+      case 6:
+        l = 1;
+        break;
+      case 7:
+        l = 1;
+        u = 1;
+        break;
+    }
+  }
+  coin_sw[hub] = (coin_sw[hub] << 1) |
+                 (button_check(info->button[ 8], data) ? 0x01 : 0);
+  if ((coin_sw[hub] & 3) == 1)
+    coin[hub]++;
+  sw[1 + hub * 2 + 0] = (button_check(info->button[ 9], data) ? 0x80 : 0) |
+                        (u ? 0x20 : 0) |
+                        (d ? 0x10 : 0) |
+                        (l ? 0x08 : 0) |
+                        (r ? 0x04 : 0) |
+                        (button_check(info->button[ 0], data) ? 0x02 : 0) |
+                        (button_check(info->button[ 1], data) ? 0x01 : 0);
+  sw[1 + hub * 2 + 1] = (button_check(info->button[ 2], data) ? 0x80 : 0) |
+                        (button_check(info->button[ 3], data) ? 0x40 : 0) |
+                        (button_check(info->button[ 4], data) ? 0x20 : 0) |
+                        (button_check(info->button[ 5], data) ? 0x10 : 0) |
+                        (button_check(info->button[ 6], data) ? 0x08 : 0) |
+                        (button_check(info->button[ 7], data) ? 0x04 : 0) |
+                        (button_check(info->button[10], data) ? 0x02 : 0) |
+                        (button_check(info->button[11], data) ? 0x01 : 0);
 }
 
 void main() {
   initialize();
+  pinMode(4, 6, INPUT_PULLUP);
+  pinMode(1, 7, INPUT_PULLUP);
   delay(30);
   Serial.println(id);
 
@@ -138,6 +224,26 @@ void main() {
   for (;;) {
     hid_poll();
     led_poll();
+    if (digitalRead(4, 6) == LOW)
+      sw[1] |= 0x40;
+    else
+      sw[1] &= ~0x40;
+    if (digitalRead(1, 7) == LOW)
+      sw[0] |= 0x80;
+    else
+      sw[0] &= ~0x80;
     jvs_poll(io);
+#if 0
+    Serial.printc(sw[0], BIN);
+    Serial.putc('_');
+    Serial.printc(sw[1], BIN);
+    Serial.putc('_');
+    Serial.printc(sw[2], BIN);
+    Serial.putc('_');
+    Serial.printc(sw[3], BIN);
+    Serial.putc('_');
+    Serial.printc(sw[4], BIN);
+    Serial.println("");
+#endif
   }
 }

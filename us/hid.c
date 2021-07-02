@@ -48,6 +48,7 @@ static void check_configuration_desc(uint8_t hub, const uint8_t* data) {
     hub_info[hub].state = HID_STATE_NOT_READY;
 }
 
+//#define _DBG_HID
 #ifdef _DBG_HID
 #  define REPORT0(s) Serial.println(s " (0)")
 #  define REPORT1(s) Serial.printf(s " (1): %x\n", data[i + 1])
@@ -183,13 +184,14 @@ static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
     }
   }
  quit:
-#if 0
+#ifdef _DBG_HID
   Serial.printf("Report Size for ID (%d): %d-bits (%d-Bytes)\n",
       0/*report_id*/,
       hub_info[hub].hid_report_size,
       hub_info[hub].hid_report_size / 8);
   for (uint8_t i = 0; i < 2; ++i)
     Serial.printf("axis %d: %d, %d\n", i, hub_info[hub].axis[i], hub_info[hub].axis_size[i]);
+  Serial.printf("hat: %d\n", hub_info[hub].dpad);
   for (uint8_t i = 0; i < 12; ++i)
     Serial.printf("button %d: %d\n", i, hub_info[hub].button[i]);
 #endif

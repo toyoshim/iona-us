@@ -123,8 +123,8 @@ static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
           break;
         case 0x81:
           REPORT1("M:Input");
-          if (usage_page == 0x01 && usage == 0x39 &&
-              report_size == 4) { // Hat switch
+          if (usage_page == 0x01 && usage == 0x39 && report_size == 4 &&
+              (data[i + 1] & 1) == 0) { // Hat switch
             hub_info[hub].dpad = hub_info[hub].hid_report_size;
           } else if (usage_page == 0xff00 && usage == 0x20 &&
                      report_size == 6) {  // PS4 counter
@@ -134,7 +134,7 @@ static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
               hub_info[hub].button[button_index++] =
                   hub_info[hub].hid_report_size + i;
             }
-          } else {  // Analog buttons
+          } else if ((data[i + 1] & 1) == 0) {  // Analog buttons
             for (uint8_t i = 0; i < report_count && analog_index < 2; ++i) {
               hub_info[hub].axis_size[analog_index] = report_size;
               hub_info[hub].axis[analog_index++] =

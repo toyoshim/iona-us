@@ -213,7 +213,7 @@ void hid_init(struct hid* new_hid) {
   host.check_device_desc = 0;
   host.check_configuration_desc = check_configuration_desc;
   host.check_hid_report_desc = check_hid_report_desc;
-  host.hid_report = hid_report;
+  host.in = hid_report;
   usb_host_init(&host);
 }
 
@@ -226,8 +226,8 @@ void hid_poll() {
     uint16_t size = hub_info[hub].report_size / 8;
     if (hub_info[hub].report_id)
       size++;
-    //usb_host_in(hub, hub_info[hub].hid_ep, size);
-    usb_host_hid_get_report(hub, hub_info[hub].report_id, size);
+    usb_host_in(hub, hub_info[hub].ep, size);
+    //usb_host_hid_get_report(hub, hub_info[hub].report_id, size);
   }
   hub = (hub + 1) & 1;
 }

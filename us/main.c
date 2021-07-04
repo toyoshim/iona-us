@@ -253,7 +253,7 @@ void main() {
     jvs_poll(io);
 #if 0
     static uint8_t old_sw[5] = { 0, 0, 0, 0, 0 };
-    if (old_sw[0] != sw[0] || old_sw[1] != sw[1] || old_sw[2] != sw[2] &&
+    if (old_sw[0] != sw[0] || old_sw[1] != sw[1] || old_sw[2] != sw[2] ||
         old_sw[3] != sw[3] || old_sw[4] != sw[4]) {
       for (uint8_t i = 0; i < 5; ++i)
         old_sw[i] = sw[i];

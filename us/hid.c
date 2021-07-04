@@ -14,15 +14,15 @@ static struct hub_info hub_info[2];
 
 static void disconnected(uint8_t hub) {
   hub_info[hub].state = HID_STATE_DISCONNECTED;
-  hub_info[hub].hid_report_size = 0;
+  hub_info[hub].report_size = 0;
   if (!hid->report)
     return;
   hid->report(hub, &hub_info[hub], 0);
 }
 
 static void check_configuration_desc(uint8_t hub, const uint8_t* data) {
-  hub_info[hub].hid_report_desc_size = 0;
-  hub_info[hub].hid_ep = 0;
+  hub_info[hub].report_desc_size = 0;
+  hub_info[hub].ep = 0;
   hub_info[hub].state = HID_STATE_CONNECTED;
   const struct usb_desc_configuration* desc =
       (const struct usb_desc_configuration*)data;
@@ -32,19 +32,19 @@ static void check_configuration_desc(uint8_t hub, const uint8_t* data) {
     switch (head->bDescriptorType) {
       case USB_DESC_HID: {
         const struct usb_desc_hid* hid = (const struct usb_desc_hid*)(data + i);
-        hub_info[hub].hid_report_desc_size = hid->wDescriptorLength;
+        hub_info[hub].report_desc_size = hid->wDescriptorLength;
         break;
       }
       case USB_DESC_ENDPOINT: {
         const struct usb_desc_endpoint* ep =
             (const struct usb_desc_endpoint*)(data + i);
         if (ep->bEndpointAddress >= 128)
-        hub_info[hub].hid_ep = ep->bEndpointAddress;
+        hub_info[hub].ep = ep->bEndpointAddress;
         break;
       }
     }
   }
-  if (hub_info[hub].hid_report_desc_size && hub_info[hub].hid_ep)
+  if (hub_info[hub].report_desc_size && hub_info[hub].ep)
     hub_info[hub].state = HID_STATE_NOT_READY;
 }
 
@@ -63,8 +63,8 @@ static void check_configuration_desc(uint8_t hub, const uint8_t* data) {
 static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
   if (hub_info[hub].state != HID_STATE_NOT_READY)
     return;
-  const uint16_t size = hub_info[hub].hid_report_desc_size;
-  hub_info[hub].hid_report_size = 0;
+  const uint16_t size = hub_info[hub].report_desc_size;
+  hub_info[hub].report_size = 0;
   hub_info[hub].axis[0] = 0xffff;
   hub_info[hub].axis[1] = 0xffff;
   hub_info[hub].dpad = 0xffff;
@@ -125,26 +125,26 @@ static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
           REPORT1("M:Input");
           if (usage_page == 0x01 && usage == 0x39 && report_size == 4 &&
               (data[i + 1] & 1) == 0) { // Hat switch
-            hub_info[hub].dpad = hub_info[hub].hid_report_size;
+            hub_info[hub].dpad = hub_info[hub].report_size;
           } else if (usage_page == 0xff00 && usage == 0x20 &&
                      report_size == 6) {  // PS4 counter
             hub_info[hub].type = HID_TYPE_PS4;
           } else if (report_size == 1) {  // Buttons
             for (uint8_t i = 0; i < report_count && button_index < 12; ++i) {
               hub_info[hub].button[button_index++] =
-                  hub_info[hub].hid_report_size + i;
+                  hub_info[hub].report_size + i;
             }
           } else if ((data[i + 1] & 1) == 0) {  // Analog buttons
             for (uint8_t i = 0; i < report_count && analog_index < 2; ++i) {
               hub_info[hub].axis_size[analog_index] = report_size;
               hub_info[hub].axis[analog_index++] =
-                hub_info[hub].hid_report_size + report_size * i;
+                hub_info[hub].report_size + report_size * i;
             }
           }
-          hub_info[hub].hid_report_size += report_size * report_count;
+          hub_info[hub].report_size += report_size * report_count;
           break;
         case 0x85:
-          if (hub_info[hub].hid_report_size)
+          if (hub_info[hub].report_size)
             goto quit;
           REPORT1("G:Report ID");
           hub_info[hub].report_id = data[i + 1];
@@ -187,8 +187,8 @@ static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
 #ifdef _DBG_HID
   Serial.printf("Report Size for ID (%d): %d-bits (%d-Bytes)\n",
       0/*report_id*/,
-      hub_info[hub].hid_report_size,
-      hub_info[hub].hid_report_size / 8);
+      hub_info[hub].report_size,
+      hub_info[hub].report_size / 8);
   for (uint8_t i = 0; i < 2; ++i)
     Serial.printf("axis %d: %d, %d\n", i, hub_info[hub].axis[i], hub_info[hub].axis_size[i]);
   Serial.printf("hat: %d\n", hub_info[hub].dpad);
@@ -200,7 +200,7 @@ static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
     led_oneshot(L_PULSE_ONCE);
 }
 
-static void in(uint8_t hub, const uint8_t* data) {
+static void hid_report(uint8_t hub, const uint8_t* data) {
   if (!hid->report)
     return;
   hid->report(hub, &hub_info[hub], data);
@@ -213,7 +213,7 @@ void hid_init(struct hid* new_hid) {
   host.check_device_desc = 0;
   host.check_configuration_desc = check_configuration_desc;
   host.check_hid_report_desc = check_hid_report_desc;
-  host.in = in;
+  host.hid_report = hid_report;
   usb_host_init(&host);
 }
 
@@ -223,10 +223,11 @@ void hid_poll() {
   if (!usb_host_idle())
     return;
   if (hub_info[hub].state == HID_STATE_READY && usb_host_ready(hub)) {
-    uint16_t size = hub_info[hub].hid_report_size / 8;
+    uint16_t size = hub_info[hub].report_size / 8;
     if (hub_info[hub].report_id)
       size++;
-    usb_host_in(hub, hub_info[hub].hid_ep, size);
+    //usb_host_in(hub, hub_info[hub].hid_ep, size);
+    usb_host_hid_get_report(hub, hub_info[hub].report_id, size);
   }
   hub = (hub + 1) & 1;
 }

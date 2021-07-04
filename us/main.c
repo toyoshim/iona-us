@@ -127,6 +127,24 @@ static inline bool button_check(uint16_t index, const uint8_t* data) {
 
 static void report(
     uint8_t hub, const struct hub_info* info, const uint8_t* data) {
+#if 0
+   uint8_t report_size = info->report_size / 8;
+   if (info->report_id)
+     report_size++;
+  static uint8_t old_data[256];
+  bool modified = false;
+  for (uint8_t i = 0; i < report_size; ++i) {
+    if (old_data[i] == data[i])
+      continue;
+    modified = true;
+    old_data[i] = data[i];
+  }
+  if (!modified)
+    return;
+  for (uint8_t i = 0; i < report_size; ++i)
+    Serial.printf("%x,", data[i]);
+  Serial.println("");
+#endif
   if (info->state != HID_STATE_READY) {
     sw[1 + hub * 2 + 0] = 0;
     sw[1 + hub * 2 + 1] = 0;
@@ -234,16 +252,22 @@ void main() {
       sw[0] &= ~0x80;
     jvs_poll(io);
 #if 0
-    Serial.printc(sw[0], BIN);
-    Serial.putc('_');
-    Serial.printc(sw[1], BIN);
-    Serial.putc('_');
-    Serial.printc(sw[2], BIN);
-    Serial.putc('_');
-    Serial.printc(sw[3], BIN);
-    Serial.putc('_');
-    Serial.printc(sw[4], BIN);
-    Serial.println("");
+    static uint8_t old_sw[5] = { 0, 0, 0, 0, 0 };
+    if (old_sw[0] != sw[0] || old_sw[1] != sw[1] || old_sw[2] != sw[2] &&
+        old_sw[3] != sw[3] || old_sw[4] != sw[4]) {
+      for (uint8_t i = 0; i < 5; ++i)
+        old_sw[i] = sw[i];
+      Serial.printc(sw[0], BIN);
+      Serial.putc('_');
+      Serial.printc(sw[1], BIN);
+      Serial.putc('_');
+      Serial.printc(sw[2], BIN);
+      Serial.putc('_');
+      Serial.printc(sw[3], BIN);
+      Serial.putc('_');
+      Serial.printc(sw[4], BIN);
+      Serial.println("");
+    }
 #endif
   }
 }

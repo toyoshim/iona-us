@@ -20,15 +20,15 @@ enum {
 };
 
 struct hub_info {
-  uint16_t hid_report_desc_size;
-  uint16_t hid_report_size;
+  uint16_t report_desc_size;
+  uint16_t report_size;
   uint16_t axis[2];
   uint16_t dpad;
   uint16_t button[12];
   uint8_t axis_size[2];
   uint8_t report_id;
   uint8_t type;
-  uint8_t hid_ep;
+  uint8_t ep;
   uint8_t state;
 };
 

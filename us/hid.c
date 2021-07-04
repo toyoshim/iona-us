@@ -49,6 +49,8 @@ static void check_configuration_desc(uint8_t hub, const uint8_t* data) {
 }
 
 //#define _DBG_HID
+//#define _HID_REPORT_DESC_DUMP
+
 #ifdef _DBG_HID
 #  define REPORT0(s) Serial.println(s " (0)")
 #  define REPORT1(s) Serial.printf(s " (1): %x\n", data[i + 1])
@@ -59,8 +61,6 @@ static void check_configuration_desc(uint8_t hub, const uint8_t* data) {
 #  define REPORT2(s)
 #  pragma disable_warning 110
 #endif
-
-//#define _HID_REPORT_DESC_DUMP
 
 static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
   if (hub_info[hub].state != HID_STATE_NOT_READY)

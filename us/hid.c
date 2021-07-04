@@ -60,9 +60,17 @@ static void check_configuration_desc(uint8_t hub, const uint8_t* data) {
 #  pragma disable_warning 110
 #endif
 
+//#define _HID_REPORT_DESC_DUMP
+
 static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
   if (hub_info[hub].state != HID_STATE_NOT_READY)
     return;
+#ifdef _HID_REPORT_DESC_DUMP
+  {
+    for (uint16_t i = 0; i < hub_info[hub].report_desc_size; ++i)
+      Serial.printf("0x%x, ", data[i]);
+  }
+#endif
   const uint16_t size = hub_info[hub].report_desc_size;
   hub_info[hub].report_size = 0;
   hub_info[hub].axis[0] = 0xffff;
@@ -186,7 +194,7 @@ static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
  quit:
 #ifdef _DBG_HID
   Serial.printf("Report Size for ID (%d): %d-bits (%d-Bytes)\n",
-      0/*report_id*/,
+      hub_info[hub].report_id,
       hub_info[hub].report_size,
       hub_info[hub].report_size / 8);
   for (uint8_t i = 0; i < 2; ++i)
@@ -215,6 +223,10 @@ void hid_init(struct hid* new_hid) {
   host.check_hid_report_desc = check_hid_report_desc;
   host.in = hid_report;
   usb_host_init(&host);
+}
+
+struct hub_info* hid_get_info(uint8_t hub) {
+  return &hub_info[hub];
 }
 
 void hid_poll() {

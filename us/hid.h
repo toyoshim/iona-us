@@ -37,6 +37,7 @@ struct hid {
 };
 
 void hid_init(struct hid* hid);
+struct hub_info* hid_get_info(uint8_t hub);
 void hid_poll();
 
 #endif  // __hid_h__

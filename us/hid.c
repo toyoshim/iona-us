@@ -11,19 +11,51 @@
 static struct hid* hid;
 static struct usb_host host;
 static struct hub_info hub_info[2];
+static struct {
+  uint16_t ep_max_packet_size;
+  uint8_t ep;
+  uint8_t state;
+  uint8_t cmd_count;
+} xbox_info[2];
+
+enum {
+  XBOX_CONNECTED,
+  XBOX_INITIALIZED,
+};
+
+static uint8_t xbox_initialize[] = { 0x05, 0x20, 0x00, 0x01, 0x00 };
 
 static void disconnected(uint8_t hub) {
   hub_info[hub].state = HID_STATE_DISCONNECTED;
   hub_info[hub].report_size = 0;
   if (!hid->report)
     return;
-  hid->report(hub, &hub_info[hub], 0);
+  hid->report(hub, &hub_info[hub], 0, 0);
 }
 
-static void check_configuration_desc(uint8_t hub, const uint8_t* data) {
+static void check_device_desc(uint8_t hub, const uint8_t* data) {
   hub_info[hub].report_desc_size = 0;
   hub_info[hub].ep = 0;
   hub_info[hub].state = HID_STATE_CONNECTED;
+  const struct usb_desc_device* desc = (const struct usb_desc_device*)data;
+
+  if (desc->idVendor == 0x045e) {  // Microsoft
+    if (desc->idProduct == 0x02d1 || desc->idProduct == 0x02dd ||
+        desc->idProduct == 0x02e3 || desc->idProduct == 0x02ea ||
+        desc->idProduct == 0x0b00 || desc->idProduct == 0x0b0a ||
+        desc->idProduct == 0x0b12) {
+      hub_info[hub].type = HID_TYPE_XBOX_ONE;
+      hub_info[hub].report_desc_size = 1;
+    }
+  } else if (desc->bDeviceClass == 0xff && desc->bDeviceSubClass == 0x47 &&
+      desc->bDeviceProtocol == 0xd0) {
+    // Might be a Xbox One compatible controller.
+    hub_info[hub].type = HID_TYPE_XBOX_ONE;
+    hub_info[hub].report_desc_size = 1;
+  }
+}
+
+static void check_configuration_desc(uint8_t hub, const uint8_t* data) {
   const struct usb_desc_configuration* desc =
       (const struct usb_desc_configuration*)data;
   struct usb_desc_head* head;
@@ -38,14 +70,29 @@ static void check_configuration_desc(uint8_t hub, const uint8_t* data) {
       case USB_DESC_ENDPOINT: {
         const struct usb_desc_endpoint* ep =
             (const struct usb_desc_endpoint*)(data + i);
-        if (ep->bEndpointAddress >= 128)
-        hub_info[hub].ep = ep->bEndpointAddress;
+        if (ep->bEndpointAddress >= 128 && (ep->bmAttributes & 3) == 3) {
+          // interrupt input.
+          hub_info[hub].ep = ep->bEndpointAddress & 0x0f;
+          xbox_info[hub].ep_max_packet_size = ep->wMaxPacketSize;
+        } else if (ep->bEndpointAddress < 128 && (ep->bmAttributes & 3) == 3) {
+          // interrupt output.
+          xbox_info[hub].ep = ep->bEndpointAddress & 0x0f;
+        }
         break;
       }
     }
   }
   if (hub_info[hub].report_desc_size && hub_info[hub].ep)
     hub_info[hub].state = HID_STATE_NOT_READY;
+
+  if (hub_info[hub].state == HID_STATE_NOT_READY && xbox_info[hub].ep &&
+      hub_info[hub].type == HID_TYPE_XBOX_ONE) {
+    hub_info[hub].state = HID_STATE_READY;
+    hub_info[hub].report_size = xbox_info[hub].ep_max_packet_size * 8;
+    xbox_info[hub].state = XBOX_CONNECTED;
+    xbox_info[hub].cmd_count = 0;
+    led_oneshot(L_PULSE_ONCE);
+  }
 }
 
 //#define _DBG_HID
@@ -208,17 +255,17 @@ static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
     led_oneshot(L_PULSE_ONCE);
 }
 
-static void hid_report(uint8_t hub, const uint8_t* data) {
+static void hid_report(uint8_t hub, const uint8_t* data, uint16_t size) {
   if (!hid->report)
     return;
-  hid->report(hub, &hub_info[hub], data);
+  hid->report(hub, &hub_info[hub], data, size);
 }
 
 void hid_init(struct hid* new_hid) {
   hid = new_hid;
   host.flags = USE_HUB1 | USE_HUB0;
   host.disconnected = disconnected;
-  host.check_device_desc = 0;
+  host.check_device_desc = check_device_desc;
   host.check_configuration_desc = check_configuration_desc;
   host.check_hid_report_desc = check_hid_report_desc;
   host.in = hid_report;
@@ -235,11 +282,22 @@ void hid_poll() {
   if (!usb_host_idle())
     return;
   if (hub_info[hub].state == HID_STATE_READY && usb_host_ready(hub)) {
-    uint16_t size = hub_info[hub].report_size / 8;
-    if (hub_info[hub].report_id)
-      size++;
-    usb_host_in(hub, hub_info[hub].ep, size);
-    //usb_host_hid_get_report(hub, hub_info[hub].report_id, size);
+    if (hub_info[hub].type != HID_TYPE_XBOX_ONE) {
+      uint16_t size = hub_info[hub].report_size / 8;
+      if (hub_info[hub].report_id)
+        size++;
+      usb_host_in(hub, hub_info[hub].ep, size);
+      //usb_host_hid_get_report(hub, hub_info[hub].report_id, size);
+    } else {
+      if (xbox_info[hub].state == XBOX_CONNECTED) {
+        xbox_initialize[2] = xbox_info[hub].cmd_count++;
+        usb_host_out(
+            hub, xbox_info[hub].ep, xbox_initialize, sizeof(xbox_initialize));
+        xbox_info[hub].state = XBOX_INITIALIZED;
+      } else if (xbox_info[hub].state == XBOX_INITIALIZED) {
+        usb_host_in(hub, hub_info[hub].ep, xbox_info[hub].ep_max_packet_size);
+      }
+    }
   }
   hub = (hub + 1) & 1;
 }

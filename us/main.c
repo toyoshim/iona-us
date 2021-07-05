@@ -126,22 +126,21 @@ static inline bool button_check(uint16_t index, const uint8_t* data) {
 }
 
 static void report(
-    uint8_t hub, const struct hub_info* info, const uint8_t* data) {
+    uint8_t hub, const struct hub_info* info, const uint8_t* data, uint16_t size) {
+  size;
 #if 0
-   uint8_t report_size = info->report_size / 8;
-   if (info->report_id)
-     report_size++;
   static uint8_t old_data[256];
   bool modified = false;
-  for (uint8_t i = 0; i < report_size; ++i) {
+  for (uint8_t i = 0; i < size; ++i) {
     if (old_data[i] == data[i])
       continue;
     modified = true;
     old_data[i] = data[i];
   }
-  if (!modified)
+  if (!modified && size)
     return;
-  for (uint8_t i = 0; i < report_size; ++i)
+  Serial.printf("Report %d Bytes: ", size);
+  for (uint8_t i = 0; i < size; ++i)
     Serial.printf("%x,", data[i]);
   Serial.println("");
 #endif

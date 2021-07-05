@@ -10,6 +10,7 @@
 enum {
   HID_TYPE_UNKNOWN,
   HID_TYPE_PS4,
+  HID_TYPE_XBOX_ONE,
 };
 
 enum {
@@ -33,7 +34,7 @@ struct hub_info {
 };
 
 struct hid {
-  void (*report)(uint8_t hub, const struct hub_info*, const uint8_t* data);
+  void (*report)(uint8_t hub, const struct hub_info*, const uint8_t* data, uint16_t size);
 };
 
 void hid_init(struct hid* hid);

@@ -32,4 +32,8 @@ bool usb_host_in(uint8_t hub, uint8_t ep, uint8_t size) {
   return false;
 }
 
+bool usb_host_out(uint8_t hub, uint8_t ep, uint8_t* data, uint8_t size) {
+  return false;
+}
+
 }

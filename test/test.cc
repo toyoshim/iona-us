@@ -24,6 +24,7 @@ struct DummyDescriptor {
     sizeof(usb_desc_endpoint),
     USB_DESC_ENDPOINT,
     129,
+    3,
   };
   usb_desc_hid hid = {
     sizeof(usb_desc_hid),
@@ -56,13 +57,21 @@ class CompatTest : public ::testing::Test {
   void CheckHubInfo(hub_info& expected, hub_info& actual) {
     EXPECT_EQ(expected.report_desc_size, actual.report_desc_size);
     EXPECT_EQ(expected.report_size, actual.report_size);
+
     for (size_t i = 0; i < 2; ++i) {
       EXPECT_EQ(expected.axis[i], actual.axis[i]);
       EXPECT_EQ(expected.axis_size[i], actual.axis_size[i]);
+      EXPECT_EQ(expected.axis_sign[i], actual.axis_sign[i]);
+      EXPECT_EQ(expected.axis_polarity[i], actual.axis_polarity[i]);
     }
+
+    for (size_t i = 0; i < 4; ++i)
+      EXPECT_EQ(expected.dpad[i], actual.dpad[i]);
+
     for (size_t i = 0; i < 12; ++i)
       EXPECT_EQ(expected.button[i], actual.button[i]);
-    EXPECT_EQ(expected.dpad, actual.dpad);
+    EXPECT_EQ(expected.hat, actual.hat);
+
     EXPECT_EQ(expected.report_id, actual.report_id);
     EXPECT_EQ(expected.type, actual.type);
     EXPECT_EQ(expected.ep, actual.ep);
@@ -98,11 +107,14 @@ TEST_F(PS4CompatTest, HoripadFpsPlusForPlayStation4_ModePS4) {
     504,
     { 0, 8 },
     32,
+    { 0xffff, 0xffff, 0xffff, 0xffff },
     { 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47 },
     { 8, 8 },
+    { false, false },
+    { false, false },
     1,
     HID_TYPE_PS4,
-    129,
+    1,
     HID_STATE_READY,
   };
  
@@ -128,11 +140,14 @@ TEST_F(PS4CompatTest, HoripadFpsPlusForPlayStation4_ModePS3) {
     216,
     { 24, 32 },
     16,
+    { 0xffff, 0xffff, 0xffff, 0xffff },
     { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 },
     { 8, 8 },
+    { false, false },
+    { false, false },
     0,
     HID_TYPE_UNKNOWN,
-    129,
+    1,
     HID_STATE_READY,
   };
  
@@ -161,11 +176,14 @@ TEST_F(SwitchCompatTest, HoripadMiniForNintendoSwitch) {
     216,
     { 24, 32 },
     16,
+    { 0xffff, 0xffff, 0xffff, 0xffff },
     { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 },
     { 8, 8 },
+    { false, false },
+    { false, false },
     0,
     HID_TYPE_UNKNOWN,
-    129,
+    1,
     HID_STATE_READY,
   };
 

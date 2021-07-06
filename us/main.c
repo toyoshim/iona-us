@@ -151,20 +151,43 @@ static void report(
   }
   if (info->report_id)
     data++;
-  uint8_t u = 0, d = 0, l = 0, r = 0;
+  uint8_t u = button_check(info->dpad[0], data) ? 1 : 0;
+  uint8_t d = button_check(info->dpad[1], data) ? 1 : 0;
+  uint8_t l = button_check(info->dpad[2], data) ? 1 : 0;
+  uint8_t r = button_check(info->dpad[3], data) ? 1 : 0;
   if (info->axis[0] != 0xffff && info->axis_size[0] == 8) {
     uint8_t x = data[info->axis[0] >> 3];
     if (x < 64) l = 1;
     else if (x > 192) r = 1;
+  }
+  if (info->axis[0] != 0xffff && info->axis_size[0] == 16) {
+    uint8_t byte = info->axis[0] >> 3;
+    uint16_t x = data[byte] | ((uint16_t)data[byte + 1] << 8);
+    if (info->axis_sign[0])
+      x += 0x8000;
+    if (info->axis_polarity[0])
+      x = -x - 1;
+    if (x < 0x4000) l = 1;
+    else if (x > 0xc000) r = 1;
   }
   if (info->axis[1] != 0xffff && info->axis_size[1] == 8) {
     uint8_t y = data[info->axis[1] >> 3];
     if (y < 64) u = 1;
     else if (y > 192) d = 1;
   }
-  if (info->dpad != 0xffff) {
-    uint8_t byte = info->dpad >> 3;
-    uint8_t bit = info->dpad & 7;
+  if (info->axis[1] != 0xffff && info->axis_size[1] == 16) {
+    uint8_t byte = info->axis[1] >> 3;
+    uint16_t y = data[byte] | ((uint16_t)data[byte + 1] << 8);
+    if (info->axis_sign[1])
+      y += 0x8000;
+    if (info->axis_polarity[1])
+      y = -y - 1;
+    if (y < 0x4000) u = 1;
+    else if (y > 0xc000) d = 1;
+  }
+  if (info->hat != 0xffff) {
+    uint8_t byte = info->hat >> 3;
+    uint8_t bit = info->hat & 7;
     uint8_t hat = (data[byte] >> bit) & 0xf;
     switch (hat) {
       case 0:

@@ -141,6 +141,7 @@ static void check_configuration_desc(uint8_t hub, const uint8_t* data) {
       hub_info[hub].button[10] = 16 + 6;
       hub_info[hub].button[11] = 16 + 7;
     } else {
+      // https://github.com/quantus/xbox-one-controller-protocol
       hub_info[hub].report_size = xbox_info[hub].ep_max_packet_size * 8;
     }
     led_oneshot(L_PULSE_ONCE);

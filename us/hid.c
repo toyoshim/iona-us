@@ -344,7 +344,7 @@ void hid_poll() {
     switch (hub_info[hub].type) {
       case HID_TYPE_XBOX_360:
         if (xbox_info[hub].state == XBOX_CONNECTED) {
-          xbox_360_initialize[2] = 0x06 + hub;
+          xbox_360_initialize[2] = 0x02 + hub;
           usb_host_out(
               hub, xbox_info[hub].ep, xbox_360_initialize,
               sizeof(xbox_360_initialize));

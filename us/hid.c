@@ -113,6 +113,7 @@ static void check_configuration_desc(uint8_t hub, const uint8_t* data) {
     xbox_info[hub].state = XBOX_CONNECTED;
     xbox_info[hub].cmd_count = 0;
     if (hub_info[hub].type == HID_TYPE_XBOX_360) {
+      // https://github.com/xboxdrv/xboxdrv/blob/stable/PROTOCOL
       hub_info[hub].report_size = 20 * 8;
       hub_info[hub].axis[0] = 6 * 8;
       hub_info[hub].axis_size[0] = 16;

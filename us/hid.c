@@ -137,15 +137,40 @@ static void check_configuration_desc(uint8_t hub, const uint8_t* data) {
       hub_info[hub].button[3] = 24 + 7;
       hub_info[hub].button[4] = 24 + 0;
       hub_info[hub].button[5] = 24 + 1;
-      hub_info[hub].button[6] = 32;
-      hub_info[hub].button[7] = 40;
+      hub_info[hub].button[6] = 39;
+      hub_info[hub].button[7] = 47;
       hub_info[hub].button[8] = 16 + 5;
       hub_info[hub].button[9] = 16 + 4;
       hub_info[hub].button[10] = 16 + 6;
       hub_info[hub].button[11] = 16 + 7;
     } else {
       // https://github.com/quantus/xbox-one-controller-protocol
-      hub_info[hub].report_size = xbox_info[hub].ep_max_packet_size * 8;
+      hub_info[hub].report_size = 18 * 8;
+      hub_info[hub].axis[0] = 10 * 8;
+      hub_info[hub].axis_size[0] = 16;
+      hub_info[hub].axis_sign[0] = true;
+      hub_info[hub].axis_polarity[0] = false;
+      hub_info[hub].axis[1] = 12 * 8;
+      hub_info[hub].axis_size[1] = 16;
+      hub_info[hub].axis_sign[1] = true;
+      hub_info[hub].axis_polarity[1] = true;
+      hub_info[hub].hat = 0xffff;
+      hub_info[hub].dpad[0] = 40 + 0;
+      hub_info[hub].dpad[1] = 40 + 1;
+      hub_info[hub].dpad[2] = 40 + 2;
+      hub_info[hub].dpad[3] = 40 + 3;
+      hub_info[hub].button[0] = 32 + 6;
+      hub_info[hub].button[1] = 32 + 4;
+      hub_info[hub].button[2] = 32 + 5;
+      hub_info[hub].button[3] = 32 + 7;
+      hub_info[hub].button[4] = 40 + 4;
+      hub_info[hub].button[5] = 40 + 5;
+      hub_info[hub].button[6] = 57;
+      hub_info[hub].button[7] = 73;
+      hub_info[hub].button[8] = 32 + 3;
+      hub_info[hub].button[9] = 32 + 2;
+      hub_info[hub].button[10] = 40 + 6;
+      hub_info[hub].button[11] = 40 + 7;
     }
     led_oneshot(L_PULSE_ONCE);
   }
@@ -316,6 +341,8 @@ static void hid_report(uint8_t hub, const uint8_t* data, uint16_t size) {
   if (!hid->report)
     return;
   if (hub_info[hub].type == HID_TYPE_XBOX_360 && size != 20 && data[0] != 0x00)
+    return;
+  if (hub_info[hub].type == HID_TYPE_XBOX_ONE && size != 18 && data[0] != 0x20)
     return;
   hid->report(hub, &hub_info[hub], data, size);
 }

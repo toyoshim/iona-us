@@ -9,6 +9,9 @@
 #include "jvsio/JVSIO_c.h"
 #include "soft485.h"
 
+//#define _DBG_HID_REPORT_DUMP
+//#define _DBG_JVS_BUTTON_DUMP
+
 #define VER "1.10g"
 
 static const char id[] = "SEGA ENTERPRISES,LTD.compat;MP07-IONA-US;ver" VER;
@@ -128,7 +131,7 @@ static inline bool button_check(uint16_t index, const uint8_t* data) {
 static void report(
     uint8_t hub, const struct hub_info* info, const uint8_t* data, uint16_t size) {
   size;
-#if 0
+#ifdef _DBG_HID_REPORT_DUMP
   static uint8_t old_data[256];
   bool modified = false;
   for (uint8_t i = 0; i < size; ++i) {
@@ -137,13 +140,14 @@ static void report(
     modified = true;
     old_data[i] = data[i];
   }
-  if (!modified && size)
+  if (!modified)
     return;
   Serial.printf("Report %d Bytes: ", size);
   for (uint8_t i = 0; i < size; ++i)
     Serial.printf("%x,", data[i]);
   Serial.println("");
-#endif
+#endif  // _DBG_HID_REPORT_DUMP
+
   if (info->state != HID_STATE_READY) {
     sw[1 + hub * 2 + 0] = 0;
     sw[1 + hub * 2 + 1] = 0;
@@ -273,7 +277,7 @@ void main() {
     else
       sw[0] &= ~0x80;
     jvs_poll(io);
-#if 0
+#ifdef _DBG_JVS_BUTTON_DUMP
     static uint8_t old_sw[5] = { 0, 0, 0, 0, 0 };
     if (old_sw[0] != sw[0] || old_sw[1] != sw[1] || old_sw[2] != sw[2] ||
         old_sw[3] != sw[3] || old_sw[4] != sw[4]) {
@@ -290,6 +294,6 @@ void main() {
       Serial.printc(sw[4], BIN);
       Serial.println("");
     }
-#endif
+#endif  // _DBG_JVS_BUTTON_DUMP
   }
 }

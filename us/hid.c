@@ -8,6 +8,9 @@
 #include "chlib/led.h"
 #include "chlib/usb.h"
 
+//#define _DBG_HID_REPORT_DESC
+//#define _DBG_HID_REPORT_DESC_DUMP
+
 static struct hid* hid;
 static struct usb_host host;
 static struct hub_info hub_info[2];
@@ -148,10 +151,7 @@ static void check_configuration_desc(uint8_t hub, const uint8_t* data) {
   }
 }
 
-//#define _DBG_HID
-//#define _HID_REPORT_DESC_DUMP
-
-#ifdef _DBG_HID
+#ifdef _DBG_HID_REPORT_DESC
 #  define REPORT0(s) Serial.println(s " (0)")
 #  define REPORT1(s) Serial.printf(s " (1): %x\n", data[i + 1])
 #  define REPORT2(s) Serial.printf(s " (2): %x%x\n", data[i + 1], data[i + 2])
@@ -165,7 +165,7 @@ static void check_configuration_desc(uint8_t hub, const uint8_t* data) {
 static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
   if (hub_info[hub].state != HID_STATE_NOT_READY)
     return;
-#ifdef _HID_REPORT_DESC_DUMP
+#ifdef _DBG_HID_REPORT_DESC_DUMP
   {
     for (uint16_t i = 0; i < hub_info[hub].report_desc_size; ++i)
       Serial.printf("0x%x, ", data[i]);
@@ -296,7 +296,7 @@ static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
     }
   }
  quit:
-#ifdef _DBG_HID
+#ifdef _DBG_HID_REPORT_DESC
   Serial.printf("Report Size for ID (%d): %d-bits (%d-Bytes)\n",
       hub_info[hub].report_id,
       hub_info[hub].report_size,
@@ -325,6 +325,7 @@ void hid_init(struct hid* new_hid) {
   host.flags = USE_HUB1 | USE_HUB0;
   host.disconnected = disconnected;
   host.check_device_desc = check_device_desc;
+  host.check_string_desc = 0;
   host.check_configuration_desc = check_configuration_desc;
   host.check_hid_report_desc = check_hid_report_desc;
   host.in = hid_report;

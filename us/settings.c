@@ -31,7 +31,7 @@ void reset() {
     settings.settings[i].speed = 1;
     settings.settings[i].rapid_fire = 0;
     for (uint8_t b = 0; b < 12; ++b)
-      settings.settings[i].button_masks[b] = (uint16_t)1 << i;
+      settings.settings[i].button_masks[b] = (uint16_t)1 << b;
     for (uint8_t b = 0; b < 2; ++b)
       settings.settings[i].padding[b] = 0;
   }

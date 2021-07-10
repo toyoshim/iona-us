@@ -39,13 +39,6 @@ void reset() {
 }
 
 static void mode_layout() {
-  if (mode_player == 0xff) {
-    uint16_t player1 = controller_raw(0);
-    uint16_t player2 = controller_raw(1);
-    if (player1 == 0 && player2 == 0)
-      return;
-    mode_player = (player1 != 0) ? 0 : 1;
-  }
   uint16_t buttons = controller_raw(mode_player);
   if (mode_data && !buttons) {
     if (mode_step < 12) {
@@ -107,13 +100,6 @@ static void quit_speed() {
 }
 
 static void mode_select() {
-  if (mode_player == 0xff) {
-    uint16_t player1 = controller_raw(0);
-    uint16_t player2 = controller_raw(1);
-    if (player1 == 0 && player2 == 0)
-      return;
-    mode_player = (player1 != 0) ? 0 : 1;
-  }
   uint16_t buttons = ((uint16_t)controller_jvs(1 + mode_player * 2) << 8) |
                      controller_jvs(1 + mode_player * 2 + 1);
   if (buttons & 0x0200) {
@@ -192,11 +178,10 @@ static void slow_poll() {
       next_mode = S_NORMAL;
       break;
   }
+  last_buttons[0] = button0;
+  last_buttons[1] = button1;
   if (changed) {
     switch (mode) {
-      case S_NORMAL:
-        mode_player = 0xff;
-        break;
       case S_LAYOUT:
         quit_layout();
         break;
@@ -218,6 +203,7 @@ static void slow_poll() {
         led_mode(client_led_mode);
         break;
       case S_LAYOUT:
+        mode_player = 0xff;
         led_mode(L_FASTER_BLINK);
         break;
       case S_RAPID:
@@ -230,6 +216,13 @@ static void slow_poll() {
         led_mode(L_OFF);
         break;
     }
+  }
+  if (mode_player == 0xff) {
+    uint16_t player1 = controller_raw(0);
+    uint16_t player2 = controller_raw(1);
+    if (!player1 && !player2)
+      return;
+    mode_player = player1 ? 0 : 1;
   }
   switch (mode) {
     case S_LAYOUT:
@@ -245,8 +238,6 @@ static void slow_poll() {
       mode_select();
       break;
   }
-  last_buttons[0] = button0;
-  last_buttons[1] = button1;
 }
 
 void settings_init() {

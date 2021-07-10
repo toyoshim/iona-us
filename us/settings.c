@@ -41,7 +41,8 @@ static void mode_layout() {
     mode_data = 0;
     mode_step++;
   }
-  mode_data |= buttons;
+  if (mode_step < 12)
+    mode_data |= buttons;
   if (mode_data)
     led_mode(L_OFF);
 }

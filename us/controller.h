@@ -28,10 +28,9 @@ enum {
 void controller_init();
 void controller_update(
     uint8_t hub, const struct hub_info* info, const uint8_t* data,
-    uint16_t size);
+    uint16_t size, uint16_t* mask);
 void controller_poll();
 uint16_t controller_raw(uint8_t player);
-uint16_t* controller_mask(uint8_t player);
 uint8_t controller_jvs(uint8_t index);
 uint8_t controller_coin(uint8_t player);
 void controller_coin_add(uint8_t player, uint8_t add);

@@ -13,7 +13,6 @@ static uint16_t raw_map[2] = { 0, 0 };
 static uint8_t jvs_map[5] = { 0, 0, 0, 0, 0 };
 static uint8_t coin_sw[2] = { 0, 0 };
 static uint8_t coin[2] = { 0, 0 };
-static uint16_t mask[2][12];
 
 static inline bool button_check(uint16_t index, const uint8_t* data) {
   if (index == 0xffff)
@@ -26,13 +25,11 @@ static inline bool button_check(uint16_t index, const uint8_t* data) {
 void controller_init() {
   pinMode(4, 6, INPUT_PULLUP);
   pinMode(4, 7, INPUT_PULLUP);
-  for (uint8_t i = 0; i < 12; ++i)
-    mask[0][i] = mask[1][i] = 1 << i;
 }
 
 void controller_update(
     uint8_t hub, const struct hub_info* info, const uint8_t* data,
-    uint16_t size) {
+    uint16_t size, uint16_t* mask) {
   size;
 #ifdef _DBG_HID_REPORT_DUMP
   static uint8_t old_data[256];
@@ -143,27 +140,27 @@ void controller_update(
       button_check(info->button[HID_BUTTON_R3    ], data) ? (1 << B_10   ) : 0;
 
   coin_sw[hub] = (coin_sw[hub] << 1) |
-                 (raw_map[hub] & mask[hub][B_COIN]) ? 0x01: 0;
+                 (raw_map[hub] & mask[B_COIN]) ? 0x01: 0;
   if ((coin_sw[hub] & 3) == 1)
     coin[hub]++;
 
   jvs_map[1 + hub * 2 + 0] =
-      ((raw_map[hub] & mask[hub][B_START]) ? 0x80 : 0) |
+      ((raw_map[hub] & mask[B_START]) ? 0x80 : 0) |
       (u ? 0x20 : 0) |
       (d ? 0x10 : 0) |
       (l ? 0x08 : 0) |
       (r ? 0x04 : 0) |
-      ((raw_map[hub] & mask[hub][B_1]) ? 0x01 : 0) |
-      ((raw_map[hub] & mask[hub][B_2]) ? 0x01 : 0);
+      ((raw_map[hub] & mask[B_1]) ? 0x01 : 0) |
+      ((raw_map[hub] & mask[B_2]) ? 0x01 : 0);
   jvs_map[1 + hub * 2 + 1] =
-      ((raw_map[hub] & mask[hub][B_3]) ? 0x80 : 0) |
-      ((raw_map[hub] & mask[hub][B_4]) ? 0x40 : 0) |
-      ((raw_map[hub] & mask[hub][B_5]) ? 0x20 : 0) |
-      ((raw_map[hub] & mask[hub][B_6]) ? 0x10 : 0) |
-      ((raw_map[hub] & mask[hub][B_7]) ? 0x08 : 0) |
-      ((raw_map[hub] & mask[hub][B_8]) ? 0x04 : 0) |
-      ((raw_map[hub] & mask[hub][B_9]) ? 0x02 : 0) |
-      ((raw_map[hub] & mask[hub][B_10]) ? 0x01 : 0);
+      ((raw_map[hub] & mask[B_3]) ? 0x80 : 0) |
+      ((raw_map[hub] & mask[B_4]) ? 0x40 : 0) |
+      ((raw_map[hub] & mask[B_5]) ? 0x20 : 0) |
+      ((raw_map[hub] & mask[B_6]) ? 0x10 : 0) |
+      ((raw_map[hub] & mask[B_7]) ? 0x08 : 0) |
+      ((raw_map[hub] & mask[B_8]) ? 0x04 : 0) |
+      ((raw_map[hub] & mask[B_9]) ? 0x02 : 0) |
+      ((raw_map[hub] & mask[B_10]) ? 0x01 : 0);
 }
 
 void controller_poll() {
@@ -200,10 +197,6 @@ void controller_poll() {
 
 uint16_t controller_raw(uint8_t player) {
   return raw_map[player];
-}
-
-uint16_t* controller_mask(uint8_t player) {
-  return mask[player];
 }
 
 uint8_t controller_jvs(uint8_t index) {

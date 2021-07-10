@@ -19,6 +19,7 @@ static struct JVSIO_SenseClient sense;
 static struct JVSIO_LedClient led;
 
 static int8_t coin_index_bias = 0;
+static uint16_t mask[12];
 
 static void debug_putc(uint8_t val) { val; }
 
@@ -115,6 +116,12 @@ static void jvs_poll(struct JVSIO_Lib* io) {
   }
 }
 
+static void report(
+    uint8_t hub, const struct hub_info* info, const uint8_t* data,
+    uint16_t size) {
+  controller_update(hub, info, data, size, mask);
+}
+
 void main() {
   initialize();
   controller_init();
@@ -130,9 +137,12 @@ void main() {
   Serial.println("JVS I/O ready");
 
   struct hid hid;
-  hid.report = controller_update;
+  hid.report = report;
   hid_init(&hid);
   Serial.println("USB Host ready");
+
+  for (uint8_t i = 0; i < 12; ++i)
+    mask[i] = 1 << i;
 
   for (;;) {
     hid_poll();

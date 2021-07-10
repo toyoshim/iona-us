@@ -21,6 +21,21 @@ enum {
   HID_STATE_READY,
 };
 
+enum {
+  HID_BUTTON_1,
+  HID_BUTTON_2,
+  HID_BUTTON_3,
+  HID_BUTTON_4,
+  HID_BUTTON_L1,
+  HID_BUTTON_R1,
+  HID_BUTTON_L2,
+  HID_BUTTON_R2,
+  HID_BUTTON_SELECT,
+  HID_BUTTON_START,
+  HID_BUTTON_L3,
+  HID_BUTTON_R3,
+};
+
 struct hub_info {
   uint16_t report_desc_size;
   uint16_t report_size;

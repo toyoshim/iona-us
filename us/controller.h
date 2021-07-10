@@ -31,6 +31,7 @@ void controller_update(
     uint16_t size);
 void controller_poll();
 uint16_t controller_raw(uint8_t player);
+uint16_t* controller_mask(uint8_t player);
 uint8_t controller_jvs(uint8_t index);
 uint8_t controller_coin(uint8_t player);
 void controller_coin_add(uint8_t player, uint8_t add);

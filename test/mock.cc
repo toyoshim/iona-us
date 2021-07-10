@@ -10,15 +10,13 @@ extern "C" {
 
 #include "chlib/led.h"
 
-void led_oneshot(uint8_t shot) {
-}
+void led_oneshot(uint8_t shot) {}
 
 void usb_host_init(struct usb_host* host) {
   usb_host = host;
 }
 
-void usb_host_poll() {
-}
+void usb_host_poll() {}
 
 bool usb_host_ready(uint8_t hub) {
   return false;
@@ -35,5 +33,4 @@ bool usb_host_in(uint8_t hub, uint8_t ep, uint8_t size) {
 bool usb_host_out(uint8_t hub, uint8_t ep, uint8_t* data, uint8_t size) {
   return false;
 }
-
 }

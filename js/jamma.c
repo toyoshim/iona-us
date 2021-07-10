@@ -99,20 +99,21 @@ void jamma_sync() {
 
 uint8_t jamma_get_sw(uint8_t index, bool rapid_mode, bool rapid_mask) {
   uint8_t result = sw[index];
-  if (rapid_mode) switch (index) {
-    case 0:
-      break;
-    case 1:
-    case 3:
-      if (!rapid_mask)
-        result |= (sw[index + 1] >> 5) & 0x03;
-      break;
-    case 2:
-    case 4:
-      if (!rapid_mask)
-        result |= (result << 3) & 0x80;
-      break;
-  }
+  if (rapid_mode)
+    switch (index) {
+      case 0:
+        break;
+      case 1:
+      case 3:
+        if (!rapid_mask)
+          result |= (sw[index + 1] >> 5) & 0x03;
+        break;
+      case 2:
+      case 4:
+        if (!rapid_mask)
+          result |= (result << 3) & 0x80;
+        break;
+    }
   return result;
 }
 

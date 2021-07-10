@@ -167,7 +167,7 @@ void controller_map(uint8_t player,
   jvs_map[1 + player * 2 + 0] =
       (jvs_map[1 + player * 2 + 0] & 0x3c) |
       ((raw_map[player] & rapid_mask & button_masks[B_START]) ? 0x80 : 0) |
-      ((raw_map[player] & rapid_mask & button_masks[B_1]) ? 0x01 : 0) |
+      ((raw_map[player] & rapid_mask & button_masks[B_1]) ? 0x02 : 0) |
       ((raw_map[player] & rapid_mask & button_masks[B_2]) ? 0x01 : 0);
   jvs_map[1 + player * 2 + 1] =
       ((raw_map[player] & rapid_mask & button_masks[B_3]) ? 0x80 : 0) |

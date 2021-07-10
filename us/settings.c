@@ -23,6 +23,21 @@ struct settings {
   struct setting settings[10];
 } settings;
 
+void reset() {
+  for (uint8_t i = 0; i < 2; ++i)
+    settings.player_setting[i] = 0;
+  for (uint8_t i = 0; i < 10; ++i) {
+    settings.settings[i].magic = i;
+    settings.settings[i].speed = 1;
+    settings.settings[i].rapid_fire = 0;
+    for (uint8_t b = 0; b < 12; ++b)
+      settings.settings[i].button_masks[b] = (uint16_t)1 << i;
+    for (uint8_t b = 0; b < 2; ++b)
+      settings.settings[i].padding[b] = 0;
+  }
+  settings_save();
+}
+
 static void mode_layout() {
   if (mode_player == 0xff) {
     uint16_t player1 = controller_raw(0);
@@ -129,6 +144,11 @@ static void quit_select() {
   settings_save();
 }
 
+static void quit_reset() {
+  reset();
+  led_oneshot(L_PULSE_THREE_TIMES);
+}
+
 static void slow_poll() {
   poll_msec += poll_interval;
   bool button0 = controller_button(B_TEST);
@@ -137,31 +157,38 @@ static void slow_poll() {
   uint8_t next_mode = S_NORMAL;
   switch (mode) {
     case S_NORMAL: {
-      bool last_button = last_buttons[0] & last_buttons[1];
-      bool button = button0 & button1;
-      changed = last_button & !button;
+      bool last_button = last_buttons[0] && last_buttons[1];
+      bool button = button0 && button1;
+      changed = last_button && !button;
       next_mode = S_WAIT;
       break;
     }
     case S_WAIT:
-      changed = button0 == false && button1 == false;
+      changed = !button0 && !button1;
       next_mode = S_LAYOUT;
       break;
     case S_LAYOUT:
     case S_RAPID:
     case S_SPEED: {
-      bool changed_to_next = last_buttons[0] & !button0;
-      bool changed_to_select = last_buttons[1] & !button1;
-      changed = changed_to_next | changed_to_select;
+      bool change_to_next = last_buttons[0] && !button0;
+      bool change_to_select = last_buttons[1] && !button1;
+      bool change_to_reset = button0 && button1;
+      changed = change_to_next | change_to_select | change_to_reset;
       next_mode = mode + 1;
-      if (changed_to_select)
+      if (change_to_select)
         next_mode = S_SELECT;
+      else if (change_to_reset)
+        next_mode = S_RESET;
       else if (next_mode == (S_SPEED + 1))
         next_mode = S_NORMAL;
       break;
     }
     case S_SELECT:
       changed = last_buttons[1] & !button1;
+      next_mode = S_NORMAL;
+      break;
+    case S_RESET:
+      changed = !button0 && !button1;
       next_mode = S_NORMAL;
       break;
   }
@@ -178,6 +205,9 @@ static void slow_poll() {
         break;
       case S_SELECT:
         quit_select();
+        break;
+      case S_RESET:
+        quit_reset();
         break;
     }
     mode = next_mode;
@@ -226,20 +256,8 @@ void settings_init() {
   // Initialize data in flash, and get a copy
   flash_init(*(uint32_t*)"IONA");
   flash_read(4, (uint8_t*)settings, sizeof(settings));
-  if (settings.player_setting[0] > 10) {
-    for (uint8_t i = 0; i < 2; ++i)
-      settings.player_setting[i] = 0;
-    for (uint8_t i = 0; i < 10; ++i) {
-      settings.settings[i].magic = i;
-      settings.settings[i].speed = 1;
-      settings.settings[i].rapid_fire = 0;
-      for (uint8_t b = 0; b < 12; ++b)
-        settings.settings[i].button_masks[b] = (uint16_t)1 << i;
-      for (uint8_t b = 0; b < 2; ++b)
-        settings.settings[i].padding[b] = 0;
-    }
-    settings_save();
-  }
+  if (settings.player_setting[0] > 10)
+    reset();
 
   last_buttons[0] = controller_button(B_TEST);
   last_buttons[1] = controller_button(B_SERVICE);

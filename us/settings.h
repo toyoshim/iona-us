@@ -21,7 +21,7 @@ enum {
 
   S_SELECT,
 
-  S_NOT_ASSIGNED,
+  S_RESET,
 };
 
 struct setting {

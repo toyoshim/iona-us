@@ -29,12 +29,10 @@ void soft485_int() __interrupt INT_NO_TMR0 __using 0 {
   }
   if (data[count >> 1]) {
     P4_0 = 1;
-    //P4_1 = 0;
-    P1_1 = 0;  // XXX: proto
+    P4_1 = 0;
   } else {
     P4_0 = 0;
-    //P4_1 = 1;
-    P1_1 = 1;  // XXX: proto
+    P4_1 = 1;
   }
   count++;
 }
@@ -87,8 +85,7 @@ void soft485_input() {
   while (count != 20);
 
   pinMode(4, 0, INPUT_PULLUP);
-  //pinMode(4, 1, INPUT_PULLUP);
-  pinMode(1, 1, INPUT_PULLUP);  // XXX: proto
+  pinMode(4, 1, INPUT_PULLUP);
   SER1_FCR = bFCR_R_FIFO_CLR;  // Clear FIFO
   SER1_FCR = bFCR_FIFO_EN;  // Enable FIFO
   TR0 = 0;  // Stop timer count
@@ -98,11 +95,9 @@ void soft485_input() {
 void soft485_output() {
   SER1_FCR = 0;  // Disable FIFO
   digitalWrite(4, 0, HIGH);
-  //digitalWrite(4, 1, LOW);
-  digitalWrite(1, 1, LOW);  // XXX: proto
+  digitalWrite(4, 1, LOW);
   pinMode(4, 0, OUTPUT);
-  //pinMode(4, 1, OUTPUT);
-  pinMode(1, 1, OUTPUT);  // XXX: proto
+  pinMode(4, 1, OUTPUT);
   TL0 = 0;
   count = 20;
   TR0 = 1;  // Start timer count

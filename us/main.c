@@ -248,7 +248,7 @@ static void report(
 void main() {
   initialize();
   pinMode(4, 6, INPUT_PULLUP);
-  pinMode(1, 7, INPUT_PULLUP);
+  pinMode(4, 7, INPUT_PULLUP);
   delay(30);
   Serial.println(id);
 
@@ -272,7 +272,7 @@ void main() {
       sw[1] |= 0x40;
     else
       sw[1] &= ~0x40;
-    if (digitalRead(1, 7) == LOW)
+    if (digitalRead(4, 7) == LOW)
       sw[0] |= 0x80;
     else
       sw[0] &= ~0x80;

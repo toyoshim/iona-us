@@ -135,8 +135,9 @@ void controller_update(uint8_t hub,
     }
   }
 
-  jvs_map[1 + hub * 2 + 0] =
-      (u ? 0x20 : 0) | (d ? 0x10 : 0) | (l ? 0x08 : 0) | (r ? 0x04 : 0);
+  uint8_t service_map = hub ? 0 : (jvs_map[0] & 0x40);
+  jvs_map[1 + hub * 2 + 0] = service_map | (u ? 0x20 : 0) | (d ? 0x10 : 0) |
+                             (l ? 0x08 : 0) | (r ? 0x04 : 0);
 
   raw_map[hub] =
       (button_check(info->button[HID_BUTTON_SELECT], data) ? (1 << B_COIN)
@@ -154,7 +155,8 @@ void controller_update(uint8_t hub,
       (button_check(info->button[HID_BUTTON_L3], data) ? (1 << B_9) : 0) |
       (button_check(info->button[HID_BUTTON_R3], data) ? (1 << B_10) : 0);
 
-  coin_sw[hub] = (coin_sw[hub] << 1) | (raw_map[hub] & mask[B_COIN]) ? 0x01 : 0;
+  coin_sw[hub] =
+      (coin_sw[hub] << 1) | ((raw_map[hub] & mask[B_COIN]) ? 0x01 : 0);
   if ((coin_sw[hub] & 3) == 1)
     coin[hub]++;
 
@@ -165,7 +167,7 @@ void controller_map(uint8_t player,
                     uint16_t rapid_mask,
                     uint16_t* button_masks) {
   jvs_map[1 + player * 2 + 0] =
-      (jvs_map[1 + player * 2 + 0] & 0x3c) |
+      (jvs_map[1 + player * 2 + 0] & 0x7c) |
       ((raw_map[player] & rapid_mask & button_masks[B_START]) ? 0x80 : 0) |
       ((raw_map[player] & rapid_mask & button_masks[B_1]) ? 0x02 : 0) |
       ((raw_map[player] & rapid_mask & button_masks[B_2]) ? 0x01 : 0);

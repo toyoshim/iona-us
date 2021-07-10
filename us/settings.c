@@ -156,7 +156,7 @@ static void slow_poll() {
       next_mode = mode + 1;
       if (changed_to_select)
         next_mode = S_SELECT;
-      else if (next_mode = (S_SPEED + 1))
+      else if (next_mode == (S_SPEED + 1))
         next_mode = S_NORMAL;
       break;
     }

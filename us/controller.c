@@ -9,10 +9,10 @@
 //#define _DBG_HID_REPORT_DUMP
 //#define _DBG_JVS_BUTTON_DUMP
 
-static uint16_t raw_map[2] = { 0, 0 };
-static uint8_t jvs_map[5] = { 0, 0, 0, 0, 0 };
-static uint8_t coin_sw[2] = { 0, 0 };
-static uint8_t coin[2] = { 0, 0 };
+static uint16_t raw_map[2] = {0, 0};
+static uint8_t jvs_map[5] = {0, 0, 0, 0, 0};
+static uint8_t coin_sw[2] = {0, 0};
+static uint8_t coin[2] = {0, 0};
 
 static inline bool button_check(uint16_t index, const uint8_t* data) {
   if (index == 0xffff)
@@ -27,9 +27,11 @@ void controller_init() {
   pinMode(4, 7, INPUT_PULLUP);
 }
 
-void controller_update(
-    uint8_t hub, const struct hub_info* info, const uint8_t* data,
-    uint16_t size, uint16_t* mask) {
+void controller_update(uint8_t hub,
+                       const struct hub_info* info,
+                       const uint8_t* data,
+                       uint16_t size,
+                       uint16_t* mask) {
   size;
 #ifdef _DBG_HID_REPORT_DUMP
   static uint8_t old_data[256];
@@ -61,8 +63,10 @@ void controller_update(
   uint8_t r = button_check(info->dpad[3], data) ? 1 : 0;
   if (info->axis[0] != 0xffff && info->axis_size[0] == 8) {
     uint8_t x = data[info->axis[0] >> 3];
-    if (x < 64) l = 1;
-    else if (x > 192) r = 1;
+    if (x < 64)
+      l = 1;
+    else if (x > 192)
+      r = 1;
   }
   if (info->axis[0] != 0xffff && info->axis_size[0] == 16) {
     uint8_t byte = info->axis[0] >> 3;
@@ -71,13 +75,17 @@ void controller_update(
       x += 0x8000;
     if (info->axis_polarity[0])
       x = -x - 1;
-    if (x < 0x4000) l = 1;
-    else if (x > 0xc000) r = 1;
+    if (x < 0x4000)
+      l = 1;
+    else if (x > 0xc000)
+      r = 1;
   }
   if (info->axis[1] != 0xffff && info->axis_size[1] == 8) {
     uint8_t y = data[info->axis[1] >> 3];
-    if (y < 64) u = 1;
-    else if (y > 192) d = 1;
+    if (y < 64)
+      u = 1;
+    else if (y > 192)
+      d = 1;
   }
   if (info->axis[1] != 0xffff && info->axis_size[1] == 16) {
     uint8_t byte = info->axis[1] >> 3;
@@ -86,8 +94,10 @@ void controller_update(
       y += 0x8000;
     if (info->axis_polarity[1])
       y = -y - 1;
-    if (y < 0x4000) u = 1;
-    else if (y > 0xc000) d = 1;
+    if (y < 0x4000)
+      u = 1;
+    else if (y > 0xc000)
+      d = 1;
   }
   if (info->hat != 0xffff) {
     uint8_t byte = info->hat >> 3;
@@ -125,42 +135,49 @@ void controller_update(
     }
   }
 
-  raw_map[hub] =
-      button_check(info->button[HID_BUTTON_SELECT], data) ? (1 << B_COIN ) : 0 |
-      button_check(info->button[HID_BUTTON_START ], data) ? (1 << B_START) : 0 |
-      button_check(info->button[HID_BUTTON_1     ], data) ? (1 << B_1    ) : 0 |
-      button_check(info->button[HID_BUTTON_2     ], data) ? (1 << B_2    ) : 0 |
-      button_check(info->button[HID_BUTTON_3     ], data) ? (1 << B_3    ) : 0 |
-      button_check(info->button[HID_BUTTON_4     ], data) ? (1 << B_4    ) : 0 |
-      button_check(info->button[HID_BUTTON_L1    ], data) ? (1 << B_5    ) : 0 |
-      button_check(info->button[HID_BUTTON_R1    ], data) ? (1 << B_6    ) : 0 |
-      button_check(info->button[HID_BUTTON_L2    ], data) ? (1 << B_7    ) : 0 |
-      button_check(info->button[HID_BUTTON_R2    ], data) ? (1 << B_8    ) : 0 |
-      button_check(info->button[HID_BUTTON_L3    ], data) ? (1 << B_9    ) : 0 |
-      button_check(info->button[HID_BUTTON_R3    ], data) ? (1 << B_10   ) : 0;
+  jvs_map[1 + hub * 2 + 0] =
+      (u ? 0x20 : 0) | (d ? 0x10 : 0) | (l ? 0x08 : 0) | (r ? 0x04 : 0);
 
-  coin_sw[hub] = (coin_sw[hub] << 1) |
-                 (raw_map[hub] & mask[B_COIN]) ? 0x01: 0;
+  raw_map[hub] =
+      (button_check(info->button[HID_BUTTON_SELECT], data) ? (1 << B_COIN)
+                                                           : 0) |
+      (button_check(info->button[HID_BUTTON_START], data) ? (1 << B_START)
+                                                          : 0) |
+      (button_check(info->button[HID_BUTTON_1], data) ? (1 << B_1) : 0) |
+      (button_check(info->button[HID_BUTTON_2], data) ? (1 << B_2) : 0) |
+      (button_check(info->button[HID_BUTTON_3], data) ? (1 << B_3) : 0) |
+      (button_check(info->button[HID_BUTTON_4], data) ? (1 << B_4) : 0) |
+      (button_check(info->button[HID_BUTTON_L1], data) ? (1 << B_5) : 0) |
+      (button_check(info->button[HID_BUTTON_R1], data) ? (1 << B_6) : 0) |
+      (button_check(info->button[HID_BUTTON_L2], data) ? (1 << B_7) : 0) |
+      (button_check(info->button[HID_BUTTON_R2], data) ? (1 << B_8) : 0) |
+      (button_check(info->button[HID_BUTTON_L3], data) ? (1 << B_9) : 0) |
+      (button_check(info->button[HID_BUTTON_R3], data) ? (1 << B_10) : 0);
+
+  coin_sw[hub] = (coin_sw[hub] << 1) | (raw_map[hub] & mask[B_COIN]) ? 0x01 : 0;
   if ((coin_sw[hub] & 3) == 1)
     coin[hub]++;
 
-  jvs_map[1 + hub * 2 + 0] =
-      ((raw_map[hub] & mask[B_START]) ? 0x80 : 0) |
-      (u ? 0x20 : 0) |
-      (d ? 0x10 : 0) |
-      (l ? 0x08 : 0) |
-      (r ? 0x04 : 0) |
-      ((raw_map[hub] & mask[B_1]) ? 0x01 : 0) |
-      ((raw_map[hub] & mask[B_2]) ? 0x01 : 0);
-  jvs_map[1 + hub * 2 + 1] =
-      ((raw_map[hub] & mask[B_3]) ? 0x80 : 0) |
-      ((raw_map[hub] & mask[B_4]) ? 0x40 : 0) |
-      ((raw_map[hub] & mask[B_5]) ? 0x20 : 0) |
-      ((raw_map[hub] & mask[B_6]) ? 0x10 : 0) |
-      ((raw_map[hub] & mask[B_7]) ? 0x08 : 0) |
-      ((raw_map[hub] & mask[B_8]) ? 0x04 : 0) |
-      ((raw_map[hub] & mask[B_9]) ? 0x02 : 0) |
-      ((raw_map[hub] & mask[B_10]) ? 0x01 : 0);
+  controller_map(hub, 0xffff, mask);
+}
+
+void controller_map(uint8_t player,
+                    uint16_t rapid_mask,
+                    uint16_t* button_masks) {
+  jvs_map[1 + player * 2 + 0] =
+      (jvs_map[1 + player * 2 + 0] & 0x3c) |
+      ((raw_map[player] & rapid_mask & button_masks[B_START]) ? 0x80 : 0) |
+      ((raw_map[player] & rapid_mask & button_masks[B_1]) ? 0x01 : 0) |
+      ((raw_map[player] & rapid_mask & button_masks[B_2]) ? 0x01 : 0);
+  jvs_map[1 + player * 2 + 1] =
+      ((raw_map[player] & rapid_mask & button_masks[B_3]) ? 0x80 : 0) |
+      ((raw_map[player] & rapid_mask & button_masks[B_4]) ? 0x40 : 0) |
+      ((raw_map[player] & rapid_mask & button_masks[B_5]) ? 0x20 : 0) |
+      ((raw_map[player] & rapid_mask & button_masks[B_6]) ? 0x10 : 0) |
+      ((raw_map[player] & rapid_mask & button_masks[B_7]) ? 0x08 : 0) |
+      ((raw_map[player] & rapid_mask & button_masks[B_8]) ? 0x04 : 0) |
+      ((raw_map[player] & rapid_mask & button_masks[B_9]) ? 0x02 : 0) |
+      ((raw_map[player] & rapid_mask & button_masks[B_10]) ? 0x01 : 0);
 }
 
 void controller_poll() {
@@ -175,23 +192,23 @@ void controller_poll() {
   else
     jvs_map[0] &= ~0x80;
 #ifdef _DBG_JVS_BUTTON_DUMP
-    static uint8_t old_jvs_map[5] = { 0, 0, 0, 0, 0 };
-    if (old_jvs_map[0] != jvs_map[0] || old_jvs_map[1] != jvs_map[1] ||
-        old_jvs_map[2] != jvs_map[2] || old_jvs_map[3] != jvs_map[3] ||
-        old_jvs_map[4] != jvs_map[4]) {
-      for (uint8_t i = 0; i < 5; ++i)
-        old_jvs_map[i] = jvs_map[i];
-      Serial.printc(jvs_map[0], BIN);
-      Serial.putc('_');
-      Serial.printc(jvs_map[1], BIN);
-      Serial.putc('_');
-      Serial.printc(jvs_map[2], BIN);
-      Serial.putc('_');
-      Serial.printc(jvs_map[3], BIN);
-      Serial.putc('_');
-      Serial.printc(jvs_map[4], BIN);
-      Serial.println("");
-    }
+  static uint8_t old_jvs_map[5] = {0, 0, 0, 0, 0};
+  if (old_jvs_map[0] != jvs_map[0] || old_jvs_map[1] != jvs_map[1] ||
+      old_jvs_map[2] != jvs_map[2] || old_jvs_map[3] != jvs_map[3] ||
+      old_jvs_map[4] != jvs_map[4]) {
+    for (uint8_t i = 0; i < 5; ++i)
+      old_jvs_map[i] = jvs_map[i];
+    Serial.printc(jvs_map[0], BIN);
+    Serial.putc('_');
+    Serial.printc(jvs_map[1], BIN);
+    Serial.putc('_');
+    Serial.printc(jvs_map[2], BIN);
+    Serial.putc('_');
+    Serial.printc(jvs_map[3], BIN);
+    Serial.putc('_');
+    Serial.printc(jvs_map[4], BIN);
+    Serial.println("");
+  }
 #endif  // _DBG_JVS_BUTTON_DUMP
 }
 
@@ -215,3 +232,12 @@ void controller_coin_sub(uint8_t player, uint8_t sub) {
   coin[player] -= sub;
 }
 
+bool controller_button(uint8_t button) {
+  switch (button) {
+    case B_TEST:
+      return digitalRead(4, 7) == LOW;
+    case B_SERVICE:
+      return digitalRead(4, 6) == LOW;
+  }
+  return false;
+}

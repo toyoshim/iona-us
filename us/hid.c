@@ -26,8 +26,8 @@ enum {
   XBOX_INITIALIZED,
 };
 
-static uint8_t xbox_360_initialize[] = { 0x01, 0x03, 0x00 };
-static uint8_t xbox_one_initialize[] = { 0x05, 0x20, 0x00, 0x01, 0x00 };
+static uint8_t xbox_360_initialize[] = {0x01, 0x03, 0x00};
+static uint8_t xbox_one_initialize[] = {0x05, 0x20, 0x00, 0x01, 0x00};
 
 static void disconnected(uint8_t hub) {
   hub_info[hub].state = HID_STATE_DISCONNECTED;
@@ -57,7 +57,7 @@ static void check_device_desc(uint8_t hub, const uint8_t* data) {
       hub_info[hub].report_desc_size = 1;
     }
   } else if (desc->bDeviceClass == 0xff && desc->bDeviceSubClass == 0x47 &&
-      desc->bDeviceProtocol == 0xd0) {
+             desc->bDeviceProtocol == 0xd0) {
     // Might be a Xbox One compatible controller.
     hub_info[hub].type = HID_TYPE_XBOX_ONE;
     hub_info[hub].report_desc_size = 1;
@@ -177,14 +177,14 @@ static void check_configuration_desc(uint8_t hub, const uint8_t* data) {
 }
 
 #ifdef _DBG_HID_REPORT_DESC
-#  define REPORT0(s) Serial.println(s " (0)")
-#  define REPORT1(s) Serial.printf(s " (1): %x\n", data[i + 1])
-#  define REPORT2(s) Serial.printf(s " (2): %x%x\n", data[i + 1], data[i + 2])
+#define REPORT0(s) Serial.println(s " (0)")
+#define REPORT1(s) Serial.printf(s " (1): %x\n", data[i + 1])
+#define REPORT2(s) Serial.printf(s " (2): %x%x\n", data[i + 1], data[i + 2])
 #else
-#  define REPORT0(s)
-#  define REPORT1(s)
-#  define REPORT2(s)
-#  pragma disable_warning 110
+#define REPORT0(s)
+#define REPORT1(s)
+#define REPORT2(s)
+#pragma disable_warning 110
 #endif
 
 static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
@@ -213,7 +213,7 @@ static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
   uint8_t usage = 0;
   uint8_t button_index = 0;
   uint8_t analog_index = 0;
-  for (uint16_t i = 0; i < size; ) {
+  for (uint16_t i = 0; i < size;) {
     // Long items are not supported
     if (data[i] == 0xfe) {
       if ((i + 1) < size) {
@@ -225,7 +225,7 @@ static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
     }
     // Short items
     uint8_t b_size = data[i] & 3;
-    if (b_size == 0) { // 0 byte items
+    if (b_size == 0) {  // 0 byte items
       switch (data[i]) {
         case 0xc0:
           REPORT0("M:End Collection");
@@ -234,7 +234,7 @@ static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
           break;
       }
       i++;
-    } else if (b_size == 1) { // 1 bytes items
+    } else if (b_size == 1) {  // 1 bytes items
       if ((i + 1) >= size)
         break;
       switch (data[i]) {
@@ -259,7 +259,7 @@ static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
         case 0x81:
           REPORT1("M:Input");
           if (usage_page == 0x01 && usage == 0x39 && report_size == 4 &&
-              (data[i + 1] & 1) == 0) { // Hat switch
+              (data[i + 1] & 1) == 0) {  // Hat switch
             hub_info[hub].hat = hub_info[hub].report_size;
           } else if (usage_page == 0xff00 && usage == 0x20 &&
                      report_size == 6) {  // PS4 counter
@@ -272,10 +272,11 @@ static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
           } else if ((data[i + 1] & 1) == 0) {  // Analog buttons
             for (uint8_t i = 0; i < report_count && analog_index < 2; ++i) {
               hub_info[hub].axis_size[analog_index] = report_size;
-              hub_info[hub].axis_sign[analog_index] = false;  // TODO: support signed.
+              hub_info[hub].axis_sign[analog_index] =
+                  false;  // TODO: support signed.
               hub_info[hub].axis_polarity[analog_index] = false;
               hub_info[hub].axis[analog_index++] =
-                hub_info[hub].report_size + report_size * i;
+                  hub_info[hub].report_size + report_size * i;
             }
           }
           hub_info[hub].report_size += report_size * report_count;
@@ -293,7 +294,7 @@ static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
         case 0xa1:
           REPORT1("M:Collection");
           break;
-        default: // not supported
+        default:  // not supported
           break;
       }
       i += 2;
@@ -312,22 +313,22 @@ static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
         case 0x26:
           REPORT2("G:Logical Maximum");
           break;
-        default: // not supported
+        default:  // not supported
           break;
       }
       i += 3;
-    } else { // 4 bytes items
+    } else {  // 4 bytes items
       i += 5;
     }
   }
- quit:
+quit:
 #ifdef _DBG_HID_REPORT_DESC
   Serial.printf("Report Size for ID (%d): %d-bits (%d-Bytes)\n",
-      hub_info[hub].report_id,
-      hub_info[hub].report_size,
-      hub_info[hub].report_size / 8);
+                hub_info[hub].report_id, hub_info[hub].report_size,
+                hub_info[hub].report_size / 8);
   for (uint8_t i = 0; i < 2; ++i)
-    Serial.printf("axis %d: %d, %d\n", i, hub_info[hub].axis[i], hub_info[hub].axis_size[i]);
+    Serial.printf("axis %d: %d, %d\n", i, hub_info[hub].axis[i],
+                  hub_info[hub].axis_size[i]);
   Serial.printf("hat: %d\n", hub_info[hub].hat);
   for (uint8_t i = 0; i < 12; ++i)
     Serial.printf("button %d: %d\n", i, hub_info[hub].button[i]);
@@ -373,9 +374,8 @@ void hid_poll() {
       case HID_TYPE_XBOX_360:
         if (xbox_info[hub].state == XBOX_CONNECTED) {
           xbox_360_initialize[2] = 0x02 + hub;
-          usb_host_out(
-              hub, xbox_info[hub].ep, xbox_360_initialize,
-              sizeof(xbox_360_initialize));
+          usb_host_out(hub, xbox_info[hub].ep, xbox_360_initialize,
+                       sizeof(xbox_360_initialize));
           xbox_info[hub].state = XBOX_INITIALIZED;
         } else if (xbox_info[hub].state == XBOX_INITIALIZED) {
           usb_host_in(hub, hub_info[hub].ep, 20);
@@ -384,9 +384,8 @@ void hid_poll() {
       case HID_TYPE_XBOX_ONE:
         if (xbox_info[hub].state == XBOX_CONNECTED) {
           xbox_one_initialize[2] = xbox_info[hub].cmd_count++;
-          usb_host_out(
-              hub, xbox_info[hub].ep, xbox_one_initialize,
-              sizeof(xbox_one_initialize));
+          usb_host_out(hub, xbox_info[hub].ep, xbox_one_initialize,
+                       sizeof(xbox_one_initialize));
           xbox_info[hub].state = XBOX_INITIALIZED;
         } else if (xbox_info[hub].state == XBOX_INITIALIZED) {
           usb_host_in(hub, hub_info[hub].ep, xbox_info[hub].ep_max_packet_size);
@@ -397,7 +396,7 @@ void hid_poll() {
         if (hub_info[hub].report_id)
           size++;
         usb_host_in(hub, hub_info[hub].ep, size);
-        //usb_host_hid_get_report(hub, hub_info[hub].report_id, size);
+        // usb_host_hid_get_report(hub, hub_info[hub].report_id, size);
         break;
       }
     }

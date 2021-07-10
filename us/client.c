@@ -6,9 +6,9 @@
 
 #include "chlib/ch559.h"
 #include "chlib/io.h"
-#include "chlib/led.h"
 #include "chlib/pwm1.h"
 #include "jvsio/JVSIO_c.h"
+#include "settings.h"
 #include "soft485.h"
 
 static int data_available(struct JVSIO_DataClient* client) {
@@ -99,15 +99,13 @@ void sense_client(struct JVSIO_SenseClient* client) {
   client->is_connected = sense_is_connected;
 }
 
-static void led_begin(struct JVSIO_LedClient *client) {
+static void led_begin(struct JVSIO_LedClient* client) {
   client;
-  led_init(1, 5, LOW);
-  led_mode(L_BLINK);
 }
 
-static void led_set(struct JVSIO_LedClient *client, bool ready) {
+static void led_set(struct JVSIO_LedClient* client, bool ready) {
   client;
-  led_mode(ready ? L_ON : L_FASTER_BLINK);
+  settings_led_mode(ready ? L_ON : L_FASTER_BLINK);
 }
 
 void led_client(struct JVSIO_LedClient* client) {

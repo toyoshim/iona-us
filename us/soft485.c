@@ -9,7 +9,7 @@
 
 static bool receiving = true;
 static volatile uint8_t count = 20;
-static uint8_t data[] = { 0, 1, 0, 0, 0, 0, 0, 1, 0, 1 };  // start, 'A', stop
+static uint8_t data[] = {0, 1, 0, 0, 0, 0, 0, 1, 0, 1};  // start, 'A', stop
 static volatile uint8_t tx_buffer[8];
 static volatile uint8_t tx_wr_ptr = 0;
 static volatile uint8_t tx_rd_ptr = 0;
@@ -63,7 +63,8 @@ void soft485_init() {
 
 void soft485_send(uint8_t val) {
   uint8_t next = (tx_wr_ptr + 1) & 7;
-  while (tx_rd_ptr == next);
+  while (tx_rd_ptr == next)
+    ;
   tx_buffer[tx_wr_ptr] = val;
   tx_wr_ptr = next;
 }
@@ -75,20 +76,23 @@ bool soft485_ready() {
 }
 
 uint8_t soft485_recv() {
-  while (!soft485_ready());
+  while (!soft485_ready())
+    ;
   return SER1_FIFO;
 }
 
 void soft485_input() {
   // Wait until data in the FIFO gets empty.
-  while (tx_wr_ptr != tx_rd_ptr);
-  while (count != 20);
+  while (tx_wr_ptr != tx_rd_ptr)
+    ;
+  while (count != 20)
+    ;
 
   pinMode(4, 0, INPUT_PULLUP);
   pinMode(4, 1, INPUT_PULLUP);
   SER1_FCR = bFCR_R_FIFO_CLR;  // Clear FIFO
-  SER1_FCR = bFCR_FIFO_EN;  // Enable FIFO
-  TR0 = 0;  // Stop timer count
+  SER1_FCR = bFCR_FIFO_EN;     // Enable FIFO
+  TR0 = 0;                     // Stop timer count
   receiving = true;
 }
 

@@ -6,8 +6,10 @@ OBJS	= main.rel jamma.rel dipsw.rel ch559.rel pwm1.rel rs485.rel client.rel JVSI
 
 all: $(TARGET).bin
 
-run: $(TARGET).bin
+program: $(TARGET).bin
 	$(FLASHER) -w -f $(TARGET).bin
+
+run: program
 	$(FLASHER) -s
 
 clean:

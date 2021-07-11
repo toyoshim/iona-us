@@ -52,8 +52,8 @@ void jamma_update(bool swap) {
 
   sw[0] = (p4 & 4) ? 0 : 0x80;
   sw[1] = ~p3;
-  sw[2] = ~p4 & 0xf0;
-  sw[3] = ~p1;
+  sw[2] = (~p4 & 0xb0) | (~p1 & 0x40);
+  sw[3] = (~p1 & 0xbf);
   sw[4] = ~p0 & 0xf0;
 
   if (swap) {

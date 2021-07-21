@@ -1,1 +1,7 @@
-theme: jekyll-theme-midnight
+title: MP07-IONA-US サポートページ
+email: toyoshim@gmail.com
+description: >
+  MP07-IONA-US, Designed By Mellow PCB
+twitter_username: toyoshim
+github_username: toyoshim
+remote_theme: toyoshim/midnight@nav

@@ -1,0 +1,16 @@
+<li class="downloads"><img src="qrcode.png" width="48"></li>
+<li class="downloads">
+  {% if page.url != "/report" %}<a href="/report">{% endif %}
+    報告
+    {% if page.url != "/report" %}</a>{% endif %}
+</li>
+<li class="downloads">
+  {% if page.url != "/firmware" %}<a href="/firmware">{% endif %}
+    ファームウェア更新
+    {% if page.url != "/firmware" %}</a>{% endif %}
+</li>
+<li class="downloads">
+  {% if page.url != "/" %}<a href="/">{% endif %}
+    取扱説明書
+    {% if page.url != "/" %}</a>{% endif %}
+</li>

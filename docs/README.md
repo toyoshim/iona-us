@@ -1,6 +1,10 @@
-# MP07-IONA-US サポートページ
-
-![QRコード](qrcode.png)
+---
+layout: default
+title: 取扱説明書
+permalink: /
+---
+# 取扱説明書
+---
 
 ## 概要
 JVS仕様の基板にUSBコントローラを接続するための変換基板です。

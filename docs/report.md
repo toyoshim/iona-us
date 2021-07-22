@@ -6,4 +6,98 @@ permalink: /report
 # 報告
 ---
 未対応のコントローラについて、デバイス情報を取得して対応要望として報告するページです。
-まだ準備中です。
+WebHID APIを用いてコントローラの情報を取得します。
+ChromeまたはWebHIDの有効になったChromium系のブラウザにてご利用ください。
+情報は製品固有の物であり、環境や個人の情報は含みません。
+
+<button onclick="connect();">コントローラと接続する</button>
+
+## コントローラ情報
+<pre id="info"></pre>
+
+<script>
+function to2x(v) {
+  return '0x' + ('0' + v.toString(16)).substr(-2, 2);
+}
+async function connect() {
+  const devices = await navigator.hid.requestDevice({filters: []});
+  const device = devices[0];
+  const info = [];
+  info.push('"' + device.productName + '"');
+  info.push(' VID: 0x' + ('000' + device.vendorId.toString(16)).substr(-4, 4));
+  info.push(' PID: 0x' + ('000' + device.productId.toString(16)).substr(-4, 4));
+  info.push('[Top Collections]');
+  info.push(' #: ' + device.collections.length);
+  for (let i = 0; i < device.collections.length; ++i) {
+    info.push(' [Collection ' + i + ']');
+    info.push('  children#: ' + device.collections[i].children.length);
+    info.push('  feature#: ' + device.collections[i].featureReports.length);
+    info.push('  input#: ' + device.collections[i].inputReports.length);
+    info.push('  output#: ' + device.collections[i].outputReports.length);
+    const input = device.collections[i].inputReports;
+    const data = [];
+    for (let j = 0; j < input.length; ++j) {
+      data.push('0x85');
+      data.push(to2x(input[j].reportId));
+      for (const item of input[j].items) {
+        data.push('0x95');
+        data.push(to2x(item.reportCount));
+        data.push('0x75');
+        data.push(to2x(item.reportSize));
+        if (item.usageMaximum) {
+          if (item.usageMaximum < 256) {
+            data.push('0x29');
+            data.push(to2x(item.usageMaximum));
+          } else {
+            data.push('0x2a');
+            data.push(to2x(item.usageMaximum & 0xff));
+            data.push(to2x(item.usageMaximum >> 8));
+          }
+        }
+        if (item.usageMinimum) {
+          if (item.usageMinimum < 256) {
+            data.push('0x19');
+            data.push(to2x(item.usageMinimum));
+          } else {
+            data.push('0x1a');
+            data.push(to2x(item.usageMinimum & 0xff));
+            data.push(to2x(item.usageMinimum >> 8));
+          }
+        }
+        // TODO: {logical|physical}{Maximum|Minimum}, unit*
+        for (const usage of item.usages) {
+          if (usage < 256) {
+            data.push('0x09');
+            data.push(to2x(usage));
+          } else {
+            data.push('0x0a');
+            data.push(to2x(usage & 0xff));
+            data.push(to2x(usage >> 8));
+          }
+        }
+        let bits = 0;
+        if (item.isConstant) bits |= 1;
+        if (!item.isArray) bits |= 2;
+        if (!item.isAbsolute) bits |= 4;
+        if (item.wrap) bits |= 8;
+        if (!item.isLinear) bits |= 16;
+        if (!item.hasPreferredState) bits |= 32;
+        if (item.hasNull) bits |= 64;
+        if (item.isBufferredBytes) bits |= 256;
+        // TODO: isRange, isVolatile
+        if (bits < 256) {
+          data.push('0x81');
+          data.push(to2x(bits));
+        } else {
+          data.push('0x82');
+          data.push(to2x(bits & 0xff));
+          data.push(to2x(bits >> 8));
+        }
+      }
+      info.push('  input' + j + ': ' + data.join(', '));
+    }
+  }
+  info.push('END');
+  document.getElementById('info').innerText = info.join('\n');
+}
+</script>

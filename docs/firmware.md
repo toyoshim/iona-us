@@ -70,6 +70,10 @@ JVS I/Oとして利用する前、特にジャンパーピンを実装した人�
 うっかり短時間の間ならJVSとして認識されない程度で済むと想います。
 気づかずに長時間通電した場合、USB用の信号とJVS用の信号が衝突し、システムボードやIONA-USの故障に繋がります。
 
+## ファームウェア更新履歴
+- Ver 1.00 展示用サンプルに搭載されたバージョンでコインが減らないバグがある
+- Ver 1.01 初期製品出荷版で現状の最新版
+
 ---
 ## ファームウェア更新
 以下は実際にファームウェア更新を行うためのUIです。書き込みボタンにより実際に更新されます。
@@ -79,6 +83,7 @@ JVS I/Oとして利用する前、特にジャンパーピンを実装した人�
 async function flash() {
   const firmwares = [
     'firmwares/us_v1_00.bin',  // Ver 1.00
+    'firmwares/us_v1_01.bin',  // Ver 1.01
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -99,7 +104,8 @@ async function flash() {
 </script>
 
 <select id="version">
-<option selected>Ver 1.00</option>
+<option>Ver 1.00</option>
+<option selected>Ver 1.01</option>
 </select>
 <button onclick="flash();">書き込み</button>
 

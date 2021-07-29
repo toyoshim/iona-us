@@ -11,7 +11,7 @@
 #include "settings.h"
 #include "soft485.h"
 
-#define VER "1.00"
+#define VER "1.01"
 
 static const char id[] = "SEGA ENTERPRISES,LTD.compat;MP07-IONA-US;ver" VER;
 
@@ -118,9 +118,9 @@ static void jvs_poll(struct JVSIO_Lib* io) {
       if (data[1] == 0)
         coin_index_bias = 1;
       if (*data == kCmdCoinSub)
-        controller_coin_sub(data[1] + coin_index_bias - 1, data[2]);
+        controller_coin_sub(data[1] + coin_index_bias - 1, data[3]);
       else
-        controller_coin_add(data[1] + coin_index_bias - 1, data[2]);
+        controller_coin_add(data[1] + coin_index_bias - 1, data[3]);
       io->pushReport(io, kReportOk);
       break;
     case kCmdDriverOutput:

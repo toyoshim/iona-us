@@ -14,6 +14,11 @@
     {% if page.url != "/firmware" %}</a>{% endif %}
 </li>
 <li class="downloads">
+  {% if page.url != "/troubleshoot" %}<a href="troubleshoot">{% endif %}
+    トラブルシューティング
+    {% if page.url != "/troubleshoot" %}</a>{% endif %}
+</li>
+<li class="downloads">
   {% if page.url != "/shop" %}<a href="shop">{% endif %}
     販売
     {% if page.url != "/shop" %}</a>{% endif %}

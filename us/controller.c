@@ -55,8 +55,11 @@ void controller_update(uint8_t hub,
     jvs_map[1 + hub * 2 + 1] = 0;
     return;
   }
-  if (info->report_id)
+  if (info->report_id) {
+    if (info->report_id != data[0])
+      return;
     data++;
+  }
   uint8_t u = button_check(info->dpad[0], data) ? 1 : 0;
   uint8_t d = button_check(info->dpad[1], data) ? 1 : 0;
   uint8_t l = button_check(info->dpad[2], data) ? 1 : 0;

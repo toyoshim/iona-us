@@ -144,6 +144,7 @@ static void check_configuration_desc(uint8_t hub, const uint8_t* data) {
       hub_info[hub].button[9] = 16 + 4;
       hub_info[hub].button[10] = 16 + 6;
       hub_info[hub].button[11] = 16 + 7;
+      hub_info[hub].report_id = 0;
     } else {
       // https://github.com/quantus/xbox-one-controller-protocol
       hub_info[hub].report_size = 18 * 8;
@@ -172,6 +173,7 @@ static void check_configuration_desc(uint8_t hub, const uint8_t* data) {
       hub_info[hub].button[9] = 32 + 2;
       hub_info[hub].button[10] = 40 + 6;
       hub_info[hub].button[11] = 40 + 7;
+      hub_info[hub].report_id = 0;
     }
     led_oneshot(L_PULSE_ONCE);
   }
@@ -283,8 +285,24 @@ static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
           hub_info[hub].report_size += report_size * report_count;
           break;
         case 0x85:
-          if (hub_info[hub].report_size)
+          if (hub_info[hub].report_size &&
+              (hub_info[hub].hat != 0xffff || hub_info[hub].dpad[3] != 0xffff ||
+               hub_info[hub].axis[1] != 0xffff) &&
+              hub_info[hub].button[1] != 0xffff) {
             goto quit;
+          }
+          hub_info[hub].report_size = 0;
+          for (uint8_t button = 0; button < 2; ++button)
+            hub_info[hub].axis[button] = 0xffff;
+          hub_info[hub].hat = 0xffff;
+          for (uint8_t button = 0; button < 4; ++button)
+            hub_info[hub].dpad[button] = 0xffff;
+          for (uint8_t button = 0; button < 12; ++button)
+            hub_info[hub].button[button] = 0xffff;
+          hub_info[hub].type = HID_TYPE_UNKNOWN;
+          usage = 0;
+          button_index = 0;
+          analog_index = 0;
           REPORT1("G:Report ID");
           hub_info[hub].report_id = data[i + 1];
           break;

@@ -91,7 +91,7 @@ async function connect() {
         for (let usage of item.usages) {
           if (usage > 65535) {
             // Usage Page is encoded as an upper 16-bits
-            const usagePage = usage >> 16;
+            const usagePage = (usage >> 16) & 0xffff;
             usage &= 0xffff;
             if (usagePage < 256) {
               data.push('0x05');

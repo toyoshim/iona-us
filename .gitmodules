@@ -1,9 +1,9 @@
 [submodule "jvsio"]
 	path = jvsio
-	url = git@github.com:toyoshim/jvsio.git
+	url = https://github.com/toyoshim/jvsio.git
 [submodule "chlib"]
 	path = chlib
-	url = git@github.com:toyoshim/chlib.git
+	url = https://github.com/toyoshim/chlib.git
 [submodule "CH55x_python_flasher"]
 	path = CH55x_python_flasher
 	url = https://github.com/toyoshim/CH55x_python_flasher.git

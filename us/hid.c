@@ -213,8 +213,12 @@ static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
   uint8_t report_size = 0;
   uint8_t report_count = 0;
   uint16_t usage_page = 0;
-  uint16_t usage = 0;
+  uint8_t usage_index = 0;
+  uint32_t usages[12];
   uint8_t button_index = 0;
+  for (usage_index = 0; usage_index < 12; ++usage_index)
+    usages[usage_index] = 0;
+  usage_index = 0;
   uint8_t analog_index = 0;
   for (uint16_t i = 0; i < size;) {
     // Long items are not supported
@@ -232,6 +236,9 @@ static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
       switch (data[i]) {
         case 0xc0:
           REPORT0("M:End Collection");
+          for (usage_index = 0; usage_index < 12; ++usage_index)
+            usages[usage_index] = 0;
+          usage_index = 0;
           break;
         default:  // ignore
           break;
@@ -247,7 +254,8 @@ static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
           break;
         case 0x09:
           REPORT1("L:Usage");
-          usage = data[i + 1];
+          if (usage_index < 12)
+            usages[usage_index++] = ((uint32_t)usage_page << 16) | data[i + 1];
           break;
         case 0x15:
           REPORT1("G:Logical Minimum");
@@ -261,10 +269,10 @@ static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
           break;
         case 0x81:
           REPORT1("M:Input");
-          if (usage_page == 0x01 && usage == 0x39 && report_size == 4 &&
+          if (usages[0] == 0x00010039 && report_size == 4 &&
               (data[i + 1] & 1) == 0) {  // Hat switch
             hub_info[hub].hat = hub_info[hub].report_size;
-          } else if (usage_page == 0xff00 && usage == 0x20 &&
+          } else if (usages[0] == 0xff000020 &&
                      report_size == 6) {  // PS4 counter
             hub_info[hub].type = HID_TYPE_PS4;
           } else if (report_size == 1) {  // Buttons
@@ -274,14 +282,23 @@ static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
             }
           } else if ((data[i + 1] & 1) == 0) {  // Analog buttons
             for (uint8_t i = 0; i < report_count && analog_index < 2; ++i) {
+              if (usages[i] == 0x00010030)
+                analog_index = 0;
+              else if (usages[i] == 0x00010031)
+                analog_index = 1;
               hub_info[hub].axis_size[analog_index] = report_size;
               hub_info[hub].axis_sign[analog_index] =
                   false;  // TODO: support signed.
               hub_info[hub].axis_polarity[analog_index] = false;
               hub_info[hub].axis[analog_index++] =
                   hub_info[hub].report_size + report_size * i;
+              if (analog_index < 2 &&
+                  hub_info[hub].axis[analog_index] != 0xffff) {
+                analog_index++;
+              }
             }
           }
+          usage_index = 0;
           hub_info[hub].report_size += report_size * report_count;
           break;
         case 0x85:
@@ -300,7 +317,9 @@ static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
           for (uint8_t button = 0; button < 12; ++button)
             hub_info[hub].button[button] = 0xffff;
           hub_info[hub].type = HID_TYPE_UNKNOWN;
-          usage = 0;
+          for (uint8_t button = 0; button < 12; ++button)
+            usages[button] = 0;
+          usage_index = 0;
           button_index = 0;
           analog_index = 0;
           REPORT1("G:Report ID");
@@ -312,6 +331,9 @@ static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
           break;
         case 0xa1:
           REPORT1("M:Collection");
+          for (usage_index = 0; usage_index < 12; ++usage_index)
+            usages[usage_index] = 0;
+          usage_index = 0;
           break;
         default:  // not supported
           break;
@@ -328,7 +350,10 @@ static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
           break;
         case 0x0a:
           REPORT2("L:Usage");
-          usage = (data[i + 2] << 8) | data[i + 1];
+          if (usage_index < 12) {
+            usages[usage_index++] =
+                ((uint32_t)usage_page << 16) | (data[i + 2] << 8) | data[i + 1];
+          }
           break;
         case 0x16:
           REPORT2("G:Logical Minimum");

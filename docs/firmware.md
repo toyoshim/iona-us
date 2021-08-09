@@ -83,8 +83,9 @@ JVS I/Oとして利用する前、特にジャンパーピンを実装した人�
 
 ## ファームウェア更新履歴
 - Ver 1.00 展示用サンプルに搭載されたバージョンでコインが減らないバグがあります
-- Ver 1.01 初期製品出荷版です
-- Ver 1.02 USBホストの動作で仕様違反があったので修正、対応コントローラが増えました
+- Ver 1.01 初期製品出荷版
+- Ver 1.02 USBホストの動作で仕様違反があったので修正し、対応コントローラを追加しました
+- Ver 1.02a 他のコントローラ利用後にXbox系のコントローラを接続した際の動作不良を修正し、対応コントローラを追加しました
 
 ## ファームウェアの互換性
 Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基本的に安定して動くはずです。
@@ -94,11 +95,13 @@ Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基�
 
 |デバイス名称|確認バージョン|備考|
 |-|-|-|
-|(Xbox 360規格コントローラ)|1.00||
-|(Xbox Oneシリーズ規格コントローラ)|1.00||
+|(Xbox 360規格コントローラ)|1.00|1.02a以降推奨|
+|(Xbox Oneシリーズ規格コントローラ)|1.00|1.02a以降推奨|
 |ホリパッドFPSプラス for PlayStation 4|1.00|PS3モードも対応|
-|ホリパッドミニ for Nintendo Switch|1.00||
 |ワイヤレスコントローラー（DUALSHOCK 4）|1.02||
+|ホリパッドミニ for Nintendo Switch|1.00||
+|Nintendo Switch Proコントローラー||1.02aで調査中|
+|6B Controller (メガドライブミニ)|1.02a||
 
 ---
 ## ファームウェア更新
@@ -111,6 +114,7 @@ async function flash() {
     'firmwares/us_v1_00.bin',  // Ver 1.00
     'firmwares/us_v1_01.bin',  // Ver 1.01
     'firmwares/us_v1_02.bin',  // Ver 1.02
+    'firmwares/us_v1_02a.bin',  // Ver 1.02a
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -133,7 +137,8 @@ async function flash() {
 <select id="version">
 <option>Ver 1.00</option>
 <option>Ver 1.01</option>
-<option selected>Ver 1.02</option>
+<option>Ver 1.02</option>
+<option selected>Ver 1.02a</option>
 </select>
 <button onclick="flash();">書き込み</button>
 

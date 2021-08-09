@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 extern "C" {
+#include "chlib/serial.h"
 #include "chlib/usb.h"
 #include "hid.h"
 }
@@ -75,6 +76,7 @@ class CompatTest : public ::testing::Test {
 
  private:
   void SetUp() override {
+    serial_init();
     hid.report = nullptr;
     hid_init(&hid);
   }
@@ -82,6 +84,7 @@ class CompatTest : public ::testing::Test {
   hid hid;
 };
 
+// Compatibility tests for PS4 controllers with precised descriptors
 using PS4CompatTest = CompatTest;
 
 TEST_F(PS4CompatTest, HoripadFpsPlusForPlayStation4_ModePS4) {

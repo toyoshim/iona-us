@@ -4,6 +4,7 @@
 
 #include "chlib/ch559.h"
 #include "chlib/led.h"
+#include "chlib/serial.h"
 #include "client.h"
 #include "controller.h"
 #include "hid.h"

@@ -6,6 +6,7 @@
 
 #include "chlib/ch559.h"
 #include "chlib/led.h"
+#include "chlib/serial.h"
 #include "chlib/usb.h"
 
 //#define _DBG_HID_REPORT_DESC
@@ -179,7 +180,7 @@ static void check_configuration_desc(uint8_t hub, const uint8_t* data) {
 #ifdef _DBG_HID_REPORT_DESC
 #define REPORT0(s) Serial.println(s " (0)")
 #define REPORT1(s) Serial.printf(s " (1): %x\n", data[i + 1])
-#define REPORT2(s) Serial.printf(s " (2): %x%x\n", data[i + 1], data[i + 2])
+#define REPORT2(s) Serial.printf(s " (2): %x%x\n", data[i + 2], data[i + 1])
 #else
 #define REPORT0(s)
 #define REPORT1(s)
@@ -210,7 +211,7 @@ static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
   uint8_t report_size = 0;
   uint8_t report_count = 0;
   uint16_t usage_page = 0;
-  uint8_t usage = 0;
+  uint16_t usage = 0;
   uint8_t button_index = 0;
   uint8_t analog_index = 0;
   for (uint16_t i = 0; i < size;) {
@@ -306,6 +307,10 @@ static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
         case 0x06:
           REPORT2("G:Usage Page");
           usage_page = (data[i + 2] << 8) | data[i + 1];
+          break;
+        case 0x0a:
+          REPORT2("L:Usage");
+          usage = (data[i + 2] << 8) | data[i + 1];
           break;
         case 0x16:
           REPORT2("G:Logical Minimum");

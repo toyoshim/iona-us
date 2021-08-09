@@ -15,6 +15,11 @@ ChromeまたはWebHIDの有効になったChromium系のブラウザにてご利
 また、未対応のコントローラ対応やファームウェアの更新は保証外の作業であり、
 状況によっては時間を頂いたり、対応を諦める事もある事をご理解願います。
 
+## 既存の報告
+[こちらのページ](https://github.com/toyoshim/iona-us/issues)に未解決の報告をまとめてあります。
+既に報告が上がっている場合は対応をお待ち下さい。
+コメント欄に一言頂けると励みになったり修正時に通知が飛んだりします。
+
 ## 手順
 該当するコントローラをコンピュータに接続し、デバイスの名前を確認してください。
 下にある「コントローラと接続する」ボタンを押すと、下記のようなダイアログが現れます。
@@ -83,7 +88,20 @@ async function connect() {
           }
         }
         // TODO: {logical|physical}{Maximum|Minimum}, unit*
-        for (const usage of item.usages) {
+        for (let usage of item.usages) {
+          if (usage > 65535) {
+            // Usage Page is encoded as an upper 16-bits
+            const usagePage = usage >> 16;
+            usage >>= 16;
+            if (usagePage < 256) {
+              data.push('0x05');
+              data.push(to2x(usage));
+            } else {
+              data.push('0x06');
+              data.push(to2x(usage & 0xff));
+              data.push(to2x(usage >> 8));
+            }
+          }
           if (usage < 256) {
             data.push('0x09');
             data.push(to2x(usage));

@@ -92,7 +92,7 @@ async function connect() {
           if (usage > 65535) {
             // Usage Page is encoded as an upper 16-bits
             const usagePage = usage >> 16;
-            usage >>= 16;
+            usage &= 0xffff;
             if (usagePage < 256) {
               data.push('0x05');
               data.push(to2x(usage));

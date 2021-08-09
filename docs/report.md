@@ -95,11 +95,11 @@ async function connect() {
             usage &= 0xffff;
             if (usagePage < 256) {
               data.push('0x05');
-              data.push(to2x(usage));
+              data.push(to2x(usagePage));
             } else {
               data.push('0x06');
-              data.push(to2x(usage & 0xff));
-              data.push(to2x(usage >> 8));
+              data.push(to2x(usagePage & 0xff));
+              data.push(to2x(usagePage >> 8));
             }
           }
           if (usage < 256) {

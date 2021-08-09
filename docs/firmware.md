@@ -71,8 +71,9 @@ JVS I/Oとして利用する前、特にジャンパーピンを実装した人�
 気づかずに長時間通電した場合、USB用の信号とJVS用の信号が衝突し、システムボードやIONA-USの故障に繋がります。
 
 ## ファームウェア更新履歴
-- Ver 1.00 展示用サンプルに搭載されたバージョンでコインが減らないバグがある
-- Ver 1.01 初期製品出荷版で現状の最新版です
+- Ver 1.00 展示用サンプルに搭載されたバージョンでコインが減らないバグがあります
+- Ver 1.01 初期製品出荷版です
+- Ver 1.02 USBホストの動作で仕様違反があったので修正、対応コントローラが増えました
 
 ## ファームウェアの互換性
 Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基本的に安定して動くはずです。
@@ -86,6 +87,7 @@ Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基�
 |(Xbox Oneシリーズ規格コントローラ)|1.00||
 |ホリパッドFPSプラス for PlayStation 4|1.00|PS3モードも対応|
 |ホリパッドミニ for Nintendo Switch|1.00||
+|ワイヤレスコントローラー（DUALSHOCK 4）|1.02||
 
 ---
 ## ファームウェア更新
@@ -97,6 +99,7 @@ async function flash() {
   const firmwares = [
     'firmwares/us_v1_00.bin',  // Ver 1.00
     'firmwares/us_v1_01.bin',  // Ver 1.01
+    'firmwares/us_v1_02.bin',  // Ver 1.02
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -118,7 +121,8 @@ async function flash() {
 
 <select id="version">
 <option>Ver 1.00</option>
-<option selected>Ver 1.01</option>
+<option>Ver 1.01</option>
+<option selected>Ver 1.02</option>
 </select>
 <button onclick="flash();">書き込み</button>
 

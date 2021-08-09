@@ -13,6 +13,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Submodule update
+      run: git submodule update --init
     - name: Build tests
       run: |
         cd test

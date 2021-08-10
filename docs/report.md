@@ -58,7 +58,7 @@ async function connect() {
     info.push('  input#: ' + device.collections[i].inputReports.length);
     info.push('  output#: ' + device.collections[i].outputReports.length);
     const input = device.collections[i].inputReports;
-    const data = [];
+    let data = [];
     for (let j = 0; j < input.length; ++j) {
       data.push('0x85');
       data.push(to2x(input[j].reportId));
@@ -131,6 +131,7 @@ async function connect() {
         }
       }
       info.push('  input' + j + ': ' + data.join(', '));
+      data = [];
     }
   }
   info.push('END');

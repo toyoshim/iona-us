@@ -98,9 +98,10 @@ Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基�
 |(Xbox 360規格コントローラ)|1.00|1.02a以降推奨|
 |(Xbox Oneシリーズ規格コントローラ)|1.00|1.02a以降推奨|
 |ホリパッドFPSプラス for PlayStation 4|1.00|PS3モードも対応|
-|ワイヤレスコントローラー（DUALSHOCK 4）|1.02||
+|ワイヤレスコントローラー（DUALSHOCK 4 - CUH-ZCT1J）|1.02||
+|ワイヤレスコントローラー（DUALSHOCK 4 - CUH-ZCT2J）|未対応|調査中|
 |ホリパッドミニ for Nintendo Switch|1.00||
-|Nintendo Switch Proコントローラー||1.02aで調査中|
+|Nintendo Switch Proコントローラー|未対応|調査中|
 |6B Controller (メガドライブミニ)|1.02a||
 
 ---

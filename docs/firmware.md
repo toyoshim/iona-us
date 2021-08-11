@@ -86,6 +86,7 @@ JVS I/Oとして利用する前、特にジャンパーピンを実装した人�
 - Ver 1.01 初期製品出荷版
 - Ver 1.02 USBホストの動作で仕様違反があったので修正し、対応コントローラを追加しました
 - Ver 1.02a 他のコントローラ利用後にXbox系のコントローラを接続した際の動作不良を修正し、対応コントローラを追加しました
+- Ver 1.03 複合デバイスとREMOTE WAKEUPの対応を改善し、対応コントローラを追加しました
 
 ## ファームウェアの互換性
 Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基本的に安定して動くはずです。
@@ -99,7 +100,7 @@ Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基�
 |(Xbox Oneシリーズ規格コントローラ)|1.00|1.02a以降推奨|
 |ホリパッドFPSプラス for PlayStation 4|1.00|PS3モードも対応|
 |ワイヤレスコントローラー（DUALSHOCK 4 - CUH-ZCT1J）|1.02||
-|ワイヤレスコントローラー（DUALSHOCK 4 - CUH-ZCT2J）|未対応|調査中|
+|ワイヤレスコントローラー（DUALSHOCK 4 - CUH-ZCT2J）|1.03||
 |ホリパッドミニ for Nintendo Switch|1.00||
 |Nintendo Switch Proコントローラー|未対応|調査中|
 |6B Controller (メガドライブミニ)|1.02a||
@@ -116,6 +117,7 @@ async function flash() {
     'firmwares/us_v1_01.bin',  // Ver 1.01
     'firmwares/us_v1_02.bin',  // Ver 1.02
     'firmwares/us_v1_02a.bin',  // Ver 1.02a
+    'firmwares/us_v1_03.bin',  // Ver 1.03
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -139,7 +141,8 @@ async function flash() {
 <option>Ver 1.00</option>
 <option>Ver 1.01</option>
 <option>Ver 1.02</option>
-<option selected>Ver 1.02a</option>
+<option>Ver 1.02a</option>
+<option selected>Ver 1.03</option>
 </select>
 <button onclick="flash();">書き込み</button>
 

@@ -15,6 +15,7 @@
 static struct hid* hid;
 static struct usb_host host;
 static struct hub_info hub_info[2];
+static struct { uint8_t class; } usb_info[2];
 static struct {
   uint16_t ep_max_packet_size;
   uint8_t ep;
@@ -45,6 +46,8 @@ static void check_device_desc(uint8_t hub, const uint8_t* data) {
   hub_info[hub].type = HID_TYPE_UNKNOWN;
   const struct usb_desc_device* desc = (const struct usb_desc_device*)data;
 
+  usb_info[hub].class = desc->bDeviceClass;
+
   if (desc->idVendor == 0x045e) {  // Microsoft
     if (desc->idProduct == 0x028e) {
       hub_info[hub].type = HID_TYPE_XBOX_360;
@@ -69,14 +72,15 @@ static void check_configuration_desc(uint8_t hub, const uint8_t* data) {
   const struct usb_desc_configuration* desc =
       (const struct usb_desc_configuration*)data;
   struct usb_desc_head* head;
-  uint8_t interface_number = 0;
+  uint8_t class = usb_info[hub].class;
   for (uint8_t i = sizeof(*desc); i < desc->wTotalLength; i += head->bLength) {
     head = (struct usb_desc_head*)(data + i);
     switch (head->bDescriptorType) {
       case USB_DESC_INTERFACE: {
         const struct usb_desc_interface* intf =
             (const struct usb_desc_interface*)(data + i);
-        interface_number = intf->bInterfaceNumber;
+        if (usb_info[hub].class == 0)
+          class = intf->bInterfaceClass;
         if (intf->bInterfaceClass == 0xff && intf->bInterfaceSubClass == 0x5d &&
             intf->bInterfaceProtocol == 0x01) {
           // Might be a Xbox 360 compatible controller.
@@ -91,10 +95,10 @@ static void check_configuration_desc(uint8_t hub, const uint8_t* data) {
         break;
       }
       case USB_DESC_ENDPOINT: {
+        if (hub_info[hub].type == HID_TYPE_UNKNOWN && class != USB_CLASS_HID)
+          break;
         const struct usb_desc_endpoint* ep =
             (const struct usb_desc_endpoint*)(data + i);
-        if (interface_number)
-          break;
         if (ep->bEndpointAddress >= 128 && (ep->bmAttributes & 3) == 3) {
           // interrupt input.
           hub_info[hub].ep = ep->bEndpointAddress & 0x0f;

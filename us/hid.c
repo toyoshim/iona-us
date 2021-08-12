@@ -11,6 +11,7 @@
 
 //#define _DBG_HID_REPORT_DESC
 //#define _DBG_HID_REPORT_DESC_DUMP
+//#define _DBG_WITH_ONLY_HUB1
 
 static struct hid* hid;
 static struct usb_host host;
@@ -402,7 +403,11 @@ static void hid_report(uint8_t hub, const uint8_t* data, uint16_t size) {
 
 void hid_init(struct hid* new_hid) {
   hid = new_hid;
+#ifdef _DBG_WITH_ONLY_HUB1
+  host.flags = USE_HUB1;
+#else
   host.flags = USE_HUB1 | USE_HUB0;
+#endif
   host.disconnected = disconnected;
   host.check_device_desc = check_device_desc;
   host.check_string_desc = 0;

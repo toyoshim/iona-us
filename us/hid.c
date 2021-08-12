@@ -16,14 +16,15 @@
 static struct hid* hid;
 static struct usb_host host;
 static struct hub_info hub_info[2];
-static struct { uint8_t class; } usb_info[2];
 static struct {
+  uint8_t class;
   uint16_t ep_max_packet_size;
   uint8_t ep;
   uint8_t state;
   uint8_t cmd_count;
-} xbox_info[2];
+} usb_info[2];
 
+// state for XBOX series.
 enum {
   XBOX_CONNECTED,
   XBOX_INITIALIZED,
@@ -103,10 +104,10 @@ static void check_configuration_desc(uint8_t hub, const uint8_t* data) {
         if (ep->bEndpointAddress >= 128 && (ep->bmAttributes & 3) == 3) {
           // interrupt input.
           hub_info[hub].ep = ep->bEndpointAddress & 0x0f;
-          xbox_info[hub].ep_max_packet_size = ep->wMaxPacketSize;
+          usb_info[hub].ep_max_packet_size = ep->wMaxPacketSize;
         } else if (ep->bEndpointAddress < 128 && (ep->bmAttributes & 3) == 3) {
           // interrupt output.
-          xbox_info[hub].ep = ep->bEndpointAddress & 0x0f;
+          usb_info[hub].ep = ep->bEndpointAddress & 0x0f;
         }
         break;
       }
@@ -119,8 +120,8 @@ static void check_configuration_desc(uint8_t hub, const uint8_t* data) {
       (hub_info[hub].type == HID_TYPE_XBOX_ONE ||
        hub_info[hub].type == HID_TYPE_XBOX_360)) {
     hub_info[hub].state = HID_STATE_READY;
-    xbox_info[hub].state = XBOX_CONNECTED;
-    xbox_info[hub].cmd_count = 0;
+    usb_info[hub].state = XBOX_CONNECTED;
+    usb_info[hub].cmd_count = 0;
     if (hub_info[hub].type == HID_TYPE_XBOX_360) {
       // https://github.com/xboxdrv/xboxdrv/blob/stable/PROTOCOL
       hub_info[hub].report_size = 20 * 8;
@@ -429,23 +430,23 @@ void hid_poll() {
   if (hub_info[hub].state == HID_STATE_READY && usb_host_ready(hub)) {
     switch (hub_info[hub].type) {
       case HID_TYPE_XBOX_360:
-        if (xbox_info[hub].state == XBOX_CONNECTED) {
+        if (usb_info[hub].state == XBOX_CONNECTED) {
           xbox_360_initialize[2] = 0x02 + hub;
-          usb_host_out(hub, xbox_info[hub].ep, xbox_360_initialize,
+          usb_host_out(hub, usb_info[hub].ep, xbox_360_initialize,
                        sizeof(xbox_360_initialize));
-          xbox_info[hub].state = XBOX_INITIALIZED;
-        } else if (xbox_info[hub].state == XBOX_INITIALIZED) {
+          usb_info[hub].state = XBOX_INITIALIZED;
+        } else if (usb_info[hub].state == XBOX_INITIALIZED) {
           usb_host_in(hub, hub_info[hub].ep, 20);
         }
         break;
       case HID_TYPE_XBOX_ONE:
-        if (xbox_info[hub].state == XBOX_CONNECTED) {
-          xbox_one_initialize[2] = xbox_info[hub].cmd_count++;
-          usb_host_out(hub, xbox_info[hub].ep, xbox_one_initialize,
+        if (usb_info[hub].state == XBOX_CONNECTED) {
+          xbox_one_initialize[2] = usb_info[hub].cmd_count++;
+          usb_host_out(hub, usb_info[hub].ep, xbox_one_initialize,
                        sizeof(xbox_one_initialize));
-          xbox_info[hub].state = XBOX_INITIALIZED;
-        } else if (xbox_info[hub].state == XBOX_INITIALIZED) {
-          usb_host_in(hub, hub_info[hub].ep, xbox_info[hub].ep_max_packet_size);
+          usb_info[hub].state = XBOX_INITIALIZED;
+        } else if (usb_info[hub].state == XBOX_INITIALIZED) {
+          usb_host_in(hub, hub_info[hub].ep, usb_info[hub].ep_max_packet_size);
         }
         break;
       default: {

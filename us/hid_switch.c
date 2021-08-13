@@ -251,10 +251,10 @@ void hid_switch_poll(uint8_t hub, struct usb_info* usb_info) {
     case PLAYER_LED_IN:
     case HOME_LED_IN:
     case REPORT_MODE_IN:
-      usb_host_in(hub, ep, 64);
+      usb_host_in_data0(hub, ep, 64);
       break;
     case INITIALIZED:
-      usb_host_in(hub, ep, 64);
+      usb_host_in_data0(hub, ep, 64);
       if (usb_info->pid == 0x200e)
         switch_info[hub].joycon = (switch_info[hub].joycon + 1) & 1;
       return;

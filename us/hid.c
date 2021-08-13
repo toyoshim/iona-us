@@ -19,19 +19,16 @@ static struct hub_info hub_info[2];
 static struct {
   uint8_t class;
   uint16_t ep_max_packet_size;
-  uint8_t ep;
+  uint8_t ep;  // interrupt out
   uint8_t state;
   uint8_t cmd_count;
 } usb_info[2];
 
-// state for XBOX series.
+// state
 enum {
-  XBOX_CONNECTED,
+  XBOX_CONNECTED = 0,
   XBOX_INITIALIZED,
 };
-
-static uint8_t xbox_360_initialize[] = {0x01, 0x03, 0x00};
-static uint8_t xbox_one_initialize[] = {0x05, 0x20, 0x00, 0x01, 0x00};
 
 static void disconnected(uint8_t hub) {
   hub_info[hub].state = HID_STATE_DISCONNECTED;
@@ -50,7 +47,8 @@ static void check_device_desc(uint8_t hub, const uint8_t* data) {
 
   usb_info[hub].class = desc->bDeviceClass;
 
-  if (desc->idVendor == 0x045e) {  // Microsoft
+  if (desc->idVendor == 0x045e) {
+    // Microsoft Xbox 360 / ONE official controllers.
     if (desc->idProduct == 0x028e) {
       hub_info[hub].type = HID_TYPE_XBOX_360;
       hub_info[hub].report_desc_size = 1;
@@ -61,6 +59,12 @@ static void check_device_desc(uint8_t hub, const uint8_t* data) {
         desc->idProduct == 0x0b12) {
       hub_info[hub].type = HID_TYPE_XBOX_ONE;
       hub_info[hub].report_desc_size = 1;
+    }
+  } else if (desc->idVendor == 0x057e) {
+    if (desc->idProduct == 0x2009 || desc->idProduct == 0x200e) {
+      // Nintendo Switch Pro Controller, and Charging Grip.
+      hub_info[hub].type = HID_TYPE_SWITCH;
+      usb_info[hub].state = SWITCH_CONNECTED;
     }
   } else if (desc->bDeviceClass == 0xff && desc->bDeviceSubClass == 0x47 &&
              desc->bDeviceProtocol == 0xd0) {
@@ -215,7 +219,6 @@ static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
   for (uint8_t button = 0; button < 12; ++button)
     hub_info[hub].button[button] = 0xffff;
   hub_info[hub].report_id = 0;
-  hub_info[hub].type = HID_TYPE_UNKNOWN;
   uint8_t report_size = 0;
   uint8_t report_count = 0;
   uint16_t usage_page = 0;
@@ -322,7 +325,6 @@ static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
             hub_info[hub].dpad[button] = 0xffff;
           for (uint8_t button = 0; button < 12; ++button)
             hub_info[hub].button[button] = 0xffff;
-          hub_info[hub].type = HID_TYPE_UNKNOWN;
           for (uint8_t button = 0; button < 12; ++button)
             usages[button] = 0;
           usage_index = 0;
@@ -431,6 +433,7 @@ void hid_poll() {
     switch (hub_info[hub].type) {
       case HID_TYPE_XBOX_360:
         if (usb_info[hub].state == XBOX_CONNECTED) {
+          static uint8_t xbox_360_initialize[] = {0x01, 0x03, 0x00};
           xbox_360_initialize[2] = 0x02 + hub;
           usb_host_out(hub, usb_info[hub].ep, xbox_360_initialize,
                        sizeof(xbox_360_initialize));
@@ -441,6 +444,7 @@ void hid_poll() {
         break;
       case HID_TYPE_XBOX_ONE:
         if (usb_info[hub].state == XBOX_CONNECTED) {
+          static uint8_t xbox_one_initialize[] = {0x05, 0x20, 0x00, 0x01, 0x00};
           xbox_one_initialize[2] = usb_info[hub].cmd_count++;
           usb_host_out(hub, usb_info[hub].ep, xbox_one_initialize,
                        sizeof(xbox_one_initialize));
@@ -448,6 +452,8 @@ void hid_poll() {
         } else if (usb_info[hub].state == XBOX_INITIALIZED) {
           usb_host_in(hub, hub_info[hub].ep, usb_info[hub].ep_max_packet_size);
         }
+        break;
+      case HID_TYPE_SWITCH:
         break;
       default: {
         uint16_t size = hub_info[hub].report_size / 8;

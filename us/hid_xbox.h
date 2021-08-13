@@ -16,8 +16,8 @@ struct usb_desc_interface;
 bool hid_xbox_check_device_desc(struct hub_info* hub_info,
                                 const struct usb_desc_device* desc);
 
-bool hid_xbox_check_interface_desc(struct hub_info* hub_info,
-                                   const struct usb_desc_interface* intf);
+bool hid_xbox_360_check_interface_desc(struct hub_info* hub_info,
+                                       const struct usb_desc_interface* intf);
 
 bool hid_xbox_initialize(struct hub_info* hub_info, struct usb_info* usb_info);
 

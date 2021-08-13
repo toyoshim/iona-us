@@ -41,8 +41,8 @@ bool hid_xbox_check_device_desc(struct hub_info* hub_info,
   return false;
 }
 
-bool hid_xbox_check_interface_desc(struct hub_info* hub_info,
-                                   const struct usb_desc_interface* intf) {
+bool hid_xbox_360_check_interface_desc(struct hub_info* hub_info,
+                                       const struct usb_desc_interface* intf) {
   if (intf->bInterfaceClass == 0xff && intf->bInterfaceSubClass == 0x5d &&
       intf->bInterfaceProtocol == 0x01) {
     // Might be a Xbox 360 compatible controller.
@@ -131,6 +131,8 @@ bool hid_xbox_initialize(struct hub_info* hub_info, struct usb_info* usb_info) {
 bool hid_xbox_report(struct hub_info* hub_info,
                      const uint8_t* data,
                      uint16_t size) {
+  if (!size)
+    return false;
   if (hub_info->type == HID_TYPE_XBOX_360 && size != 20 && data[0] != 0x00)
     return true;
   if (hub_info->type == HID_TYPE_XBOX_ONE && size != 18 && data[0] != 0x20)

@@ -50,6 +50,7 @@ static void check_configuration_desc(uint8_t hub, const uint8_t* data) {
       (const struct usb_desc_configuration*)data;
   struct usb_desc_head* head;
   uint8_t class = usb_info[hub].class;
+  bool target_interface = false;
   for (uint8_t i = sizeof(*desc); i < desc->wTotalLength; i += head->bLength) {
     head = (struct usb_desc_head*)(data + i);
     switch (head->bDescriptorType) {
@@ -58,7 +59,8 @@ static void check_configuration_desc(uint8_t hub, const uint8_t* data) {
             (const struct usb_desc_interface*)(data + i);
         if (usb_info[hub].class == 0)
           class = intf->bInterfaceClass;
-        hid_xbox_check_interface_desc(&hub_info[hub], intf);
+        target_interface =
+            hid_xbox_360_check_interface_desc(&hub_info[hub], intf);
         break;
       }
       case USB_DESC_HID: {
@@ -68,6 +70,8 @@ static void check_configuration_desc(uint8_t hub, const uint8_t* data) {
       }
       case USB_DESC_ENDPOINT: {
         if (hub_info[hub].type == HID_TYPE_UNKNOWN && class != USB_CLASS_HID)
+          break;
+        if (hub_info[hub].type == HID_TYPE_XBOX_360 && !target_interface)
           break;
         const struct usb_desc_endpoint* ep =
             (const struct usb_desc_endpoint*)(data + i);

@@ -72,6 +72,21 @@ void controller_update(uint8_t hub,
     else if (x > 192)
       r = 1;
   }
+  if (info->axis[0] != 0xffff && info->axis_size[0] == 12) {
+    uint8_t byte_index = info->axis[0] >> 3;
+    uint16_t lx = data[byte_index + 0];
+    uint16_t hx = data[byte_index + 1];
+    uint16_t x = ((info->axis[0] & 7) == 0) ? (((hx << 8) & 0x0f00) | lx)
+                                            : ((hx << 4) | (lx >> 4));
+    if (info->axis_sign[0])
+      x += 0x0800;
+    if (info->axis_polarity[0])
+      x = 0x0fff - x;
+    if (x < 0x0400)
+      l = 1;
+    else if (x > 0x0c00)
+      r = 1;
+  }
   if (info->axis[0] != 0xffff && info->axis_size[0] == 16) {
     uint8_t byte = info->axis[0] >> 3;
     uint16_t x = data[byte] | ((uint16_t)data[byte + 1] << 8);
@@ -89,6 +104,21 @@ void controller_update(uint8_t hub,
     if (y < 64)
       u = 1;
     else if (y > 192)
+      d = 1;
+  }
+  if (info->axis[1] != 0xffff && info->axis_size[1] == 12) {
+    uint8_t byte_index = info->axis[1] >> 3;
+    uint16_t ly = data[byte_index + 0];
+    uint16_t hy = data[byte_index + 1];
+    uint16_t y = ((info->axis[1] & 7) == 0) ? (((hy << 8) & 0x0f00) | ly)
+                                            : ((hy << 4) | (ly >> 4));
+    if (info->axis_sign[1])
+      y += 0x0800;
+    if (info->axis_polarity[1])
+      y = 0x0fff - y;
+    if (y < 0x0400)
+      u = 1;
+    else if (y > 0x0c00)
       d = 1;
   }
   if (info->axis[1] != 0xffff && info->axis_size[1] == 16) {

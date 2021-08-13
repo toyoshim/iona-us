@@ -290,6 +290,8 @@ quit:
     Serial.printf("button %d: %d\n", i, hub_info[hub].button[i]);
 #endif
   hub_info[hub].state = HID_STATE_READY;
+  if (hub_info[hub].type == HID_TYPE_SWITCH)
+    hid_switch_initialize(&hub_info[hub]);
   if (hub_info[hub].type != HID_TYPE_UNKNOWN)
     led_oneshot(L_PULSE_ONCE);
 }
@@ -297,9 +299,9 @@ quit:
 static void hid_report(uint8_t hub, const uint8_t* data, uint16_t size) {
   if (hid_xbox_report(&hub_info[hub], data, size))
     return;
-  if (hid_switch_report(&hub_info[hub], data, size))
+  if (hid_switch_report(&hub_info[hub], &usb_info[hub], data, size))
     return;
-  if (hid->report)
+  if (hid->report && size)
     hid->report(hub, &hub_info[hub], data, size);
 }
 

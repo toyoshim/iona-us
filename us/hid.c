@@ -9,6 +9,7 @@
 #include "chlib/serial.h"
 #include "chlib/usb.h"
 #include "hid_internal.h"
+#include "hid_switch.h"
 #include "hid_xbox.h"
 
 //#define _DBG_HID_REPORT_DESC
@@ -39,14 +40,8 @@ static void check_device_desc(uint8_t hub, const uint8_t* data) {
 
   if (hid_xbox_check_device_desc(&hub_info[hub], desc))
     return;
-
-  if (desc->idVendor == 0x057e) {
-    if (desc->idProduct == 0x2009 || desc->idProduct == 0x200e) {
-      // Nintendo Switch Pro Controller, and Charging Grip.
-      hub_info[hub].type = HID_TYPE_SWITCH;
-      usb_info[hub].state = SWITCH_CONNECTED;
-    }
-  }
+  if (hid_switch_check_device_desc(&hub_info[hub], &usb_info[hub], desc))
+    return;
 }
 
 static void check_configuration_desc(uint8_t hub, const uint8_t* data) {
@@ -302,6 +297,8 @@ quit:
 static void hid_report(uint8_t hub, const uint8_t* data, uint16_t size) {
   if (hid_xbox_report(&hub_info[hub], data, size))
     return;
+  if (hid_switch_report(&hub_info[hub], data, size))
+    return;
   if (hid->report)
     hid->report(hub, &hub_info[hub], data, size);
 }
@@ -340,6 +337,7 @@ void hid_poll() {
         hid_xbox_one_poll(hub, &hub_info[hub], &usb_info[hub]);
         break;
       case HID_TYPE_SWITCH:
+        hid_switch_poll(hub, &hub_info[hub], &usb_info[hub]);
         break;
       default: {
         uint16_t size = hub_info[hub].report_size / 8;

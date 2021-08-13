@@ -13,8 +13,4 @@ struct usb_info {
   uint8_t cmd_count;
 };
 
-enum {
-  SWITCH_CONNECTED = 0,
-};
-
 #endif  // __hid_internal_h__

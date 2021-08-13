@@ -22,7 +22,7 @@ bool hid_switch_initialize(struct hub_info* hub_info);
 bool hid_switch_report(uint8_t hub,
                        struct hub_info* hub_info,
                        struct usb_info* usb_info,
-                       const uint8_t* data,
+                       uint8_t* data,
                        uint16_t size);
 
 void hid_switch_poll(uint8_t hub, struct usb_info* usb_info);

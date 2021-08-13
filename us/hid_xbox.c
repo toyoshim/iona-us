@@ -10,8 +10,8 @@
 
 // state
 enum {
-  XBOX_CONNECTED = 0,
-  XBOX_INITIALIZED,
+  CONNECTED,
+  INITIALIZED,
 };
 
 bool hid_xbox_check_device_desc(struct hub_info* hub_info,
@@ -63,7 +63,7 @@ bool hid_xbox_initialize(struct hub_info* hub_info, struct usb_info* usb_info) {
   }
 
   hub_info->state = HID_STATE_READY;
-  usb_info->state = XBOX_CONNECTED;
+  usb_info->state = CONNECTED;
   usb_info->cmd_count = 0;
 
   if (hub_info->type == HID_TYPE_XBOX_360) {
@@ -141,13 +141,12 @@ bool hid_xbox_report(struct hub_info* hub_info,
 void hid_xbox_360_poll(uint8_t hub,
                        struct hub_info* hub_info,
                        struct usb_info* usb_info) {
-  if (usb_info->state == XBOX_CONNECTED) {
-    static uint8_t xbox_360_initialize[] = {0x01, 0x03, 0x00};
-    xbox_360_initialize[2] = 0x02 + hub;
-    usb_host_out(hub, usb_info->ep, xbox_360_initialize,
-                 sizeof(xbox_360_initialize));
-    usb_info->state = XBOX_INITIALIZED;
-  } else if (usb_info->state == XBOX_INITIALIZED) {
+  if (usb_info->state == CONNECTED) {
+    static uint8_t initialize[] = {0x01, 0x03, 0x00};
+    initialize[2] = 0x02 + hub;
+    usb_host_out(hub, usb_info->ep, initialize, sizeof(initialize));
+    usb_info->state = INITIALIZED;
+  } else if (usb_info->state == INITIALIZED) {
     usb_host_in(hub, hub_info->ep, 20);
   }
 }
@@ -155,13 +154,12 @@ void hid_xbox_360_poll(uint8_t hub,
 void hid_xbox_one_poll(uint8_t hub,
                        struct hub_info* hub_info,
                        struct usb_info* usb_info) {
-  if (usb_info->state == XBOX_CONNECTED) {
-    static uint8_t xbox_one_initialize[] = {0x05, 0x20, 0x00, 0x01, 0x00};
-    xbox_one_initialize[2] = usb_info->cmd_count++;
-    usb_host_out(hub, usb_info->ep, xbox_one_initialize,
-                 sizeof(xbox_one_initialize));
-    usb_info->state = XBOX_INITIALIZED;
-  } else if (usb_info->state == XBOX_INITIALIZED) {
+  if (usb_info->state == CONNECTED) {
+    static uint8_t initialize[] = {0x05, 0x20, 0x00, 0x01, 0x00};
+    initialize[2] = usb_info->cmd_count++;
+    usb_host_out(hub, usb_info->ep, initialize, sizeof(initialize));
+    usb_info->state = INITIALIZED;
+  } else if (usb_info->state == INITIALIZED) {
     usb_host_in(hub, hub_info->ep, usb_info->ep_max_packet_size);
   }
 }

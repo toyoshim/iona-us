@@ -19,13 +19,12 @@ bool hid_switch_check_device_desc(struct hub_info* hub_info,
 
 bool hid_switch_initialize(struct hub_info* hub_info);
 
-bool hid_switch_report(struct hub_info* hub_info,
+bool hid_switch_report(uint8_t hub,
+                       struct hub_info* hub_info,
                        struct usb_info* usb_info,
                        const uint8_t* data,
                        uint16_t size);
 
-void hid_switch_poll(uint8_t hub,
-                     struct hub_info* hub_info,
-                     struct usb_info* usb_info);
+void hid_switch_poll(uint8_t hub, struct usb_info* usb_info);
 
 #endif  // __hid_switch_h__

@@ -37,6 +37,7 @@ static void check_device_desc(uint8_t hub, const uint8_t* data) {
   const struct usb_desc_device* desc = (const struct usb_desc_device*)data;
 
   usb_info[hub].class = desc->bDeviceClass;
+  usb_info[hub].pid = desc->idProduct;
 
   if (hid_xbox_check_device_desc(&hub_info[hub], desc))
     return;
@@ -296,10 +297,10 @@ quit:
     led_oneshot(L_PULSE_ONCE);
 }
 
-static void hid_report(uint8_t hub, const uint8_t* data, uint16_t size) {
+static void hid_report(uint8_t hub, uint8_t* data, uint16_t size) {
   if (hid_xbox_report(&hub_info[hub], data, size))
     return;
-  if (hid_switch_report(&hub_info[hub], &usb_info[hub], data, size))
+  if (hid_switch_report(hub, &hub_info[hub], &usb_info[hub], data, size))
     return;
   if (hid->report && size)
     hid->report(hub, &hub_info[hub], data, size);
@@ -339,7 +340,7 @@ void hid_poll() {
         hid_xbox_one_poll(hub, &hub_info[hub], &usb_info[hub]);
         break;
       case HID_TYPE_SWITCH:
-        hid_switch_poll(hub, &hub_info[hub], &usb_info[hub]);
+        hid_switch_poll(hub, &usb_info[hub]);
         break;
       default: {
         uint16_t size = hub_info[hub].report_size / 8;

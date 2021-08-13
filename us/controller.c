@@ -82,9 +82,9 @@ void controller_update(uint8_t hub,
       x += 0x0800;
     if (info->axis_polarity[0])
       x = 0x0fff - x;
-    if (x < 0x0400)
+    if (x < 0x0600)
       l = 1;
-    else if (x > 0x0c00)
+    else if (x > 0x0a00)
       r = 1;
   }
   if (info->axis[0] != 0xffff && info->axis_size[0] == 16) {
@@ -94,9 +94,9 @@ void controller_update(uint8_t hub,
       x += 0x8000;
     if (info->axis_polarity[0])
       x = -x - 1;
-    if (x < 0x4000)
+    if (x < 0x6000)
       l = 1;
-    else if (x > 0xc000)
+    else if (x > 0xa000)
       r = 1;
   }
   if (info->axis[1] != 0xffff && info->axis_size[1] == 8) {
@@ -116,9 +116,9 @@ void controller_update(uint8_t hub,
       y += 0x0800;
     if (info->axis_polarity[1])
       y = 0x0fff - y;
-    if (y < 0x0400)
+    if (y < 0x0600)
       u = 1;
-    else if (y > 0x0c00)
+    else if (y > 0x0a00)
       d = 1;
   }
   if (info->axis[1] != 0xffff && info->axis_size[1] == 16) {
@@ -128,9 +128,9 @@ void controller_update(uint8_t hub,
       y += 0x8000;
     if (info->axis_polarity[1])
       y = -y - 1;
-    if (y < 0x4000)
+    if (y < 0x6000)
       u = 1;
-    else if (y > 0xc000)
+    else if (y > 0xa000)
       d = 1;
   }
   if (info->hat != 0xffff) {

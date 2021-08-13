@@ -10,6 +10,7 @@
 
 enum {
   CONNECTED = 0,
+  REQUEST_MAC,
   REQUEST_MAC_IN,
   REQUEST_MAC_RECV,
   HANDSHAKE,
@@ -38,6 +39,12 @@ enum {
   REPORT_MODE_RECV,
   INITIALIZED,
 };
+
+static struct {
+  uint8_t joycon;
+  uint8_t data3;
+  uint8_t data4;
+} switch_info[2];
 
 static uint8_t* create_sub_command(struct usb_info* usb_info,
                                    uint8_t sub_command,
@@ -81,6 +88,7 @@ bool hid_switch_initialize(struct hub_info* hub_info) {
   if (hub_info->type != HID_TYPE_SWITCH)
     return false;
 
+  // Their reporting HID Report Descriptors are completely fake.
   hub_info->report_size = 64 * 8;
   hub_info->axis[0] = 5 * 8;
   hub_info->axis_size[0] = 12;
@@ -110,9 +118,10 @@ bool hid_switch_initialize(struct hub_info* hub_info) {
   hub_info->report_id = 0x30;
   return true;
 }
-bool hid_switch_report(struct hub_info* hub_info,
+bool hid_switch_report(uint8_t hub,
+                       struct hub_info* hub_info,
                        struct usb_info* usb_info,
-                       const uint8_t* data,
+                       uint8_t* data,
                        uint16_t size) {
   if (hub_info->type != HID_TYPE_SWITCH)
     return false;
@@ -124,8 +133,16 @@ bool hid_switch_report(struct hub_info* hub_info,
     return true;
   }
 
-  if (usb_info->state == INITIALIZED && data[0] == 0x30)
+  if (usb_info->state == INITIALIZED && data[0] == 0x30) {
+    if (switch_info[hub].joycon != 0) {
+      switch_info[hub].data3 = data[3];
+      switch_info[hub].data4 = data[4];
+      return true;
+    }
+    data[3] |= switch_info[hub].data3;
+    data[4] |= switch_info[hub].data4;
     return false;
+  }
 
   switch (usb_info->state) {
     case REQUEST_MAC_RECV:
@@ -164,56 +181,65 @@ bool hid_switch_report(struct hub_info* hub_info,
       return true;
   }
   usb_info->state++;
+  if (usb_info->state == INITIALIZED) {
+    if (usb_info->pid == 0x200e && switch_info[hub].joycon == 0) {
+      switch_info[hub].joycon++;
+      usb_info->state = REQUEST_MAC;
+    }
+  }
   return true;
 retry:
   usb_info->state--;
   return true;
 }
 
-void hid_switch_poll(uint8_t hub,
-                     struct hub_info* hub_info,
-                     struct usb_info* usb_info) {
+void hid_switch_poll(uint8_t hub, struct usb_info* usb_info) {
+  uint8_t ep = switch_info[hub].joycon == 0 ? 1 : 2;
   switch (usb_info->state) {
-    case CONNECTED: {
+    case CONNECTED:
+      switch_info[hub].joycon = 0;
+      switch_info[hub].data3 = 0;
+      switch_info[hub].data4 = 0;
+      break;
+    case REQUEST_MAC: {
       static uint8_t request_mac[2] = {0x80, 0x01};
-      usb_host_out(hub, usb_info->ep, request_mac, sizeof(request_mac));
+      usb_host_out(hub, ep, request_mac, sizeof(request_mac));
       break;
     }
     case HANDSHAKE:
     case HANDSHAKE2: {
       static uint8_t handshake[2] = {0x80, 0x02};
-      usb_host_out(hub, usb_info->ep, handshake, sizeof(handshake));
+      usb_host_out(hub, ep, handshake, sizeof(handshake));
       break;
     }
     case BAUDRATE: {
       static uint8_t baudrate[2] = {0x80, 0x03};
-      usb_host_out(hub, usb_info->ep, baudrate, sizeof(baudrate));
+      usb_host_out(hub, ep, baudrate, sizeof(baudrate));
       break;
     }
     case NO_TIMEOUT: {
       static uint8_t no_timeout[2] = {0x80, 0x04};
-      usb_host_out(hub, usb_info->ep, no_timeout, sizeof(no_timeout));
+      usb_host_out(hub, ep, no_timeout, sizeof(no_timeout));
       break;
     }
     case NO_TIMEOUT2: {
-      usb_host_out(hub, usb_info->ep, create_sub_command(usb_info, 0x33, 0, 0),
-                   64);
+      usb_host_out(hub, ep, create_sub_command(usb_info, 0x33, 0, 0), 64);
       break;
     }
     case PLAYER_LED: {
       uint8_t led[1] = {0x01 + hub};
-      usb_host_out(hub, usb_info->ep,
+      usb_host_out(hub, ep,
                    create_sub_command(usb_info, 0x30, led, sizeof(led)), 64);
       break;
     }
     case HOME_LED: {
       uint8_t led[4] = {0x01, 0xf0, 0xf0, 0x00};
-      usb_host_out(hub, usb_info->ep,
+      usb_host_out(hub, ep,
                    create_sub_command(usb_info, 0x38, led, sizeof(led)), 64);
     }
     case REPORT_MODE: {
       uint8_t mode[1] = {0x30};
-      usb_host_out(hub, usb_info->ep,
+      usb_host_out(hub, ep,
                    create_sub_command(usb_info, 0x03, mode, sizeof(mode)), 64);
     }
     case REQUEST_MAC_IN:
@@ -225,10 +251,12 @@ void hid_switch_poll(uint8_t hub,
     case PLAYER_LED_IN:
     case HOME_LED_IN:
     case REPORT_MODE_IN:
-      usb_host_in(hub, hub_info->ep, 64);
+      usb_host_in(hub, ep, 64);
       break;
     case INITIALIZED:
-      usb_host_in(hub, hub_info->ep, 64);
+      usb_host_in(hub, ep, 64);
+      if (usb_info->pid == 0x200e)
+        switch_info[hub].joycon = (switch_info[hub].joycon + 1) & 1;
       return;
     default:
       return;

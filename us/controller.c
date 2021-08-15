@@ -20,13 +20,54 @@ enum {
   MODE_TWINSTICK,
 };
 static uint8_t mode = MODE_NORMAL;
+static bool mode_sw = false;
 
-static inline bool button_check(uint16_t index, const uint8_t* data) {
+static bool button_check(uint16_t index, const uint8_t* data) {
   if (index == 0xffff)
     return false;
   uint8_t byte = index >> 3;
   uint8_t bit = index & 7;
   return data[byte] & (1 << bit);
+}
+
+static int8_t axis_check(const struct hub_info* info,
+                         const uint8_t* data,
+                         uint8_t index) {
+  if (info->axis[index] == 0xffff)
+    return 0;
+  if (info->axis_size[index] == 8) {
+    uint8_t v = data[info->axis[index] >> 3];
+    if (v < 0x60)
+      return -1;
+    if (v > 0xa0)
+      return 1;
+  } else if (info->axis_size[index] == 12) {
+    uint8_t byte_index = info->axis[index] >> 3;
+    uint16_t l = data[byte_index + 0];
+    uint16_t h = data[byte_index + 1];
+    uint16_t v = ((info->axis[index] & 7) == 0) ? (((h << 8) & 0x0f00) | l)
+                                                : ((h << 4) | (l >> 4));
+    if (info->axis_sign[index])
+      v += 0x0800;
+    if (info->axis_polarity[index])
+      v = 0x0fff - v;
+    if (v < 0x0600)
+      return -1;
+    if (v > 0x0a00)
+      return 1;
+  } else if (info->axis_size[index] == 16) {
+    uint8_t byte = info->axis[index] >> 3;
+    uint16_t v = data[byte] | ((uint16_t)data[byte + 1] << 8);
+    if (info->axis_sign[index])
+      v += 0x8000;
+    if (info->axis_polarity[index])
+      v = 0xffff - v;
+    if (v < 0x6000)
+      return -1;
+    if (v > 0xa000)
+      return 1;
+  }
+  return 0;
 }
 
 void controller_init() {
@@ -56,6 +97,8 @@ void controller_update(uint8_t hub,
     Serial.printf("%x,", data[i]);
   Serial.println("");
 #endif  // _DBG_HID_REPORT_DUMP
+  if (mode == MODE_TWINSTICK && hub != 0)
+    return;
 
   if (info->state != HID_STATE_READY) {
     jvs_map[1 + hub * 2 + 0] = 0;
@@ -71,74 +114,16 @@ void controller_update(uint8_t hub,
   uint8_t d = button_check(info->dpad[1], data) ? 1 : 0;
   uint8_t l = button_check(info->dpad[2], data) ? 1 : 0;
   uint8_t r = button_check(info->dpad[3], data) ? 1 : 0;
-  if (info->axis[0] != 0xffff && info->axis_size[0] == 8) {
-    uint8_t x = data[info->axis[0] >> 3];
-    if (x < 64)
-      l = 1;
-    else if (x > 192)
-      r = 1;
-  }
-  if (info->axis[0] != 0xffff && info->axis_size[0] == 12) {
-    uint8_t byte_index = info->axis[0] >> 3;
-    uint16_t lx = data[byte_index + 0];
-    uint16_t hx = data[byte_index + 1];
-    uint16_t x = ((info->axis[0] & 7) == 0) ? (((hx << 8) & 0x0f00) | lx)
-                                            : ((hx << 4) | (lx >> 4));
-    if (info->axis_sign[0])
-      x += 0x0800;
-    if (info->axis_polarity[0])
-      x = 0x0fff - x;
-    if (x < 0x0600)
-      l = 1;
-    else if (x > 0x0a00)
-      r = 1;
-  }
-  if (info->axis[0] != 0xffff && info->axis_size[0] == 16) {
-    uint8_t byte = info->axis[0] >> 3;
-    uint16_t x = data[byte] | ((uint16_t)data[byte + 1] << 8);
-    if (info->axis_sign[0])
-      x += 0x8000;
-    if (info->axis_polarity[0])
-      x = -x - 1;
-    if (x < 0x6000)
-      l = 1;
-    else if (x > 0xa000)
-      r = 1;
-  }
-  if (info->axis[1] != 0xffff && info->axis_size[1] == 8) {
-    uint8_t y = data[info->axis[1] >> 3];
-    if (y < 64)
-      u = 1;
-    else if (y > 192)
-      d = 1;
-  }
-  if (info->axis[1] != 0xffff && info->axis_size[1] == 12) {
-    uint8_t byte_index = info->axis[1] >> 3;
-    uint16_t ly = data[byte_index + 0];
-    uint16_t hy = data[byte_index + 1];
-    uint16_t y = ((info->axis[1] & 7) == 0) ? (((hy << 8) & 0x0f00) | ly)
-                                            : ((hy << 4) | (ly >> 4));
-    if (info->axis_sign[1])
-      y += 0x0800;
-    if (info->axis_polarity[1])
-      y = 0x0fff - y;
-    if (y < 0x0600)
-      u = 1;
-    else if (y > 0x0a00)
-      d = 1;
-  }
-  if (info->axis[1] != 0xffff && info->axis_size[1] == 16) {
-    uint8_t byte = info->axis[1] >> 3;
-    uint16_t y = data[byte] | ((uint16_t)data[byte + 1] << 8);
-    if (info->axis_sign[1])
-      y += 0x8000;
-    if (info->axis_polarity[1])
-      y = -y - 1;
-    if (y < 0x6000)
-      u = 1;
-    else if (y > 0xa000)
-      d = 1;
-  }
+  int8_t x = axis_check(info, data, 0);
+  if (x < 0)
+    l = 1;
+  else if (x > 0)
+    r = 1;
+  int8_t y = axis_check(info, data, 1);
+  if (y < 0)
+    u = 1;
+  else if (y > 0)
+    d = 1;
   if (info->hat != 0xffff) {
     uint8_t byte = info->hat >> 3;
     uint8_t bit = info->hat & 7;
@@ -200,6 +185,25 @@ void controller_update(uint8_t hub,
   if ((coin_sw[hub] & 3) == 1)
     coin[hub]++;
 
+  bool current_mode_sw = button_check(info->button[HID_BUTTON_META], data);
+  if (hub == 0 && info->type == HID_TYPE_PS4 && !mode_sw && current_mode_sw) {
+    if (mode == MODE_NORMAL) {
+      mode = MODE_TWINSTICK;
+      led_oneshot(L_PULSE_TWICE);
+    } else {
+      mode = MODE_NORMAL;
+      led_oneshot(L_PULSE_ONCE);
+    }
+  }
+  mode_sw = current_mode_sw;
+
+  if (mode == MODE_TWINSTICK) {
+    int8_t rx = axis_check(info, data, 2);
+    int8_t ry = axis_check(info, data, 3);
+    jvs_map[3] = ((ry < 0) ? 0x20 : 0) | ((ry > 0) ? 0x10 : 0) |
+                 ((rx < 0) ? 0x08 : 0) | ((rx > 0) ? 0x04 : 0);
+  }
+
   controller_map(hub, 0xffff, mask);
 }
 
@@ -220,6 +224,17 @@ void controller_map(uint8_t player,
       ((raw_map[player] & rapid_mask & button_masks[B_8]) ? 0x04 : 0) |
       ((raw_map[player] & rapid_mask & button_masks[B_9]) ? 0x02 : 0) |
       ((raw_map[player] & rapid_mask & button_masks[B_10]) ? 0x01 : 0);
+  if (mode == MODE_TWINSTICK) {
+    jvs_map[1] = (jvs_map[1] & 0xfc) |
+                 ((raw_map[0] & rapid_mask & button_masks[B_5]) ? 0x02 : 0) |
+                 ((raw_map[0] & rapid_mask & button_masks[B_7]) ? 0x01 : 0);
+    jvs_map[2] = ((raw_map[0] & rapid_mask & button_masks[B_9]) ? 0x80 : 0);
+    jvs_map[3] = (jvs_map[3] & 0x7c) |
+                 ((raw_map[0] & rapid_mask & button_masks[B_1]) ? 0x80 : 0) |
+                 ((raw_map[0] & rapid_mask & button_masks[B_6]) ? 0x02 : 0) |
+                 ((raw_map[0] & rapid_mask & button_masks[B_8]) ? 0x01 : 0);
+    jvs_map[4] = ((raw_map[0] & rapid_mask & button_masks[B_10]) ? 0x80 : 0);
+  }
 }
 
 void controller_poll() {

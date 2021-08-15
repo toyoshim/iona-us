@@ -91,6 +91,7 @@ JVS I/Oとして利用する前、特にジャンパーピンを実装した人�
 - Ver 1.02a 他のコントローラ利用後にXbox系のコントローラを接続した際の動作不良を修正し、対応コントローラを追加しました
 - Ver 1.03 複合デバイスとREMOTE WAKEUPの対応を改善し、対応コントローラを追加しました
 - Ver 1.04 対応コントローラを追加しました
+- Ver 1.10 ツインスティックモードを追加しました
 
 ## ファームウェアの互換性
 Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基本的に安定して動くはずです。
@@ -100,8 +101,8 @@ Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基�
 
 |デバイス名称|確認バージョン|備考|
 |-|-|-|
-|(Xbox 360規格コントローラ)|1.00|1.02a以降推奨, 1.03未対応|
-|(Xbox Oneシリーズ規格コントローラ)|1.00|1.02a以降推奨, 1.03未対応|
+|(Xbox 360規格コントローラ)|1.00|1.02a以降推奨|
+|(Xbox Oneシリーズ規格コントローラ)|1.00|1.02a以降推奨|
 |ホリパッドFPSプラス for PlayStation 4|1.00|PS3モードも対応|
 |ワイヤレスコントローラー（DUALSHOCK 4 - CUH-ZCT1J）|1.02||
 |ワイヤレスコントローラー（DUALSHOCK 4 - CUH-ZCT2J）|1.03||
@@ -113,6 +114,7 @@ Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基�
 ---
 ## ファームウェア更新
 以下は実際にファームウェア更新を行うためのUIです。書き込みボタンにより実際に更新されます。
+動作確認が不十分でバグも確認されているVer 1.03は選択できないようにしました。
 
 <script src="https://toyoshim.github.io/CH559Flasher.js/CH559Flasher.js"></script>
 <script>
@@ -122,8 +124,8 @@ async function flash() {
     'firmwares/us_v1_01.bin',  // Ver 1.01
     'firmwares/us_v1_02.bin',  // Ver 1.02
     'firmwares/us_v1_02a.bin',  // Ver 1.02a
-    'firmwares/us_v1_03.bin',  // Ver 1.03
     'firmwares/us_v1_04.bin',  // Ver 1.04
+    'firmwares/us_v1_10.bin',  // Ver 1.10
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -148,8 +150,8 @@ async function flash() {
 <option>Ver 1.01</option>
 <option>Ver 1.02</option>
 <option>Ver 1.02a</option>
-<option>Ver 1.03</option>
-<option selected>Ver 1.04</option>
+<option>Ver 1.04</option>
+<option selected>Ver 1.10</option>
 </select>
 <button onclick="flash();">書き込み</button>
 

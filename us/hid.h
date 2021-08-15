@@ -35,6 +35,8 @@ enum {
   HID_BUTTON_START,
   HID_BUTTON_L3,
   HID_BUTTON_R3,
+
+  HID_BUTTON_META,
 };
 
 struct hub_info {

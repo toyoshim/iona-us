@@ -8,6 +8,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "chlib/led.h"
 #include "hid.h"
 
 // Button bitmap in raw format
@@ -33,11 +34,14 @@ enum {
 };
 
 void controller_init();
-void controller_update(
-    uint8_t hub, const struct hub_info* info, const uint8_t* data,
-    uint16_t size, uint16_t* mask);
-void controller_map(
-    uint8_t player, uint16_t rapid_mask, uint16_t* button_masks);
+void controller_update(uint8_t hub,
+                       const struct hub_info* info,
+                       const uint8_t* data,
+                       uint16_t size,
+                       uint16_t* mask);
+void controller_map(uint8_t player,
+                    uint16_t rapid_mask,
+                    uint16_t* button_masks);
 void controller_poll();
 uint16_t controller_raw(uint8_t player);
 uint8_t controller_jvs(uint8_t index);

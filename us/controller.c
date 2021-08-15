@@ -15,6 +15,12 @@ static uint8_t jvs_map[5] = {0, 0, 0, 0, 0};
 static uint8_t coin_sw[2] = {0, 0};
 static uint8_t coin[2] = {0, 0};
 
+enum {
+  MODE_NORMAL,
+  MODE_TWINSTICK,
+};
+static uint8_t mode = MODE_NORMAL;
+
 static inline bool button_check(uint16_t index, const uint8_t* data) {
   if (index == 0xffff)
     return false;

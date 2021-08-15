@@ -120,12 +120,12 @@ static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
 #endif
   const uint16_t size = hub_info[hub].report_desc_size;
   hub_info[hub].report_size = 0;
-  for (uint8_t button = 0; button < 2; ++button)
+  for (uint8_t button = 0; button < 4; ++button)
     hub_info[hub].axis[button] = 0xffff;
   hub_info[hub].hat = 0xffff;
   for (uint8_t button = 0; button < 4; ++button)
     hub_info[hub].dpad[button] = 0xffff;
-  for (uint8_t button = 0; button < 12; ++button)
+  for (uint8_t button = 0; button < 13; ++button)
     hub_info[hub].button[button] = 0xffff;
   hub_info[hub].report_id = 0;
   uint8_t report_size = 0;
@@ -194,24 +194,27 @@ static void check_hid_report_desc(uint8_t hub, const uint8_t* data) {
                      report_size == 6) {  // PS4 counter
             hub_info[hub].type = HID_TYPE_PS4;
           } else if (report_size == 1) {  // Buttons
-            for (uint8_t i = 0; i < report_count && button_index < 12; ++i) {
+            for (uint8_t i = 0; i < report_count && button_index < 13; ++i) {
               hub_info[hub].button[button_index++] =
                   hub_info[hub].report_size + i;
             }
           } else if ((data[i + 1] & 1) == 0) {  // Analog buttons
-            for (uint8_t i = 0; i < report_count && analog_index < 2; ++i) {
+            for (uint8_t i = 0; i < report_count && analog_index < 4; ++i) {
               if (usages[i] == 0x00010030)
                 analog_index = 0;
               else if (usages[i] == 0x00010031)
                 analog_index = 1;
+              else if (usages[i] == 0x00010032)
+                analog_index = 2;
+              else if (usages[i] == 0x00010035)
+                analog_index = 3;
               hub_info[hub].axis_size[analog_index] = report_size;
-              hub_info[hub].axis_sign[analog_index] =
-                  false;  // TODO: support signed.
+              hub_info[hub].axis_sign[analog_index] = false;
               hub_info[hub].axis_polarity[analog_index] = false;
               hub_info[hub].axis[analog_index++] =
                   hub_info[hub].report_size + report_size * i;
-              if (analog_index < 2 &&
-                  hub_info[hub].axis[analog_index] != 0xffff) {
+              while (analog_index < 4 &&
+                     hub_info[hub].axis[analog_index] != 0xffff) {
                 analog_index++;
               }
             }
@@ -291,11 +294,11 @@ quit:
   Serial.printf("Report Size for ID (%d): %d-bits (%d-Bytes)\n",
                 hub_info[hub].report_id, hub_info[hub].report_size,
                 hub_info[hub].report_size / 8);
-  for (uint8_t i = 0; i < 2; ++i)
+  for (uint8_t i = 0; i < 4; ++i)
     Serial.printf("axis %d: %d, %d\n", i, hub_info[hub].axis[i],
                   hub_info[hub].axis_size[i]);
   Serial.printf("hat: %d\n", hub_info[hub].hat);
-  for (uint8_t i = 0; i < 12; ++i)
+  for (uint8_t i = 0; i < 13; ++i)
     Serial.printf("button %d: %d\n", i, hub_info[hub].button[i]);
 #endif
   hub_info[hub].state = HID_STATE_READY;

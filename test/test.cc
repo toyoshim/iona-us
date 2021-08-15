@@ -63,8 +63,10 @@ class CompatTest : public ::testing::Test {
     EXPECT_EQ(expected.report_desc_size, actual.report_desc_size);
     EXPECT_EQ(expected.report_size, actual.report_size);
 
-    for (size_t i = 0; i < 2; ++i) {
+    for (size_t i = 0; i < 4; ++i) {
       EXPECT_EQ(expected.axis[i], actual.axis[i]);
+      if (expected.axis[i] == 0xffff)
+        continue;
       EXPECT_EQ(expected.axis_size[i], actual.axis_size[i]);
       EXPECT_EQ(expected.axis_sign[i], actual.axis_sign[i]);
       EXPECT_EQ(expected.axis_polarity[i], actual.axis_polarity[i]);
@@ -73,7 +75,7 @@ class CompatTest : public ::testing::Test {
     for (size_t i = 0; i < 4; ++i)
       EXPECT_EQ(expected.dpad[i], actual.dpad[i]);
 
-    for (size_t i = 0; i < 12; ++i)
+    for (size_t i = 0; i < 13; ++i)
       EXPECT_EQ(expected.button[i], actual.button[i]);
     EXPECT_EQ(expected.hat, actual.hat);
 
@@ -116,13 +118,13 @@ TEST_F(PS4CompatTest, HoripadFpsPlusForPlayStation4_ModePS4) {
   hub_info expected = {
       sizeof(hid_report_desc),
       504,
-      {0, 8},
+      {0, 8, 16, 24},
       32,
       {0xffff, 0xffff, 0xffff, 0xffff},
-      {36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47},
-      {8, 8},
-      {false, false},
-      {false, false},
+      {36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48},
+      {8, 8, 8, 8},
+      {false, false, false, false},
+      {false, false, false, false},
       1,
       HID_TYPE_PS4,
       1,
@@ -152,13 +154,13 @@ TEST_F(PS4CompatTest, HoripadFpsPlusForPlayStation4_ModePS3) {
   hub_info expected = {
       sizeof(hid_report_desc),
       216,
-      {24, 32},
+      {24, 32, 40, 48},
       16,
       {0xffff, 0xffff, 0xffff, 0xffff},
-      {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11},
-      {8, 8},
-      {false, false},
-      {false, false},
+      {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
+      {8, 8, 8, 8},
+      {false, false, false, false},
+      {false, false, false, false},
       0,
       HID_TYPE_UNKNOWN,
       1,
@@ -219,13 +221,13 @@ TEST_F(PS4CompatTest, WirelessController_DualShock4_CUH_ZCT2J) {
   hub_info expected = {
       sizeof(hid_report_desc),
       504,
-      {0, 8},
+      {0, 8, 16, 24},
       32,
       {0xffff, 0xffff, 0xffff, 0xffff},
-      {36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47},
-      {8, 8},
-      {false, false},
-      {false, false},
+      {36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48},
+      {8, 8, 8, 8},
+      {false, false, false, false},
+      {false, false, false, false},
       1,
       HID_TYPE_PS4,
       1,
@@ -253,13 +255,13 @@ TEST_F(PS4PseudoCompatTest, WirelessController_DualShock4_CUH_ZCT1J) {
   hub_info expected = {
       sizeof(pseudo_hid_report_desc),
       504,
-      {0, 8},
+      {0, 8, 16, 24},
       32,
       {0xffff, 0xffff, 0xffff, 0xffff},
-      {36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47},
-      {8, 8},
-      {false, false},
-      {false, false},
+      {36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48},
+      {8, 8, 8, 8},
+      {false, false, false, false},
+      {false, false, false, false},
       1,
       HID_TYPE_PS4,
       1,
@@ -286,13 +288,13 @@ TEST_F(PS4PseudoCompatTest, WirelessController_DualShock4_CUH_ZCT2J) {
   hub_info expected = {
       sizeof(pseudo_hid_report_desc),
       504,
-      {0, 8},
+      {0, 8, 16, 24},
       32,
       {0xffff, 0xffff, 0xffff, 0xffff},
-      {36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47},
-      {8, 8},
-      {false, false},
-      {false, false},
+      {36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48},
+      {8, 8, 8, 8},
+      {false, false, false, false},
+      {false, false, false, false},
       1,
       HID_TYPE_PS4,
       1,
@@ -327,13 +329,13 @@ TEST_F(SwitchCompatTest, HoripadMiniForNintendoSwitch) {
   hub_info expected = {
       sizeof(hid_report_desc),
       216,
-      {24, 32},
+      {24, 32, 40, 48},
       16,
       {0xffff, 0xffff, 0xffff, 0xffff},
-      {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11},
-      {8, 8},
-      {false, false},
-      {false, false},
+      {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
+      {8, 8, 8, 8},
+      {false, false, false, false},
+      {false, false, false, false},
       0,
       HID_TYPE_UNKNOWN,
       1,
@@ -363,13 +365,13 @@ TEST_F(GenericCompatTest, 6BController_MegaDriveMini) {
   hub_info expected = {
       sizeof(hid_report_desc),
       64,
-      {24, 32},
+      {24, 32, 40, 0xffff},
       0xffff,
       {0xffff, 0xffff, 0xffff, 0xffff},
-      {44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55},
-      {8, 8},
-      {false, false},
-      {false, false},
+      {44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56},
+      {8, 8, 4},
+      {false, false, false},
+      {false, false, false},
       0,
       HID_TYPE_UNKNOWN,
       1,
@@ -396,13 +398,13 @@ TEST_F(GenericPseudoCompatTest, 6BController_MegaDriveMini) {
   hub_info expected = {
       sizeof(pseudo_hid_report_desc),
       64,
-      {24, 32},
+      {24, 32, 40, 0xffff},
       0xffff,
       {0xffff, 0xffff, 0xffff, 0xffff},
-      {44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55},
-      {8, 8},
-      {false, false},
-      {false, false},
+      {44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56},
+      {8, 8, 4},
+      {false, false, false},
+      {false, false, false},
       0,
       HID_TYPE_UNKNOWN,
       1,

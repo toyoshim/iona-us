@@ -5,6 +5,8 @@
 #ifndef __hid_internal_h__
 #define __hid_internal_h__
 
+#include <stdint.h>
+
 struct usb_info {
   uint8_t class;
   uint16_t pid;

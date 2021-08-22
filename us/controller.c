@@ -97,6 +97,9 @@ void controller_update(uint8_t hub,
     Serial.printf("%x,", data[i]);
   Serial.println("");
 #endif  // _DBG_HID_REPORT_DUMP
+  if (info->type == HID_TYPE_KEYBOARD)
+    return;
+
   if (mode == MODE_TWINSTICK && hub != 0)
     return;
 

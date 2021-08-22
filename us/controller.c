@@ -14,10 +14,12 @@ static uint16_t raw_map[2] = {0, 0};
 static uint8_t jvs_map[5] = {0, 0, 0, 0, 0};
 static uint8_t coin_sw[2] = {0, 0};
 static uint8_t coin[2] = {0, 0};
+static uint8_t mahjong[4] = {0, 0, 0, 0};
 
 enum {
   MODE_NORMAL,
   MODE_TWINSTICK,
+  MODE_MAHJONG,
 };
 static uint8_t mode = MODE_NORMAL;
 static bool mode_sw = false;
@@ -70,6 +72,40 @@ static int8_t axis_check(const struct hub_info* info,
   return 0;
 }
 
+static void mahjong_update(const uint8_t* data) {
+  uint8_t i;
+  for (i = 0; i < 4; ++i)
+    mahjong[i] = 0;
+  if (data[0] & 0x11)  // Ctrl: Kan
+    mahjong[0] |= 0x04;
+  if (data[0] & 0x22)  // Shift: Reach
+    mahjong[1] |= 0x04;
+  if (data[0] & 0x44)  // Alt: Pon
+    mahjong[3] |= 0x08;
+  bool coin_key = false;
+  for (i = 2; i < 8; ++i) {
+    if (0x04 <= data[i] && data[i] <= 0x07)  // A-D
+      mahjong[data[i] - 0x04] |= 0x80;
+    else if (0x08 <= data[i] && data[i] <= 0x0b)  // E-H
+      mahjong[data[i] - 0x08] |= 0x20;
+    else if (0x0c <= data[i] && data[i] <= 0x0f)  // I-L
+      mahjong[data[i] - 0x0c] |= 0x10;
+    else if (0x10 <= data[i] && data[i] <= 0x11)  // M-N
+      mahjong[data[i] - 0x10] |= 0x08;
+    else if (data[i] == 0x2c)  // Space: Chi
+      mahjong[2] |= 0x08;
+    else if (data[i] == 0x1d)  // Z: Ron
+      mahjong[2] |= 0x04;
+    else if (data[i] == 0x1e)  // 1: Start
+      mahjong[0] |= 0x02;
+    else if (data[i] == 0x22)  // 5: Coin
+      coin_key = true;
+  }
+  coin_sw[0] = (coin_sw[0] << 1) | (coin_key ? 1 : 0);
+  if ((coin_sw[0] & 3) == 1)
+    coin[0]++;
+}
+
 void controller_init() {
   pinMode(4, 6, INPUT_PULLUP);
   pinMode(4, 7, INPUT_PULLUP);
@@ -80,7 +116,6 @@ void controller_update(uint8_t hub,
                        const uint8_t* data,
                        uint16_t size,
                        uint16_t* mask) {
-  size;
 #ifdef _DBG_HID_REPORT_DUMP
   static uint8_t old_data[256];
   bool modified = false;
@@ -97,8 +132,15 @@ void controller_update(uint8_t hub,
     Serial.printf("%x,", data[i]);
   Serial.println("");
 #endif  // _DBG_HID_REPORT_DUMP
-  if (info->type == HID_TYPE_KEYBOARD)
+  if (info->type == HID_TYPE_KEYBOARD) {
+    if (size == 8) {
+      mode = MODE_MAHJONG;
+      mahjong_update(data);
+    }
     return;
+  } else if (mode == MODE_MAHJONG) {
+    mode = MODE_NORMAL;
+  }
 
   if (mode == MODE_TWINSTICK && hub != 0)
     return;
@@ -276,8 +318,21 @@ uint16_t controller_raw(uint8_t player) {
   return raw_map[player];
 }
 
-uint8_t controller_jvs(uint8_t index) {
-  return jvs_map[index];
+uint8_t controller_jvs(uint8_t index, uint8_t gpout) {
+  if (mode != MODE_MAHJONG || index == 0)
+    return jvs_map[index];
+  if (index != 1)
+    return 0;
+  uint8_t service = jvs_map[1] & 0x40;
+  if (gpout == 0x40)
+    return mahjong[0] | service;
+  if (gpout == 0x20)
+    return mahjong[1] | service;
+  if (gpout == 0x10)
+    return mahjong[2] | service;
+  if (gpout == 0x80)
+    return mahjong[3] | service;
+  return service;
 }
 
 uint8_t controller_coin(uint8_t player) {

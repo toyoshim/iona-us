@@ -76,8 +76,8 @@ static void mode_rapid() {
 }
 
 static void mode_speed() {
-  uint16_t buttons = ((uint16_t)controller_jvs(1 + mode_player * 2) << 8) |
-                     controller_jvs(1 + mode_player * 2 + 1);
+  uint16_t buttons = ((uint16_t)controller_jvs(1 + mode_player * 2, 0) << 8) |
+                     controller_jvs(1 + mode_player * 2 + 1, 0);
   uint8_t setting = settings.player_setting[mode_player];
   if (buttons & 0x0200) {
     settings.settings[setting].speed = 1;  // 30
@@ -100,8 +100,8 @@ static void quit_speed() {
 }
 
 static void mode_select() {
-  uint16_t buttons = ((uint16_t)controller_jvs(1 + mode_player * 2) << 8) |
-                     controller_jvs(1 + mode_player * 2 + 1);
+  uint16_t buttons = ((uint16_t)controller_jvs(1 + mode_player * 2, 0) << 8) |
+                     controller_jvs(1 + mode_player * 2 + 1, 0);
   if (buttons & 0x0200) {
     settings.player_setting[mode_player] = 0;
   } else if (buttons & 0x0100) {

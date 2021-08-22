@@ -12,7 +12,7 @@
 #include "settings.h"
 #include "soft485.h"
 
-#define VER "1.10"
+#define VER "1.20"
 
 static const char id[] = "SEGA ENTERPRISES,LTD.compat;MP07-IONA-US;ver" VER;
 
@@ -21,6 +21,7 @@ static struct JVSIO_SenseClient sense;
 static struct JVSIO_LedClient led;
 
 static int8_t coin_index_bias = 0;
+static uint8_t gpout = 0;
 
 static void debug_putc(uint8_t val) {
   val;
@@ -83,11 +84,11 @@ static void jvs_poll(struct JVSIO_Lib* io) {
           settings_rapid_sync();
           controller_map(0, settings_rapid_mask(0), settings_button_masks(0));
           controller_map(1, settings_rapid_mask(1), settings_button_masks(1));
-          io->pushReport(io, controller_jvs(0));
-          io->pushReport(io, controller_jvs(1));
-          io->pushReport(io, controller_jvs(2));
-          io->pushReport(io, controller_jvs(3));
-          io->pushReport(io, controller_jvs(4));
+          io->pushReport(io, controller_jvs(0, gpout));
+          io->pushReport(io, controller_jvs(1, gpout));
+          io->pushReport(io, controller_jvs(2, gpout));
+          io->pushReport(io, controller_jvs(3, gpout));
+          io->pushReport(io, controller_jvs(4, gpout));
         }
       } else {
         Serial.println("Err CmdSwInput");
@@ -125,6 +126,7 @@ static void jvs_poll(struct JVSIO_Lib* io) {
       io->pushReport(io, kReportOk);
       break;
     case kCmdDriverOutput:
+      gpout = data[2];
       io->pushReport(io, kReportOk);
       break;
   }

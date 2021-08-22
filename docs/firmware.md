@@ -92,6 +92,7 @@ JVS I/Oとして利用する前、特にジャンパーピンを実装した人�
 - Ver 1.03 複合デバイスとREMOTE WAKEUPの対応を改善し、対応コントローラを追加しました
 - Ver 1.04 対応コントローラを追加しました
 - Ver 1.10 ツインスティックモードを追加しました
+- Ver 1.20 NAOMI麻雀モードを追加しました
 
 ## ファームウェアの互換性
 Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基本的に安定して動くはずです。
@@ -103,6 +104,7 @@ Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基�
 |-|-|-|
 |(Xbox 360規格コントローラ)|1.00|1.02a以降推奨|
 |(Xbox Oneシリーズ規格コントローラ)|1.00|1.02a以降推奨|
+|(Bootモード対応キーボード)|1.20|NAOMI麻雀モードに対応|
 |ホリパッドFPSプラス for PlayStation 4|1.00|PS3モードも対応|
 |ワイヤレスコントローラー（DUALSHOCK 4 - CUH-ZCT1J）|1.02||
 |ワイヤレスコントローラー（DUALSHOCK 4 - CUH-ZCT2J）|1.03||
@@ -126,6 +128,7 @@ async function flash() {
     'firmwares/us_v1_02a.bin',  // Ver 1.02a
     'firmwares/us_v1_04.bin',  // Ver 1.04
     'firmwares/us_v1_10.bin',  // Ver 1.10
+    'firmwares/us_v1_20.bin',  // Ver 1.20
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -151,7 +154,8 @@ async function flash() {
 <option>Ver 1.02</option>
 <option>Ver 1.02a</option>
 <option>Ver 1.04</option>
-<option selected>Ver 1.10</option>
+<option>Ver 1.10</option>
+<option selected>Ver 1.20</option>
 </select>
 <button onclick="flash();">書き込み</button>
 

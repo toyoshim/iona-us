@@ -112,6 +112,9 @@ Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基�
 |Nintendo Switch Proコントローラー|1.04||
 |Nintendo Switch Joy-Con 充電グリップ|1.04||
 |6B Controller (メガドライブミニ)|1.02a||
+|Xin-Mo Controller (*1)|1.20||
+
+(*1) パソケード フルHDテーブル筐体 PS3ドッキングモデル にて仕様されているコントローラ
 
 ---
 ## ファームウェア更新

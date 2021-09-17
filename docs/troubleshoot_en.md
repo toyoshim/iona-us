@@ -3,72 +3,69 @@ layout: default_en
 title: Troubleshooting
 permalink: /troubleshoot_en
 ---
-# トラブルシューティング (under translation)
+# Troubleshooting (under translation)
 ---
-## トラブル時の確認手順
-1. 接続時にLEDが点滅しない
-   1. micro USB端子から5Vの電源が供給されていますか？
-      - 電源を供給してください。
-   2. 電源供給時にSERVICEボタンを押していませんでしたか？
-      - SERVICEボタンは押さずに電源供給を開始してください。
-   3. ファームウェア更新に失敗していませんか？
-      - ファームウェアを再度書き込むことで回復します。
-      [ファーム更新](firmware)の手順に従い再書き込みしてください。
-   4. それ以外の場合
-      - 出荷中、出荷後の故障が考えられます。作者まで修理の相談をお願いします。
+## Playbook to shoot troubles
+1. LED does not blink on power-on
+   1. Do you supply 5V power via micro USB port correctly?
+      - Supply 5V power.
+   2. Don't you press SERVICE button on boot.
+      - Do not press SERVICE button on booting.
+   3. Did you fail firmware update?
+      - You can retry firmware updates even if the written firmware is broken.
+      Follow the steps described in the [Firmware Update](firmware_en) page.
+   4. Other cases.
+      - The device may get broken during or after shipping.
+      Feel free to contact the author.
 
-2. JVSのシステム基板からIONA-USが認識されない
-   1. JVS側コネクタとシステム基板を接続していますか？
-      - USBケーブルでJVSバスを接続してください。
-   2. ファームウェア更新用のジャンパが短絡されていませんか？
-      - JVSバスが正しく動作しなくなりますので元の状態に戻してください。
-   3. LEDが点滅または消灯していませんか？
-      - 起動時に点滅、JVS基板からバスリセットを受け取ると高速点滅、
-      アドレスを割り振られると点灯します。点灯状態にならないと認識されません。
-      相性問題の可能性がありますので下記の「それ以外の場合」にLEDの状態も添え、
-      作者まで連絡して頂けると対応できる可能性があります。
-   4. それ以外の場合
-      - IONA-USとシステム基板の間での相性問題が考えられます。
-      ファームウェアのアップデートで対応できる可能性がありますので作者まで連絡をお願いします。
-      [Compatibility Information](https://github.com/toyoshim/iona/wiki/Compatibility-Information)
-      に書かれていないボードは動作確認が取れていないため、ソフト的な相性問題が考えられます。
-      書かれている場合は、IONA-JSとの電気的特性の違いにより生じる相性問題の可能性があります。
-      いずれの場合もファームウェアで解決する事がありますので連絡して頂けると助かります。
+2. JVS based systems don't recognize IONA-US.
+   1. Do you connect IONA's JVS port to the JVS system correctly?
+      - Connect them for JVS bus with a general USB cable.
+   2. Are jumpper pins for firmware updates shorten?
+      - As it makes JVS but not to work, please open these pins.
+   3. Are LED blinking or off?
+      - It should blink after the initial boot, blink fastly on JVS but reset, turn on when an address is assigned over JVS. Unless an address is assigned, it should not be recognized.
+      As this may be a compatibility issue, feel free to contact author with LED status.
+   4. Other cases.
+      - May be a compatibility issue for IONA-US and the arcade system board.
+      It may be resolved by a firmware update if you report the issue.
+      If the title is not listed at 
+      [Compatibility Information](https://github.com/toyoshim/iona/wiki/Compatibility-Information),
+      it's just unsupported. If it is, there may be an electrical compatibility issue.
+      Etherway, firmware update may be able to solve the issue if you report.
 
-3. IONA-USに接続されたUSBコントローラで操作できない
-   1. 間にUSBハブ等を介さずに直接接続していますか？
-      - 直接接続してください。
-   2. 設定モードになっていませんか？
-      - TEST+SERVICE同時押しにより各種設定モードに入ると、
-      コントローラからの入力は基板側に反映されません。設定を終了してください。
-   3. USBコントローラ接続時にLEDが点滅しましたか？
-      - 認識できない形式のコントローラだった場合、LEDが点滅しません。
-      現在非対応のコントローラになりますので、
-      [報告](report)ページからコントローラの情報と共にサポート要望を出してください。
-   4. レイアウト設定は正しくできていますか？
-      - 正しく認識されたコントローラであっても、
-      レイアウト設定が間違っている場合には操作できない可能性があります。
-      [取扱説明書](index)の方法に従い、レイアウト設定を行うか、設定の初期化を行ってください。
-      それでも動作しない場合は、
-      [報告](report)ページからコントローラの情報と共に作者に連絡してください。
-   5. 1P側のコントローラがツインスティックモードになっていませんか？
-      - 1P側がツインスティックモードの場合、2P側に接続されたコントローラは無視されます。
-      通常モードに戻してご使用下さい。
-   6. それ以外の場合
-      - 同様に[報告](report)ページからコントローラの情報と共に作者に連絡してください。
+3. USB gamepads connected with IONA-US don't work
+   1. Do you use USB hub?
+      - Do not use a hub.
+   2. Do you enter any setting mode other than the normal mode.
+      - If you enter any configuration mode by pressing TEST+SERVICE,
+      inputs from gamepad are not sent to the system board over JVS.
+      Please quit the setting mode.
+   3. Do you see LED flash on connecting the USB gamepad?
+      - It doesn't flash if the gamepad is not recognized in confidence.
+      It wouldn't be an officially supported device.
+      Feel free to request the device support at the [Report](report_en) page with informatino for the device.
+   4. Do you configure custom layout correctly?
+      - It's possible that wrong configuration omit inputs.
+      Please follow the [manual](en) to configure custom layout as you want, or call factory settings.
+      If the problem persists, feel free to report the problem at the [Report](report_en) page with information for the device.
+   5. Do you enable the twinstick mode for the 1P gamepad?
+      - If the twinstick mode is enabled for the 1P gamepad, 2P gamepad will be ignored.
+      Please use it in the normal mode.
+   6. Other cases.
+      - Feel free to report the issue at the [Report](report_en) page with information for the device.
 
-4. 動作が安定しない
-   1. micro USBからの電源供給は十分ですか？
-      - 十分な電力供給能力のあるPC、電源付きHub、定格出力電流の大きいUSB充電器などをご利用ください。
-   2. ツインスティックモードになっていませんか？
-      - ツインスティックモードでは、コントローラは特殊な配置に変更されます。
-      [取扱説明書](index)をご覧の上、一般的なご利用範囲では通常モードに切り替えてご使用下さい。
-   3. それ以外の場合
-      - 個別にご相談下さい。
+4. Unstable behaviors
+   1. Power supply from the micro USB port is enough?
+      - Try another PC, a USB hub with power supply, a more powerful charger
+   2. Do you enable the twinstick mode?
+      - A special layout is enforced in the twinstick mode.
+      Please check the [Manual](en), and disable the twinstick mode for usual uses.
+   3. Other cases.
+      - Feel free to contact the author.
 
-## 連絡方法
-上記手順で指示があった場合は[報告](report)ページの説明に従い、
-それ以外の場合はフリーフォーマットにて、
-作者の[Twitterアカウント](https://twitter.com/toyoshim)まで報告して下さい。
-メンション飛ばしてもらっても構いませんし、DMを開いているのでそちらでも構いません。
-通知が飛ぶような形で連絡いただければ返信させていただきます。
+## Contact
+If the playbook suggests report issues, follow the steps described in [Report](report_en) page.
+Otherwise, feel free to contact [the author at Twitter](https://twitter.com/toyoshim).
+You can use the Twitter's mention feature, or send a DM as it's open for everyone.
+As long as notification is sent to me, I will reply.

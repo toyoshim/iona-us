@@ -76,7 +76,7 @@ Chosen settings above will be stored persistently.
 ### ⑤ Factory reset (LED - flash)
 You can reset all settings and restore default settings by pressing TEST and SERVICE together outside the normal mode. LED flashes, then go back to the normal mode automatically.
 
-### ⑥設定呼び出しモード(LED - 消灯)
+### ⑥ Call store config (LED - 消灯)
 You can enter the mode to call stored config by pushing SERVICE button outside the normal mode.
 Pressing button 1 - 10 in the custom layout recall the configuration set 1 - 10.
 Initial set for the factory setting is 1.

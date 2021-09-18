@@ -3,7 +3,7 @@ layout: default_en
 title: Buy
 permalink: /shop_en
 ---
-# Buy (under translation)
+# Buy
 ---
 
 ## Shops

@@ -3,7 +3,10 @@ layout: default_en
 title: Manual
 permalink: /en
 ---
-# Manual (under translation)
+日本語版サイトは[こちら](/)
+
+---
+# Manual
 ---
 
 ## Overview

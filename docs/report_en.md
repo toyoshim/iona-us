@@ -3,39 +3,37 @@ layout: default_en
 title: Report
 permalink: /report_en
 ---
-# 報告 (under translation)
+# Report
 ---
 
-## 未対応のコントローラについて報告
-このページから未対応のコントローラについて、デバイス情報を取得して要望として報告できます。
-WebHID APIを用いてコントローラの情報を取得します。
-ChromeまたはWebHIDの有効になったChromium系のブラウザにてご利用ください。
-情報は製品固有の物であり、環境や個人の情報は含みません。
-場合によってはここから取得できる情報だけでは不十分で、追加の作業をお願いする場合もあります。
-また、未対応のコントローラ対応やファームウェアの更新は保証外の作業であり、
-状況によっては時間を頂いたり、対応を諦める事もある事をご理解願います。
+## Request for Unsupported Devices
+Here, you can report detailed information on a device that does not work with IONA to request support.
+As this page uses WebHID API to obtain device information, you need to visit this page with Google Chrome or Chromium based browsers that enables WebHID support.
+Obtained information is only about the product itself, and does not contain any privacy information such as PC environment specific parameters, serial numbers, or something about you.
+These information might not be enough to support the device. In such case, author may ask additional information to support the device.
+We don't ensure that all reported devices will be supported though we try. It may take a long time, or we may give up to support some devices if it's difficult.
 
-## 既存の報告
-[こちらのページ](https://github.com/toyoshim/iona-us/issues)に未解決の報告をまとめてあります。
-既に報告が上がっている場合は対応をお待ち下さい。
-コメント欄に一言頂けると励みになったり修正時に通知が飛んだりします。
+## Known Issues, or Unresolved Reports
+[This site](https://github.com/toyoshim/iona-us/issues) contains unresolved reported issues.
+If there is already a request for the device, please wait until the issue is resolved.
+It's good to add some comments in the thread to encourage us to prioritize the issue, or you can get a notification when the issue is fixed.
 
-## 手順
-該当するコントローラをコンピュータに接続し、デバイスの名前を確認してください。
-下にある「コントローラと接続する」ボタンを押すと、下記のようなダイアログが現れます。
-ここに該当デバイスの名前が含まれているはずですので、選択して「接続」ボタンを押して下さい。
+## How to Report
+Please connect the device under the issue to the PC. You need to know the device name that appears on the PC.
+Please push the connect button below. You will see a dialog as follows.
+This dialog should contain the device name in the list. You need to choose the one you want to report, then press connect button.
 
-![プロンプト](prompt.png)
+![Prompt](prompt.png)
 
-正しく接続されると、下にある「コントローラ情報」にデバイス情報が表示されます。
-ここに表示された内容を全てコピーして、作者の[Twitterアカウント](https://twitter.com/toyoshim)まで報告して下さい。
-DMは解放してありますので、どなたでもDMが可能です。
+Once the device is connected correctly, device information appears in the controller information section below.
+Please copy all the information, then report it to author's [Twitter account](https://twitter.com/toyoshim).
+DM is open for everyone.
 
 ---
-<button onclick="connect();">コントローラと接続する</button>
+<button onclick="connect();">Connect</button>
 
 ---
-## コントローラ情報
+## Controller Information
 <pre id="info"></pre>
 
 <script>

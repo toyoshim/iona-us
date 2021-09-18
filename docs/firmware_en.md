@@ -3,123 +3,124 @@ layout: default_en
 title: Firmware Updates
 permalink: /firmware_en
 ---
-# ファームウェア更新 (under translation)
+# Firmware Updates
 ---
-## 前置き
-ファームウェア更新は、WebUSB APIを用いて、このページ上から行います。
-ChromeまたはWebUSBの有効になったChromium系のブラウザにてご利用下さい。
+## Caution
+You can update your device's firmware to support more devices or fix issues here.
+But as this page uses WebUSB API, you need to visit by Google Chrome or Chromium based browser that enables WebUSB API support.
 
-## 準備
-下の写真で白丸で囲まれた部分にスルーホールが4つあります。
-まずは電源を入れていない状態で、黄色で結んだ対と赤で結んだ対（距離が近い対）を短絡します。
-これによりJVS端子にUSB用のデータ線（D+/D-）を接続し、コンピュータとのUSB接続を可能にします。
+## Preparation
+There are 4 through-hole on the IONA board as you can see in the white circle below.
+Before supplying power, you need to shorten the yellow hole pair and the red hole pair respectively.
+This allows the JVS port to use USB data line, D+ and D-, to communicate with PC over USB protocol.
 
-![図](fw_fig.jpg)
+![Figure](fw_fig.jpg)
 
-ここでは簡単な方法をいくつか紹介します。
-まずは1枚目の写真も針金のような物をアーチ状に曲げて穴に刺す方法。
-ホチキスの芯などでも作成可能ですが細すぎると接触が悪くなるかもしれません。
+Here, we introduce some simple ways to shorten the holes.
 
-2枚目のピンセットを使った方法も、大胆に見えますが、作業も簡単でしっかり接続されるのでオススメです。
-ただ、ピンセットを複数持っている人は少ないかも。
+The first approach is to use a thin wire arch.
+You may be able to use a staple, but it might be too thin to provide a stable connection.
 
-一番の正攻法は3枚目のピンヘッダを取り付けてジャンパーピンで繋ぐ方法です。
-ただしハンダ付けが必要なので万人向けではありません。
+The second one is to use two pairs of tweezers.
+It may look a wild way, but actually it's very easy to get a stable connection.
+It's recommended if you have two pairs of tweezers.
 
-![針金](fw_wire.jpg)
-![ピンセット](fw_pinset.jpg)
-![ジャンパーピン](fw_jump.jpg)
+The last one is the ideal approach.
+You install pin headers, and connect them with jumpper pins.
+As it needs soldering, it isn't a good way for end users.
 
-## コンピュータとの接続
-まずは基板上のSERVICEボタン（中央付近のボタン）を押しながらmicro USBから給電開始します。
-SERVICEボタンが正しく認識されると、LEDランプが消灯したままのファームウェア更新モードになります。
-点滅してしまった場合は通常モードで起動しているため、もう一度電源の接続からやり直します。
+![Wires](fw_wire.jpg)
+![Tweezers](fw_pinset.jpg)
+![Jumpper](fw_jump.jpg)
 
-うまくファームウェア更新モードで起動したら、JVS端子を使ってコンピュータとUSBで接続します。
-この際、USB端子にはゲームコントローラ等を挿さないで下さい。特に1P側の端子はJVS端子の信号と衝突します。
+## Connect to PC
+First, you need to keep the SERVICE button on the board pressed, then start supplying the power.
+If the SERVICE button is correctly kept pressed until it boots, LED will not be on.
+This is the signal that IONA boots to the firmware update mode.
+If LED blinks, IONA runs in a normal mode, and you need to power off, and retry.
 
-## WinUSBの設定（Windowsで初回のみ）
-デバイスを初めて接続した場合、デバイスマネージャーに不明なデバイスとして表示されます。
-複数表示されている場合は、プロパティの詳細に`USB\VID_4348&PID_55E0\...`と表示されているデバイスが対象とするデバイスです。
-このデバイスに対し、システム提供のWinUSBと呼ばれる標準ドライバを割り当てる必要があります。
+Once it boots to the firmware update mode, connect IONA to your PC over USB via JVS port.
+You should not connect a gamepad to the P1 USB port. It conflicts with the USB connection to the PC host, and makes communication unstable.
 
-設定方法の詳細についてはMicrosoft公式のドキュメント
-「[システム提供のデバイス クラスを指定して WinUSB をインストールする](https://docs.microsoft.com/ja-jp/windows-hardware/drivers/usbcon/winusb-installation#installing-winusb-by-specifying-the-system-provided-device-class)」
-に書かれていますので、この手順に従って設定して下さい。
+## WinUSB Settings (only for the first time on Windows)
+When you connect IONA to your PC first time, it appears as an unknown device in the device manager.
+If there are multiple unknown devices, IONA is the one that shows `USB\VID_4348&PID_55E0\...` at the property in details tab.
+You need to install the system provinding default driver called as WinUSB for the device.
 
-インストール時にエラーが発生する場合、何回か試すと成功するとの報告があります。
-この不具合に関してはチップ内蔵のブートローダ、あるいはWindows側の問題のため、改善策は今の所ありません。
+You can follow the instruction explained at the Microsoft official site, [Installing WinUSB by specifying the system-provided device class](https://docs.microsoft.com/en-us/windows-hardware/drivers/usbcon/winusb-installation#installing-winusb-by-specifying-the-system-provided-device-class).
 
-![デバイスマネージャー](fw_devman.png)
+Some users said retry will help if installation failed.
+As this firmware update mode is provided by the chip vendor, I have no other ideas to mitigate this problem.
 
-## ファームウェアの選択
-ページ一番下のメニューから書き込みたいファームウェアのバージョンを選びます。
-現在はVer 1.00のみ選択可能です。
-選択後に書き込みボタンを押すと、以下のようなプロンプトが現れます。
+![Device Manager](fw_devman.png)
 
-USBのベンダーIDと製品IDで絞って選択画面を出していますので、基本ここには1つの選択肢しか現れません。
-複数出た場合は、同じチップを搭載したデバイスがファームウェア更新モードで接続されていないか確認して下さい。
-この状況はまず無いかとは思いますが……。
-一方で、何も表示されない場合には以下の点を確認してみて下さい。
+## Firmware Selection
+You can pick up any firmware version you install.
+When you push the flash button after selecting the firmware version, you will see a prompt as below.
 
-- 準備で行ったスルーホールの短絡がうまくいっていない、または接続が不安定
-- micro USBから電源が供給されていない
-- 電源は供給されているが、SERVICEボタンを押しながらファームウェア更新モードにしていない
+You will see only devices that have a specified vendor ID and product ID. Thus, you will see only one choice here usually.
+If you see multiple choices, another device that uses the same chip by chance would be connected in a firmware update mode to your PC. It should rarely happen, but just in case.
 
-出荷時のファームウェア書き込みも同等の方法を使っているため、初期不良の可能性はありません。
-かならず上記のいずれかの問題が起きているはずですので、ゆっくりと確認してみましょう。
+If you can see no choice, please check if there are following errors.
 
-プロンプトが正しく表示されていたら、表示されているデバイスを選択し「接続」ボタンを押します。
-書き込みが始まり、プログレスバーが更新されます。
-書き込み中のトラブルで更新が失敗しても壊れませんので安心して下さい。
-継続して再書き込みを行えば問題ありません。
-もし、繰返しエラーが発生する場合には連絡を頂けたら調査します。
+- Through-holls are not shortened correctly, or connection is unstable.
+- Does not supply power over micro USB.
+- Power is supplied, but doesn't boot to the firmware update mode with the SERVICE button.
 
-![プロンプト](fw_prompt.png)
+As the initial firmware is also flashed at this site, you can expect it just works unless it is damanged after shipping.
+So, probably you can find one of these issue, and will solve it.
 
-## 動作確認
-ファームウェア更新が正常終了したら、コンピュータから切断し、micro USBからの電源を供給し直して下さい。
-通常モードで起動した際にLEDが正しく点滅するようなら、更新は成功です。
-JVS I/Oとして利用する前、特にジャンパーピンを実装した人は、忘れずにスルーホールの短絡を解除して下さい。
-うっかり短時間の間ならJVSとして認識されない程度で済むと想います。
-気づかずに長時間通電した場合、USB用の信号とJVS用の信号が衝突し、システムボードやIONA-USの故障に繋がります。
+If you can see the prompt as expected, select the device and press the connect button.
+It starts flashing, and following UIs show it's progress.
+Even if it fails during flashing, device won't be broken, and you can just retry safely.
+Boot mode should not be broken by flashing.
 
-## ファームウェア更新履歴
-- Ver 1.00 展示用サンプルに搭載されたバージョンでコインが減らないバグがあります
-- Ver 1.01 初期製品出荷版
-- Ver 1.02 USBホストの動作で仕様違反があったので修正し、対応コントローラを追加しました
-- Ver 1.02a 他のコントローラ利用後にXbox系のコントローラを接続した際の動作不良を修正し、対応コントローラを追加しました
-- Ver 1.03 複合デバイスとREMOTE WAKEUPの対応を改善し、対応コントローラを追加しました
-- Ver 1.04 対応コントローラを追加しました
-- Ver 1.10 ツインスティックモードを追加しました
-- Ver 1.20 NAOMI麻雀モードを追加しました
+If you see a persistent issue, please contact the author.
 
-## ファームウェアの互換性
-Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基本的に安定して動くはずです。
-それ以外のUSB HIDデバイスについては、別のコントローラに対応する際に、うまく動作しなくなる可能性がゼロではありません。
-以下に挙げたデバイスについては、デスクリプタの内容を把握し、実機ではないですが自動テストで互換性を確認するようにしています。
-報告していただいたデバイスについても随時追加予定ですので、ここにないデバイスを継続的に使いたい場合は報告して頂けると幸いです。
+![Prompt](fw_prompt.png)
 
-|デバイス名称|確認バージョン|備考|
+## Confirmation
+One the firmware update finishes, please disconnect IONA from your PC, and stop supplying power to reboot.
+If it bookts and starts blinking after supplying power again, you succeeded the update.
+Please ensure the shortened pins are open again before connecting it to JVS systems.
+It may be ok if it does not long, but it may damage the device to connect over JVS with through-holls shortened.
+
+## Firmware History
+- Ver 1.00 Sample for KVClab., there is a bug that coin could not be decreased.
+- Ver 1.01 Initial firmware for the first lot.
+- Ver 1.02 Fix USB host behaviors' spec violation, and add some more device supports.
+- Ver 1.02a Fix Xbox controller unstability issue, and add some more device supports.
+- Ver 1.03 Improve composite device and REMOTE WAKEUP support, and add some more device supports.
+- Ver 1.04 Add some more device supports.
+- Ver 1.10 Add twinstick mode.
+- Ver 1.20 Add NAOMI Mahjong mode.
+
+## Firmware Compatibility
+All controllers that conform Xbox 360, or Xbox One series protocols are expected to work fine.
+Other USB HID devices support might get to be broken unexpectedly on supporting other new devices.
+We know HID descriptors on following devices, and have some automated unit tests. So, it's expected to keep better compatibility. We can add more automated tests when you report device information.
+If you find a device that isn't in the list, but works, it's a good idea to report information to get stable supports.
+
+|Device Name|Confirmed Version|Note|
 |-|-|-|
-|(Xbox 360規格コントローラ)|1.00|1.02a以降推奨|
-|(Xbox Oneシリーズ規格コントローラ)|1.00|1.02a以降推奨|
-|(Bootモード対応キーボード)|1.20|NAOMI麻雀モードに対応|
-|ホリパッドFPSプラス for PlayStation 4|1.00|PS3モードも対応|
-|ワイヤレスコントローラー（DUALSHOCK 4 - CUH-ZCT1J）|1.02||
-|ワイヤレスコントローラー（DUALSHOCK 4 - CUH-ZCT2J）|1.03||
-|ホリパッドミニ for Nintendo Switch|1.00||
-|Nintendo Switch Proコントローラー|1.04||
-|Nintendo Switch Joy-Con 充電グリップ|1.04||
-|6B Controller (メガドライブミニ)|1.02a||
+|(Xbox 360 protocol controllers)|1.00|1.02a and later are recommended|
+|(Xbox One series protocol controllers)|1.00|1.02a and later are recommended|
+|(Keyboard supporting boot mode)|1.20|supported by NAOMI Mahjong mode|
+|Horipad FPS plus for PlayStation 4|1.00|PS3 mode also works|
+|Wireless Controller（DUALSHOCK 4 - CUH-ZCT1J）|1.02||
+|Wireless Controller（DUALSHOCK 4 - CUH-ZCT2J）|1.03||
+|Horipad mini for Nintendo Switch|1.00||
+|Nintendo Switch Pro Controller|1.04||
+|Nintendo Switch Joy-Con Charger Glip|1.04||
+|6B Controller (MEGADRIVE mini)|1.02a||
 |Xin-Mo Controller (*1)|1.20||
 
-(*1) パソケード フルHDテーブル筐体 PS3ドッキングモデル にて仕様されているコントローラ
+(*1) Controller used by the Pasocade full HD table cab. PS3 dock model
 
 ---
-## ファームウェア更新
-以下は実際にファームウェア更新を行うためのUIです。書き込みボタンにより実際に更新されます。
-動作確認が不十分でバグも確認されているVer 1.03は選択できないようにしました。
+## Firmware Update
+This is the real UI to update firmware. Flash button will actually flash the chosen firmware.
+Ver 1.03  is hidden as it has many known issues.
 
 <script src="https://toyoshim.github.io/CH559Flasher.js/CH559Flasher.js"></script>
 <script>
@@ -160,12 +161,12 @@ async function flash() {
 <option>Ver 1.10</option>
 <option selected>Ver 1.20</option>
 </select>
-<button onclick="flash();">書き込み</button>
+<button onclick="flash();">Flash</button>
 
 | | |
 |-|-|
-|書き込み|0% <progress id="progress_write" max=1 value=0></progress> 100%|
-|検証|0% <progress id="progress_verify" max=1 value=0></progress> 100%|
+|Write|0% <progress id="progress_write" max=1 value=0></progress> 100%|
+|Verify|0% <progress id="progress_verify" max=1 value=0></progress> 100%|
 
-結果
+Result
 <pre id="error"></pre>

@@ -3,6 +3,9 @@ layout: default
 title: 取扱説明書
 permalink: /
 ---
+English version is [here](en)
+
+---
 # 取扱説明書
 ---
 

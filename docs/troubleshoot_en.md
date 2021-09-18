@@ -3,7 +3,7 @@ layout: default_en
 title: Troubleshooting
 permalink: /troubleshoot_en
 ---
-# Troubleshooting (under translation)
+# Troubleshooting
 ---
 ## Playbook to shoot troubles
 1. LED does not blink on power-on

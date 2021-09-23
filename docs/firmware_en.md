@@ -148,7 +148,7 @@ async function flash() {
   const bin = await (await fetch(url)).arrayBuffer();
   await flasher.write(bin, rate => progressWrite.value = rate);
   await flasher.verify(bin, rate => progressVerify.value = rate);
-  error.innerText = flasher.error ? flasher.error : '成功';
+  error.innerText = flasher.error ? flasher.error : 'Succeeded';
 }
 </script>
 

@@ -5,6 +5,7 @@
 #include "dipsw.h"
 
 #include "chlib/ch559.h"
+#include "chlib/serial.h"
 
 static uint8_t dipsw = 0xff;
 static bool rapid = false;

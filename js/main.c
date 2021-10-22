@@ -3,6 +3,7 @@
 // in the LICENSE file.
 
 #include "chlib/ch559.h"
+#include "chlib/serial.h"
 #include "client.h"
 #include "dipsw.h"
 #include "jamma.h"

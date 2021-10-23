@@ -12,7 +12,7 @@
 #include "settings.h"
 #include "soft485.h"
 
-#define VER "1.20"
+#define VER "1.21"
 
 static const char id[] = "SEGA ENTERPRISES,LTD.compat;MP07-IONA-US;ver" VER;
 

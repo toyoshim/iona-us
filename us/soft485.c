@@ -88,8 +88,8 @@ void soft485_input() {
   while (count != 20)
     ;
 
-  pinMode(4, 0, INPUT_PULLUP);
-  pinMode(4, 1, INPUT_PULLUP);
+  pinMode(4, 0, INPUT);
+  pinMode(4, 1, INPUT);
   SER1_FCR = bFCR_R_FIFO_CLR;  // Clear FIFO
   SER1_FCR = bFCR_FIFO_EN;     // Enable FIFO
   TR0 = 0;                     // Stop timer count

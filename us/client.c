@@ -72,6 +72,7 @@ void data_client(struct JVSIO_DataClient* client) {
 static void sense_begin(struct JVSIO_SenseClient* client) {
   client;
   pwm1_init();
+  pwm1_duty(3, 4);
 }
 
 static void sense_set(struct JVSIO_SenseClient* client, bool ready) {

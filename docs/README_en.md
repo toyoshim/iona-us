@@ -17,6 +17,8 @@ For JVS based system having standard power supply, video and audio outputs, such
 ### JVS Systems
 Like the previous product, [MP01-IONA-JS](../iona-js/), it support almost all JVS based systems. Also, now it supports special I/O layouts such as Cyber Troopers Virtual-On Oratorio Tangram for NAOMI and Mahjong mode used by e.g. Idol Janshi Suchipai III for NAOMI. See later sections to know how these mode works.
 
+If Ver 1.10 based PCB isn't recognized by namco's system board, this [mod](mod_en) will solve the stability issue. Recent boards with firmware 1.21 and later will have this fix by default. Triforce and System 2x6 may have this compatibility issue.
+
 ### USB Gamepads
 It's expected to support all controllers for Xbox 360 and One serices, and many controllers for PS4. Also, some controllers for PS3 and Switch will be available.
 Usually each USB gamepad requires a special treatment to handle it correctly, IONA could not support all devices, but the firmware is designed as flexible to be able to handle as many controllers as possible.

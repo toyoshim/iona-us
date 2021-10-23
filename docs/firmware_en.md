@@ -94,6 +94,7 @@ It may be ok if it does not long, but it may damage the device to connect over J
 - Ver 1.04 Add some more device supports.
 - Ver 1.10 Add twinstick mode.
 - Ver 1.20 Add NAOMI Mahjong mode.
+- Ver 1.21 Improve JVS electrical characteristics.
 
 ## Firmware Compatibility
 All controllers that conform Xbox 360, or Xbox One series protocols are expected to work fine.
@@ -159,7 +160,8 @@ async function flash() {
 <option>Ver 1.02a</option>
 <option>Ver 1.04</option>
 <option>Ver 1.10</option>
-<option selected>Ver 1.20</option>
+<option>Ver 1.20</option>
+<option selected>Ver 1.21</option>
 </select>
 <button onclick="flash();">Flash</button>
 

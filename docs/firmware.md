@@ -93,6 +93,7 @@ JVS I/Oとして利用する前、特にジャンパーピンを実装した人�
 - Ver 1.04 対応コントローラを追加しました
 - Ver 1.10 ツインスティックモードを追加しました
 - Ver 1.20 NAOMI麻雀モードを追加しました
+- Ver 1.21 JVS電気特性の向上
 
 ## ファームウェアの互換性
 Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基本的に安定して動くはずです。
@@ -132,6 +133,7 @@ async function flash() {
     'firmwares/us_v1_04.bin',  // Ver 1.04
     'firmwares/us_v1_10.bin',  // Ver 1.10
     'firmwares/us_v1_20.bin',  // Ver 1.20
+    'firmwares/us_v1_21.bin',  // Ver 1.21
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -158,7 +160,8 @@ async function flash() {
 <option>Ver 1.02a</option>
 <option>Ver 1.04</option>
 <option>Ver 1.10</option>
-<option selected>Ver 1.20</option>
+<option>Ver 1.20</option>
+<option selected>Ver 1.21</option>
 </select>
 <button onclick="flash();">書き込み</button>
 

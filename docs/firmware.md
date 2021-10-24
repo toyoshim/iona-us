@@ -94,6 +94,7 @@ JVS I/Oとして利用する前、特にジャンパーピンを実装した人�
 - Ver 1.10 ツインスティックモードを追加しました
 - Ver 1.20 NAOMI麻雀モードを追加しました
 - Ver 1.21 JVS電気特性の向上
+- Ver 1.22 レイアウト設定モードに入るには0.5秒以上の同時押しが必要になりました
 
 ## ファームウェアの互換性
 Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基本的に安定して動くはずです。
@@ -134,6 +135,7 @@ async function flash() {
     'firmwares/us_v1_10.bin',  // Ver 1.10
     'firmwares/us_v1_20.bin',  // Ver 1.20
     'firmwares/us_v1_21.bin',  // Ver 1.21
+    'firmwares/us_v1_22.bin',  // Ver 1.22
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -161,7 +163,8 @@ async function flash() {
 <option>Ver 1.04</option>
 <option>Ver 1.10</option>
 <option>Ver 1.20</option>
-<option selected>Ver 1.21</option>
+<option>Ver 1.21</option>
+<option selected>Ver 1.22</option>
 </select>
 <button onclick="flash();">書き込み</button>
 

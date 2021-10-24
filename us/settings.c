@@ -143,15 +143,15 @@ static void slow_poll() {
   uint8_t next_mode = S_NORMAL;
   switch (mode) {
     case S_NORMAL: {
-      bool last_button = last_buttons[0] && last_buttons[1];
-      bool button = button0 && button1;
-      changed = last_button && !button;
+      changed = button0 && button1;
       next_mode = S_WAIT;
+      mode_step = 0;
       break;
     }
     case S_WAIT:
       changed = !button0 && !button1;
-      next_mode = S_LAYOUT;
+      mode_step++;
+      next_mode = (mode_step > 30) ? S_LAYOUT : S_NORMAL;
       break;
     case S_LAYOUT:
     case S_RAPID:
@@ -242,7 +242,7 @@ static void slow_poll() {
 
 void settings_init() {
   led_init(1, 5, LOW);
-  led_mode(L_BLINK);
+  settings_led_mode(L_BLINK);
 
   // Initialize data in flash, and get a copy
   flash_init(*(uint32_t*)"IONA");
@@ -268,7 +268,7 @@ void settings_poll() {
 }
 
 uint16_t settings_rapid_mask(uint8_t player) {
-  if (mode != S_NORMAL)
+  if (mode != S_NORMAL && mode != S_WAIT)
     return 0xffff;
   bool rapid_mask =
       rapid_step[player] >
@@ -296,6 +296,6 @@ void settings_rapid_sync() {
 
 void settings_led_mode(uint8_t client_mode) {
   client_led_mode = client_mode;
-  if (mode == S_NORMAL)
+  if (mode == S_NORMAL || mode == S_WAIT)
     led_mode(client_mode);
 }

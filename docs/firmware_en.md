@@ -95,6 +95,7 @@ It may be ok if it does not long, but it may damage the device to connect over J
 - Ver 1.10 Add twinstick mode.
 - Ver 1.20 Add NAOMI Mahjong mode.
 - Ver 1.21 Improve JVS electrical characteristics.
+- Ver 1.22 Requre buttons pressed over 0.5 seconds to enter the layout mode.
 
 ## Firmware Compatibility
 All controllers that conform Xbox 360, or Xbox One series protocols are expected to work fine.
@@ -134,6 +135,7 @@ async function flash() {
     'firmwares/us_v1_04.bin',  // Ver 1.04
     'firmwares/us_v1_10.bin',  // Ver 1.10
     'firmwares/us_v1_20.bin',  // Ver 1.20
+    'firmwares/us_v1_22.bin',  // Ver 1.22
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -161,7 +163,8 @@ async function flash() {
 <option>Ver 1.04</option>
 <option>Ver 1.10</option>
 <option>Ver 1.20</option>
-<option selected>Ver 1.21</option>
+<option>Ver 1.21</option>
+<option selected>Ver 1.22</option>
 </select>
 <button onclick="flash();">Flash</button>
 

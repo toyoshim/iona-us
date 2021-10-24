@@ -17,7 +17,9 @@ For JVS based system having standard power supply, video and audio outputs, such
 ### JVS Systems
 Like the previous product, [MP01-IONA-JS](../iona-js/), it support almost all JVS based systems. Also, now it supports special I/O layouts such as Cyber Troopers Virtual-On Oratorio Tangram for NAOMI and Mahjong mode used by e.g. Idol Janshi Suchipai III for NAOMI. See later sections to know how these mode works.
 
-If Ver 1.10 based PCB isn't recognized by namco's system board, this [mod](mod_en) will solve the stability issue. Recent boards with firmware 1.21 and later will have this fix by default. Triforce and System 2x6 may have this compatibility issue.
+If Ver 1.10 based PCB isn't recognized by namco's system board, this [mod](mod_en) will solve the stability issue.
+Triforce and System 2x6 may have this compatibility issue.
+We will try solving this issue in the next PCB update.
 
 ### USB Gamepads
 It's expected to support all controllers for Xbox 360 and One serices, and many controllers for PS4. Also, some controllers for PS3 and Switch will be available.
@@ -66,6 +68,7 @@ Works as a JVS I/O controllers with chosen settings.
 
 ### ② Layout config mode (LED - fact blink)
 On pushing TEST and SERVICE together, it enters the layout config mode.
+After firmware ver 1.22, you need to press them together over 0.5 second to enter the layout config mode.
 You don't need to push them exactly together, e.g. keeping TEST down and clicking SERVICE will work.
 
 In the button layuout mode, you will choose physical buttons in the following order, coin, start, button1 to 10. If you push multiple buttons together, you can assign multiple physical buttons into one button. You don't need to push them at the eaxctly timing as well. When you press a button, IONA starts recording all pressed buttons until all buttons are released, then assign them all to the target button. You continue this sequence until all 12 buttons are mapped. If you leave this mode before settings all, remaining buttons are remained to have no assignment. If you configure no button, exceptionally IONA doesn't update layout at all and move to the next mode.

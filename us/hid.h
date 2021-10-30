@@ -14,6 +14,7 @@ enum {
   HID_TYPE_XBOX_360,
   HID_TYPE_XBOX_ONE,
   HID_TYPE_SWITCH,
+  HID_TYPE_GENERIC,
 };
 
 enum {

@@ -95,6 +95,7 @@ JVS I/Oとして利用する前、特にジャンパーピンを実装した人�
 - Ver 1.20 NAOMI麻雀モードを追加しました
 - Ver 1.21 JVS電気特性の向上
 - Ver 1.22 レイアウト設定モードに入るには0.5秒以上の同時押しが必要になりました
+- Ver 1.23 コントローラ接続時に電源が安定するまで少し長く待つようにしました
 
 ## ファームウェアの互換性
 Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基本的に安定して動くはずです。
@@ -113,6 +114,7 @@ Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基�
 |ホリパッドミニ for Nintendo Switch|1.00||
 |Nintendo Switch Proコントローラー|1.04||
 |Nintendo Switch Joy-Con 充電グリップ|1.04||
+|CYBER・アーケードスティック|1.23||
 |6B Controller (メガドライブミニ)|1.02a||
 |Xin-Mo Controller (*1)|1.20||
 
@@ -136,6 +138,7 @@ async function flash() {
     'firmwares/us_v1_20.bin',  // Ver 1.20
     'firmwares/us_v1_21.bin',  // Ver 1.21
     'firmwares/us_v1_22.bin',  // Ver 1.22
+    'firmwares/us_v1_23.bin',  // Ver 1.23
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -164,7 +167,8 @@ async function flash() {
 <option>Ver 1.10</option>
 <option>Ver 1.20</option>
 <option>Ver 1.21</option>
-<option selected>Ver 1.22</option>
+<option>Ver 1.22</option>
+<option selected>Ver 1.23</option>
 </select>
 <button onclick="flash();">書き込み</button>
 

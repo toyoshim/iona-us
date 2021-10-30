@@ -319,6 +319,16 @@ quit:
   for (uint8_t i = 0; i < 13; ++i)
     Serial.printf("button %d: %d\n", i, hub_info[hub].button[i]);
 #endif
+  if (hub_info[hub].type == HID_TYPE_UNKNOWN) {
+    if (hub_info[hub].report_size && hub_info[hub].button[12] != 0xfff &&
+        ((hub_info[hub].axis[0] != 0xffff && hub_info[hub].axis[1] != 0xffff) ||
+         hub_info[hub].hat != 0xffff ||
+         (hub_info[hub].dpad[0] != 0xffff && hub_info[hub].dpad[1] != 0xffff &&
+          hub_info[hub].dpad[2] != 0xffff &&
+          hub_info[hub].dpad[3] != 0xffff))) {
+      hub_info[hub].type = HID_TYPE_GENERIC;
+    }
+  }
   hub_info[hub].state = HID_STATE_READY;
   if (hub_info[hub].type == HID_TYPE_SWITCH)
     hid_switch_initialize(&hub_info[hub]);

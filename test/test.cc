@@ -162,7 +162,7 @@ TEST_F(PS4CompatTest, HoripadFpsPlusForPlayStation4_ModePS3) {
       {false, false, false, false},
       {false, false, false, false},
       0,
-      HID_TYPE_UNKNOWN,
+      HID_TYPE_GENERIC,
       1,
       HID_STATE_READY,
   };
@@ -332,7 +332,7 @@ TEST_F(PS3PseudoCompatTest, XinMoController) {
       {false, false, false, false},
       {false, false, false, false},
       0,
-      HID_TYPE_UNKNOWN,
+      HID_TYPE_GENERIC,
       1,
       HID_STATE_READY,
   };
@@ -373,7 +373,7 @@ TEST_F(SwitchCompatTest, HoripadMiniForNintendoSwitch) {
       {false, false, false, false},
       {false, false, false, false},
       0,
-      HID_TYPE_UNKNOWN,
+      HID_TYPE_GENERIC,
       1,
       HID_STATE_READY,
   };
@@ -404,7 +404,7 @@ TEST_F(SwitchCompatTest, RetroArcadeStick) {
       {false, false, false, false},
       {false, false, false, false},
       0,
-      HID_TYPE_UNKNOWN,
+      HID_TYPE_GENERIC,
       1,
       HID_STATE_READY,
   };
@@ -440,7 +440,7 @@ TEST_F(SwitchPseudoCompatTest, RetroArcadeStick) {
       {false, false, false, false},
       {false, false, false, false},
       0,
-      HID_TYPE_UNKNOWN,
+      HID_TYPE_GENERIC,
       1,
       HID_STATE_READY,
   };
@@ -476,7 +476,7 @@ TEST_F(GenericCompatTest, 6BController_MegaDriveMini) {
       {false, false, false},
       {false, false, false},
       0,
-      HID_TYPE_UNKNOWN,
+      HID_TYPE_GENERIC,
       1,
       HID_STATE_READY,
   };
@@ -509,7 +509,7 @@ TEST_F(GenericPseudoCompatTest, 6BController_MegaDriveMini) {
       {false, false, false},
       {false, false, false},
       0,
-      HID_TYPE_UNKNOWN,
+      HID_TYPE_GENERIC,
       1,
       HID_STATE_READY,
   };

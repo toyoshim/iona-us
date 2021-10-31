@@ -46,6 +46,7 @@ void controller_poll();
 uint16_t controller_raw(uint8_t player);
 uint8_t controller_jvs(uint8_t index, uint8_t gpout);
 uint8_t controller_coin(uint8_t player);
+uint16_t controller_analog(uint8_t index);
 void controller_coin_add(uint8_t player, uint8_t add);
 void controller_coin_sub(uint8_t player, uint8_t sub);
 bool controller_button(uint8_t button);

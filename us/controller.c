@@ -15,6 +15,7 @@ static uint8_t jvs_map[5] = {0, 0, 0, 0, 0};
 static uint8_t coin_sw[2] = {0, 0};
 static uint8_t coin[2] = {0, 0};
 static uint8_t mahjong[4] = {0, 0, 0, 0};
+static uint16_t analog[4] = {0x8000, 0x8000, 0x8000, 0x8000};
 
 enum {
   MODE_NORMAL,
@@ -34,11 +35,13 @@ static bool button_check(uint16_t index, const uint8_t* data) {
 
 static int8_t axis_check(const struct hub_info* info,
                          const uint8_t* data,
+                         uint8_t hub,
                          uint8_t index) {
   if (info->axis[index] == 0xffff)
     return 0;
   if (info->axis_size[index] == 8) {
     uint8_t v = data[info->axis[index] >> 3];
+    analog[hub * 2 + index] = v << 8;
     if (v < 0x60)
       return -1;
     if (v > 0xa0)
@@ -53,6 +56,7 @@ static int8_t axis_check(const struct hub_info* info,
       v += 0x0800;
     if (info->axis_polarity[index])
       v = 0x0fff - v;
+    analog[hub * 2 + index] = v << 4;
     if (v < 0x0600)
       return -1;
     if (v > 0x0a00)
@@ -64,6 +68,7 @@ static int8_t axis_check(const struct hub_info* info,
       v += 0x8000;
     if (info->axis_polarity[index])
       v = 0xffff - v;
+    analog[hub * 2 + index] = v;
     if (v < 0x6000)
       return -1;
     if (v > 0xa000)
@@ -159,12 +164,12 @@ void controller_update(uint8_t hub,
   uint8_t d = button_check(info->dpad[1], data) ? 1 : 0;
   uint8_t l = button_check(info->dpad[2], data) ? 1 : 0;
   uint8_t r = button_check(info->dpad[3], data) ? 1 : 0;
-  int8_t x = axis_check(info, data, 0);
+  int8_t x = axis_check(info, data, hub, 0);
   if (x < 0)
     l = 1;
   else if (x > 0)
     r = 1;
-  int8_t y = axis_check(info, data, 1);
+  int8_t y = axis_check(info, data, hub, 1);
   if (y < 0)
     u = 1;
   else if (y > 0)
@@ -243,8 +248,8 @@ void controller_update(uint8_t hub,
   mode_sw = current_mode_sw;
 
   if (mode == MODE_TWINSTICK) {
-    int8_t rx = axis_check(info, data, 2);
-    int8_t ry = axis_check(info, data, 3);
+    int8_t rx = axis_check(info, data, 0, 2);
+    int8_t ry = axis_check(info, data, 0, 3);
     jvs_map[3] = ((ry < 0) ? 0x20 : 0) | ((ry > 0) ? 0x10 : 0) |
                  ((rx < 0) ? 0x08 : 0) | ((rx > 0) ? 0x04 : 0);
   }
@@ -337,6 +342,12 @@ uint8_t controller_jvs(uint8_t index, uint8_t gpout) {
 
 uint8_t controller_coin(uint8_t player) {
   return coin[player];
+}
+
+uint16_t controller_analog(uint8_t index) {
+  if (index < 4)
+    return analog[index];
+  return 0x8000;
 }
 
 void controller_coin_add(uint8_t player, uint8_t add) {

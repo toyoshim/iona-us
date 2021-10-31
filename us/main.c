@@ -12,7 +12,7 @@
 #include "settings.h"
 #include "soft485.h"
 
-#define VER "1.23"
+#define VER "1.30"
 
 static const char id[] = "SEGA ENTERPRISES,LTD.compat;MP07-IONA-US;ver" VER;
 
@@ -108,8 +108,9 @@ static void jvs_poll(struct JVSIO_Lib* io) {
     case kCmdAnalogInput:
       io->pushReport(io, kReportOk);
       for (uint8_t channel = 0; channel < data[1]; ++channel) {
-        io->pushReport(io, 0x80);
-        io->pushReport(io, 0x00);
+        uint16_t analog = controller_analog(channel);
+        io->pushReport(io, analog >> 8);
+        io->pushReport(io, analog & 0xff);
       }
       break;
     case kCmdCoinSub:

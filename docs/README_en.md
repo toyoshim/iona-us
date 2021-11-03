@@ -15,14 +15,16 @@ For JVS based system having standard power supply, video and audio outputs, such
 
 ## Compatibility
 ### JVS Systems
-Like the previous product, [MP01-IONA-JS](../iona-js/), it support almost all JVS based systems. Also, now it supports special I/O layouts such as Cyber Troopers Virtual-On Oratorio Tangram for NAOMI and Mahjong mode used by e.g. Idol Janshi Suchipai III for NAOMI. See later sections to know how these mode works.
+Like the previous product, [MP01-IONA-JS](../iona-js/), it support almost all JVS based systems. Also, now it supports special I/O layouts such as Cyber Troopers Virtual-On Oratorio Tangram for NAOMI and Mahjong mode used by e.g. Idol Janshi Suchipai III for NAOMI. See later sections to know how these mode works. If you connect Guncon3, zapper mode will be activated.
 
 If Ver 1.10 based PCB isn't recognized by namco's system board, this [mod](mod_en) will solve the stability issue.
 Triforce and System 2x6 may have this compatibility issue.
 We will try solving this issue in the next PCB update.
 
+From firmware 1.30, P1's X/Y axies are assigned to analog 0,1, and P2's X/Y axies are done to analog 2,3.  Guncon mode is also added at 1.31.
+
 ### USB Gamepads
-It's expected to support all controllers for Xbox 360 and One serices, and many controllers for PS4. Also, some controllers for PS3 and Switch will be available.
+It's expected to support all controllers for Xbox 360 and One serices, and many controllers for PS4. Also, some controllers for PS3 and Switch will be available. Guncon3 for PS3 is also available.
 Usually each USB gamepad requires a special treatment to handle it correctly, IONA could not support all devices, but the firmware is designed as flexible to be able to handle as many controllers as possible.
 It supports 1 lever and 10 buttons at maximum. Both left analog stick and D-Pad are assigned to the lever. 
 If your gamepad isn't available, you can request supporting it from the [Report](report_en) page.
@@ -57,6 +59,11 @@ In the twinstick mode, left analog stick and L1-3 buttons are assigned as 1P con
 ### Mahjong Mode
 When a USB keyboard supporting boot mode, though almost all keyboards will support, is connected, IONA switches to mahjong mode.
 In this mode, the layhout is adjusted to play with mahjong games for NAOMI. Key assignments are compatible with MAME. A-N are mapped to A-N, 5 is for coin, 1 is for start, ctrl, alt, space, shift are for Kan, Pon, Chi, Reach, then Z is for Ron.
+
+### Zapper Mode
+If you connect guncon3 for PS3, zapper mode will be activated automatically.
+Gun's direction will apear as X/Y and analog 0,1, and A1 will be assigned to the start button. Trigger will be mapped to the button 1.
+This is aligned with what DeathCrimson OX wants.
 
 ## Settings
 ### Transit operation modes

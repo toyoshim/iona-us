@@ -96,6 +96,8 @@ JVS I/Oとして利用する前、特にジャンパーピンを実装した人�
 - Ver 1.21 JVS電気特性の向上
 - Ver 1.22 レイアウト設定モードに入るには0.5秒以上の同時押しが必要になりました
 - Ver 1.23 コントローラ接続時に電源が安定するまで少し長く待つようにしました
+- Ver 1.30 アナログ０−３に対し、P1アナログX/Y、P2アナログX/Yを割り当てた
+- Ver 1.31 ガンコン3に対応しました
 
 ## ファームウェアの互換性
 Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基本的に安定して動くはずです。
@@ -108,6 +110,7 @@ Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基�
 |(Xbox 360規格コントローラ)|1.00|1.02a以降推奨|
 |(Xbox Oneシリーズ規格コントローラ)|1.00|1.02a以降推奨|
 |(Bootモード対応キーボード)|1.20|NAOMI麻雀モードに対応|
+|ガンコン3|1.31||DeathCrimson OX対応|
 |ホリパッドFPSプラス for PlayStation 4|1.00|PS3モードも対応|
 |ワイヤレスコントローラー（DUALSHOCK 4 - CUH-ZCT1J）|1.02||
 |ワイヤレスコントローラー（DUALSHOCK 4 - CUH-ZCT2J）|1.03||
@@ -139,6 +142,8 @@ async function flash() {
     'firmwares/us_v1_21.bin',  // Ver 1.21
     'firmwares/us_v1_22.bin',  // Ver 1.22
     'firmwares/us_v1_23.bin',  // Ver 1.23
+    'firmwares/us_v1_30.bin',  // Ver 1.30
+    'firmwares/us_v1_31.bin',  // Ver 1.31
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -168,7 +173,9 @@ async function flash() {
 <option>Ver 1.20</option>
 <option>Ver 1.21</option>
 <option>Ver 1.22</option>
-<option selected>Ver 1.23</option>
+<option>Ver 1.23</option>
+<option>Ver 1.30</option>
+<option selected>Ver 1.31</option>
 </select>
 <button onclick="flash();">書き込み</button>
 

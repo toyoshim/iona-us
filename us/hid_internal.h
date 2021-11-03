@@ -9,6 +9,7 @@
 
 struct usb_info {
   uint8_t class;
+  uint16_t vid;
   uint16_t pid;
   uint16_t ep_max_packet_size;
   uint8_t ep;  // interrupt out

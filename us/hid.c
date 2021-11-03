@@ -8,6 +8,7 @@
 #include "chlib/led.h"
 #include "chlib/serial.h"
 #include "chlib/usb.h"
+#include "hid_guncon3.h"
 #include "hid_internal.h"
 #include "hid_keyboard.h"
 #include "hid_switch.h"
@@ -39,17 +40,23 @@ static void check_device_desc(uint8_t hub, const uint8_t* data) {
   const struct usb_desc_device* desc = (const struct usb_desc_device*)data;
 
 #ifdef _DBG_DESC
+  Serial.printf("device vendor: %x%x\n", desc->idVendor >> 8,
+                desc->idVendor & 0xff);
+  Serial.printf("device product: %x%x\n", desc->idProduct >> 8,
+                desc->idProduct & 0xff);
   Serial.printf("device class: %x\n", desc->bDeviceClass);
   Serial.printf("device subclass: %x\n", desc->bDeviceSubClass);
   Serial.printf("device protocol: %x\n", desc->bDeviceProtocol);
-#endif  // _DBG_DESC
+#endif
 
   usb_info[hub].class = desc->bDeviceClass;
+  usb_info[hub].vid = desc->idVendor;
   usb_info[hub].pid = desc->idProduct;
 
   if (hid_keyboard_check_device_desc(&hub_info[hub], desc) ||
       hid_xbox_check_device_desc(&hub_info[hub], desc) ||
-      hid_switch_check_device_desc(&hub_info[hub], &usb_info[hub], desc)) {
+      hid_switch_check_device_desc(&hub_info[hub], &usb_info[hub], desc) ||
+      hid_guncon3_check_device_desc(&hub_info[hub], &usb_info[hub], desc)) {
     return;
   }
 }
@@ -76,7 +83,8 @@ static void check_configuration_desc(uint8_t hub, const uint8_t* data) {
         target_interface =
             hid_keyboard_check_interface_desc(&hub_info[hub], intf) ||
             hid_xbox_360_check_interface_desc(&hub_info[hub], intf) ||
-            hid_xbox_one_check_interface_desc(&hub_info[hub], intf);
+            hid_xbox_one_check_interface_desc(&hub_info[hub], intf) ||
+            hid_guncon3_check_interface_desc(&usb_info[hub]);
         break;
       }
       case USB_DESC_HID: {
@@ -99,9 +107,15 @@ static void check_configuration_desc(uint8_t hub, const uint8_t* data) {
           // interrupt input.
           hub_info[hub].ep = ep->bEndpointAddress & 0x0f;
           usb_info[hub].ep_max_packet_size = ep->wMaxPacketSize;
+#ifdef _DBG_DESC
+          Serial.printf("ep in: %d\n", hub_info[hub].ep);
+#endif
         } else if (ep->bEndpointAddress < 128 && (ep->bmAttributes & 3) == 3) {
           // interrupt output.
           usb_info[hub].ep = ep->bEndpointAddress & 0x0f;
+#ifdef _DBG_DESC
+          Serial.printf("ep out: %d\n", usb_info[hub].ep);
+#endif
         }
         break;
       }
@@ -111,6 +125,7 @@ static void check_configuration_desc(uint8_t hub, const uint8_t* data) {
     hub_info[hub].state = HID_STATE_NOT_READY;
 
   if (hid_keyboard_initialize(&hub_info[hub]) ||
+      hid_guncon3_initialize(&hub_info[hub], &usb_info[hub]) ||
       hid_xbox_initialize(&hub_info[hub], &usb_info[hub])) {
     led_oneshot(L_PULSE_ONCE);
   }
@@ -337,6 +352,8 @@ quit:
 }
 
 static void hid_report(uint8_t hub, uint8_t* data, uint16_t size) {
+  if (hid_guncon3_report(&usb_info[hub], data, size))
+    return;
   if (hid_xbox_report(&hub_info[hub], data, size))
     return;
   if (hid_switch_report(hub, &hub_info[hub], &usb_info[hub], data, size))
@@ -372,6 +389,9 @@ void hid_poll() {
     return;
   if (hub_info[hub].state == HID_STATE_READY && usb_host_ready(hub)) {
     switch (hub_info[hub].type) {
+      case HID_TYPE_ZAPPER:
+        hid_guncon3_poll(hub, &usb_info[hub]);
+        break;
       case HID_TYPE_XBOX_360:
         hid_xbox_360_poll(hub, &hub_info[hub], &usb_info[hub]);
         break;

@@ -140,6 +140,7 @@ async function flash() {
     'firmwares/us_v1_04.bin',  // Ver 1.04
     'firmwares/us_v1_10.bin',  // Ver 1.10
     'firmwares/us_v1_20.bin',  // Ver 1.20
+    'firmwares/us_v1_21.bin',  // Ver 1.21
     'firmwares/us_v1_22.bin',  // Ver 1.22
     'firmwares/us_v1_23.bin',  // Ver 1.23
     'firmwares/us_v1_30.bin',  // Ver 1.30

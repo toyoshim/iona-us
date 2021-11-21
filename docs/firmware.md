@@ -112,7 +112,7 @@ Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基�
 |(Xbox Oneシリーズ規格コントローラ)|1.00|1.02a以降推奨|
 |(Bootモード対応キーボード)|1.20|NAOMI麻雀モードに対応|
 |ガンコン3|1.31||DeathCrimson OX対応|
-|ホリパッドFPSプラス for PlayStation 4|1.00|PS3モードも対応|
+|ホリパッドFPSプラス for PlayStation 4|1.00|PS3モードも対応|
 |ワイヤレスコントローラー（DUALSHOCK 4 - CUH-ZCT1J）|1.02||
 |ワイヤレスコントローラー（DUALSHOCK 4 - CUH-ZCT2J）|1.03||
 |ホリパッドミニ for Nintendo Switch|1.00||

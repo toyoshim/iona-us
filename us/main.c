@@ -12,7 +12,7 @@
 #include "settings.h"
 #include "soft485.h"
 
-#define VER "1.31"
+#define VER "1.32"
 
 static const char id[] = "SEGA ENTERPRISES,LTD.compat;MP07-IONA-US;ver" VER;
 
@@ -64,6 +64,11 @@ static void jvs_poll(struct JVSIO_Lib* io) {
       io->pushReport(io, 0x00);  // bits
       io->pushReport(io, 0x00);
 
+      io->pushReport(io, 0x04);  // rotary inputs
+      io->pushReport(io, 0x02);  // channels
+      io->pushReport(io, 0x00);
+      io->pushReport(io, 0x00);
+
       io->pushReport(io, 0x12);  // general purpose driver
       io->pushReport(io, 0x08);  // slots
       io->pushReport(io, 0x00);
@@ -108,6 +113,15 @@ static void jvs_poll(struct JVSIO_Lib* io) {
     case kCmdAnalogInput:
       io->pushReport(io, kReportOk);
       for (uint8_t channel = 0; channel < data[1]; ++channel) {
+        uint16_t analog = controller_analog(channel);
+        io->pushReport(io, analog >> 8);
+        io->pushReport(io, analog & 0xff);
+      }
+      break;
+    case kCmdRotaryInput:
+      io->pushReport(io, kReportOk);
+      for (uint8_t channel = 0; channel < data[1]; ++channel) {
+        // Experimentally reports analog inputs.
         uint16_t analog = controller_analog(channel);
         io->pushReport(io, analog >> 8);
         io->pushReport(io, analog & 0xff);

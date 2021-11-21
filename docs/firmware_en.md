@@ -98,7 +98,8 @@ It may be ok if it does not long, but it may damage the device to connect over J
 - Ver 1.22 Requre buttons pressed over 0.5 seconds to enter the layout mode.
 - Ver 1.23 Wait more time before start a reset sequence on detecting device.
 - Ver 1.30 P1 analog X/Y, P2 analog X/Y are assigned to analog 0-3.
-- Ver 1.31 Guncon3 support
+- Ver 1.31 Guncon3 support.
+- Ver 1.32 P1 analog X/Y are also assigned to newly added 2ch Rotary inputs.
 
 ## Firmware Compatibility
 All controllers that conform Xbox 360, or Xbox One series protocols are expected to work fine.
@@ -145,6 +146,7 @@ async function flash() {
     'firmwares/us_v1_23.bin',  // Ver 1.23
     'firmwares/us_v1_30.bin',  // Ver 1.30
     'firmwares/us_v1_31.bin',  // Ver 1.31
+    'firmwares/us_v1_32.bin',  // Ver 1.32
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -176,7 +178,8 @@ async function flash() {
 <option>Ver 1.22</option>
 <option>Ver 1.23</option>
 <option>Ver 1.30</option>
-<option selected>Ver 1.31</option>
+<option>Ver 1.31</option>
+<option selected>Ver 1.32</option>
 </select>
 <button onclick="flash();">Flash</button>
 

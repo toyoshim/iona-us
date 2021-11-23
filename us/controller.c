@@ -4,8 +4,8 @@
 
 #include "controller.h"
 
-#include "chlib/ch559.h"
-#include "chlib/serial.h"
+#include "ch559.h"
+#include "serial.h"
 
 //#define _DBG_HID_REPORT_DUMP
 //#define _DBG_JVS_BUTTON_DUMP

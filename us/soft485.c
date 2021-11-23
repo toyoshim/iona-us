@@ -4,8 +4,8 @@
 
 #include "soft485.h"
 
-#include "chlib/ch559.h"
-#include "chlib/io.h"
+#include "ch559.h"
+#include "io.h"
 
 static bool receiving = true;
 static volatile uint8_t count = 20;

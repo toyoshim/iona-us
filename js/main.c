@@ -2,8 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be found
 // in the LICENSE file.
 
-#include "chlib/ch559.h"
-#include "chlib/serial.h"
+#include "ch559.h"
+#include "serial.h"
+
 #include "client.h"
 #include "dipsw.h"
 #include "jamma.h"

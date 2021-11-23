@@ -4,7 +4,7 @@
 
 #include "jamma.h"
 
-#include "chlib/ch559.h"
+#include "ch559.h"
 
 static uint8_t out;
 static uint8_t sw[5];

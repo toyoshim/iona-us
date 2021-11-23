@@ -7,6 +7,3 @@
 [submodule "CH55x_python_flasher"]
 	path = CH55x_python_flasher
 	url = https://github.com/toyoshim/CH55x_python_flasher.git
-[submodule "test/googletest"]
-	path = test/googletest
-	url = https://github.com/google/googletest.git

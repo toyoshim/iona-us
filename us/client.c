@@ -4,9 +4,10 @@
 
 #include "client.h"
 
-#include "chlib/ch559.h"
-#include "chlib/io.h"
-#include "chlib/pwm1.h"
+#include "ch559.h"
+#include "io.h"
+#include "pwm1.h"
+
 #include "jvsio/JVSIO_c.h"
 #include "settings.h"
 #include "soft485.h"

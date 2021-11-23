@@ -2,12 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be found
 // in the LICENSE file.
 
-#include "chlib/ch559.h"
-#include "chlib/led.h"
-#include "chlib/serial.h"
+#include "ch559.h"
+#include "hid.h"
+#include "led.h"
+#include "serial.h"
+
 #include "client.h"
 #include "controller.h"
-#include "hid.h"
 #include "jvsio/JVSIO_c.h"
 #include "settings.h"
 #include "soft485.h"

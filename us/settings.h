@@ -9,7 +9,7 @@
 #include <stdint.h>
 
 // Should be included from the main source file to set up interrupt handler.
-#include "chlib/led.h"
+#include "led.h"
 
 // Settings mode
 enum {

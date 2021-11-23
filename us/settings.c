@@ -4,8 +4,9 @@
 
 #include "settings.h"
 
-#include "chlib/ch559.h"
-#include "chlib/flash.h"
+#include "ch559.h"
+#include "flash.h"
+
 #include "controller.h"
 
 static uint8_t mode = S_NORMAL;

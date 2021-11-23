@@ -1,4 +1,4 @@
-CFLAGS  = -V -mmcs51 --model-large --xram-size 0x1800 --xram-loc 0x0000 --code-size 0xf000 --stack-auto
+CFLAGS  = -V -mmcs51 --model-large --xram-size 0x1800 --xram-loc 0x0000 --code-size 0xf000 --stack-auto -I../chlib/src
 CC      = sdcc
 FLASHER = ../CH55x_python_flasher/chflasher.py
 TARGET  = iona
@@ -15,14 +15,14 @@ run: program
 clean:
 	rm -f *.asm *.lst *.rel *.rst *.sym $(TARGET).bin $(TARGET).ihx $(TARGET).lk $(TARGET).map $(TARGET).mem
 
-%.rel: %.c ../jvsio/JVSIO_c.h ../chlib/*.h *.h
+%.rel: %.c ../jvsio/JVSIO_c.h ../chlib/src/*.h *.h
 	$(CC) -c $(CFLAGS) -I../ $<
 
-%.rel: ../chlib/%.c ../chlib/*.h
+%.rel: ../chlib/src/%.c ../chlib/src/*.h
 	$(CC) -c $(CFLAGS) $<
 
 JVSIO_c.rel: ../jvsio/JVSIO_c.c ../jvsio/JVSIO_c.h *.h
-	$(CC) -c $(CFLAGS) -I ../chlib $<
+	$(CC) -c $(CFLAGS) -I ../chlib/src $<
 
 $(TARGET).ihx: $(OBJS) 
 	$(CC) $(CFLAGS) $(OBJS) -o $@

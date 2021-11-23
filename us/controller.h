@@ -8,8 +8,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "chlib/led.h"
 #include "hid.h"
+#include "led.h"
 
 // Button bitmap in raw format
 enum {

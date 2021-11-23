@@ -8,7 +8,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "chlib/interrupt.h"
+#include "interrupt.h"
 
 extern void soft485_int() __interrupt INT_NO_TMR0 __using 0;
 

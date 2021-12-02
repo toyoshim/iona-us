@@ -17,10 +17,17 @@ static int data_available(struct JVSIO_DataClient* client) {
 
 static void data_setInput(struct JVSIO_DataClient* client) {
   client;
+  // Wait until all sending data go out.
+  while (!rs485_sent())
+    ;
+  // Activate pull-down.
+  pinMode(4, 6, OUTPUT);
 }
 
 static void data_setOutput(struct JVSIO_DataClient* client) {
   client;
+  // Inactivate pull-down.
+  pinMode(4, 6, INPUT);
 }
 
 static void data_startTransaction(struct JVSIO_DataClient* client) {
@@ -64,6 +71,9 @@ void data_client(struct JVSIO_DataClient* client) {
   client->delay = data_delay;
 
   rs485_init();
+
+  // Additional D+ pull-down that is activated only on receiving.
+  digitalWrite(4, 6, LOW);
 }
 
 static void sense_begin(struct JVSIO_SenseClient* client) {

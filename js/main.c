@@ -10,7 +10,7 @@
 #include "jamma.h"
 #include "jvsio/JVSIO_c.h"
 
-#define VER "1.10g"
+#define VER "1.10h"
 
 static const char id[] =
     "SEGA ENTERPRISES,LTD.compat;MP01-IONA-JS(CH559);ver" VER;

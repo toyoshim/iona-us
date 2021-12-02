@@ -288,13 +288,11 @@ void controller_map(uint8_t player,
 }
 
 void controller_poll() {
-  // Service button
-  if (digitalRead(4, 6) == LOW)
+  if (controller_button(B_SERVICE))
     jvs_map[1] |= 0x40;
   else
     jvs_map[1] &= ~0x40;
-  // Test button
-  if (digitalRead(4, 7) == LOW)
+  if (controller_button(B_TEST))
     jvs_map[0] |= 0x80;
   else
     jvs_map[0] &= ~0x80;

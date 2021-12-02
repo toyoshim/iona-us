@@ -20,9 +20,15 @@ static int data_available(struct JVSIO_DataClient* client) {
 static void data_setInput(struct JVSIO_DataClient* client) {
   client;
   soft485_input();
+
+  // Activate pull-down.
+  pinMode(2, 0, OUTPUT);
 }
 
 static void data_setOutput(struct JVSIO_DataClient* client) {
+  // Inactivate pull-down.
+  pinMode(2, 0, INPUT);
+
   client;
   soft485_output();
 }
@@ -68,6 +74,9 @@ void data_client(struct JVSIO_DataClient* client) {
   client->delay = data_delay;
 
   soft485_init();
+
+  // Additional D+ pull-down that is activated only on receiving.
+  digitalWrite(2, 0, LOW);
 }
 
 static void sense_begin(struct JVSIO_SenseClient* client) {

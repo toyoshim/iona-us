@@ -58,9 +58,6 @@ void soft485_init() {
   ET0 = 1;
   EA = 1;
 
-  // Additional D+ pull-down that is activated only on receiving.
-  digitalWrite(2, 0, LOW);
-
   soft485_input();
 }
 
@@ -91,9 +88,6 @@ void soft485_input() {
   while (count != 20)
     ;
 
-  // Activate pull-down.
-  pinMode(2, 0, OUTPUT);
-
   pinMode(4, 0, INPUT);
   pinMode(4, 1, INPUT);
   SER1_FCR = bFCR_R_FIFO_CLR;  // Clear FIFO
@@ -103,9 +97,6 @@ void soft485_input() {
 }
 
 void soft485_output() {
-  // Inactivate pull-down.
-  pinMode(2, 0, INPUT);
-
   SER1_FCR = 0;  // Disable FIFO
   digitalWrite(4, 0, HIGH);
   digitalWrite(4, 1, LOW);

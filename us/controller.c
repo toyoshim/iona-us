@@ -333,7 +333,7 @@ uint8_t controller_jvs(uint8_t index, uint8_t gpout) {
     return mahjong[1] | service;
   if (gpout == 0x10)
     return mahjong[2] | service;
-  if (gpout == 0x80)
+  if (gpout == 0x80 || gpout == 0x08)
     return mahjong[3] | service;
   return service;
 }

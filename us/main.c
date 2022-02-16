@@ -13,7 +13,7 @@
 #include "settings.h"
 #include "soft485.h"
 
-#define VER "1.33"
+#define VER "1.34"
 
 static const char id[] = "SEGA ENTERPRISES,LTD.compat;MP07-IONA-US;ver" VER;
 
@@ -61,7 +61,7 @@ static void jvs_poll(struct JVSIO_Lib* io) {
       io->pushReport(io, 0x00);
 
       io->pushReport(io, 0x03);  // analog inputs
-      io->pushReport(io, 0x08);  // channels
+      io->pushReport(io, 0x04);  // channels
       io->pushReport(io, 0x00);  // bits
       io->pushReport(io, 0x00);
 

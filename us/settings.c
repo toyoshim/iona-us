@@ -153,6 +153,8 @@ static void slow_poll() {
       changed = !button0 && !button1;
       mode_step++;
       next_mode = (mode_step > 30) ? S_LAYOUT : S_NORMAL;
+      if (mode_step > 30)
+        led_mode(L_FASTER_BLINK);
       break;
     case S_LAYOUT:
     case S_RAPID:

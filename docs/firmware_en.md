@@ -102,6 +102,7 @@ It may be ok if it does not long, but it may damage the device to connect over J
 - Ver 1.31 Guncon3 support.
 - Ver 1.32 P1 analog X/Y are also assigned to newly added 2ch Rotary inputs.
 - Ver 1.33 Improved JVS compatibility for v1.20+ PCB.
+- Ver 1.34 Reduce Analog channel to 4ch to avoid I/O error on Guilty Gear series, and fix the issue D/H/L/Pon are not responsible for Usagi.
 
 ## Firmware Compatibility
 All controllers that conform Xbox 360, or Xbox One series protocols are expected to work fine.
@@ -151,6 +152,7 @@ async function flash() {
     'firmwares/us_v1_31.bin',  // Ver 1.31
     'firmwares/us_v1_32.bin',  // Ver 1.32
     'firmwares/us_v1_33.bin',  // Ver 1.33
+    'firmwares/us_v1_34.bin',  // Ver 1.34
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -181,11 +183,12 @@ async function flash() {
 <option>Ver 1.21</option>
 <option>Ver 1.22</option>
 <option>Ver 1.23</option>
-<option selected>Ver 1.24</option>
+<option>Ver 1.24</option>
 <option>Ver 1.30</option>
 <option>Ver 1.31</option>
 <option>Ver 1.32</option>
 <option>Ver 1.33</option>
+<option selected>Ver 1.34</option>
 </select>
 <button onclick="flash();">Flash</button>
 

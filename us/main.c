@@ -13,9 +13,12 @@
 #include "settings.h"
 #include "soft485.h"
 
-#define VER "1.34"
+#define VER "1.40"
 
-static const char id[] = "SEGA ENTERPRISES,LTD.compat;MP07-IONA-US;ver" VER;
+static const char sega_id[] =
+    "SEGA ENTERPRISES,LTD.compat;MP07-IONA-US;ver" VER;
+static const char namco_id[] =
+    "namco ltd.;JYU-PCB;compat Ver" VER ";MP07-IONA-US,2Coins 2Guns";
 
 static struct JVSIO_DataClient data;
 static struct JVSIO_SenseClient sense;
@@ -43,8 +46,11 @@ static void jvs_poll(struct JVSIO_Lib* io) {
       break;
     case kCmdIoId:
       io->pushReport(io, kReportOk);
-      for (uint8_t i = 0; id[i]; ++i)
-        io->pushReport(io, id[i]);
+      {
+        const char* id = sega_id;
+        for (uint8_t i = 0; id[i]; ++i)
+          io->pushReport(io, id[i]);
+      }
       io->pushReport(io, 0x00);
       break;
     case kCmdFunctionCheck:
@@ -69,6 +75,11 @@ static void jvs_poll(struct JVSIO_Lib* io) {
       io->pushReport(io, 0x02);  // channels
       io->pushReport(io, 0x00);
       io->pushReport(io, 0x00);
+
+      io->pushReport(io, 0x06);  // screen position inputs
+      io->pushReport(io, 0x0a);  // Xbits
+      io->pushReport(io, 0x0a);  // Ybits
+      io->pushReport(io, 0x02);  // channels
 
       io->pushReport(io, 0x12);  // general purpose driver
       io->pushReport(io, 0x08);  // slots
@@ -128,6 +139,18 @@ static void jvs_poll(struct JVSIO_Lib* io) {
         io->pushReport(io, analog & 0xff);
       }
       break;
+    case kCmdScreenPositionInput:
+      io->pushReport(io, kReportOk);
+      {
+        uint8_t channel = data[1] - 1;
+        uint16_t x = (controller_analog(channel * 2 + 0) + 0x8000) >> 6;
+        uint16_t y = (controller_analog(channel * 2 + 1) + 0x8000) >> 6;
+        io->pushReport(io, x >> 8);
+        io->pushReport(io, x & 0xff);
+        io->pushReport(io, y >> 8);
+        io->pushReport(io, y & 0xff);
+      }
+      break;
     case kCmdCoinSub:
     case kCmdCoinAdd:
       // Coin slot index should start with 1, but some PCB seem to expect
@@ -160,7 +183,7 @@ void main() {
   controller_init();
   settings_init();
   delay(30);
-  Serial.println(id);
+  Serial.println(sega_id);
 
   data_client(&data);
   sense_client(&sense);

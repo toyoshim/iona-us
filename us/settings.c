@@ -10,7 +10,7 @@
 #include "controller.h"
 
 static uint8_t mode = S_NORMAL;
-static uint8_t mode_step = 0;
+static uint16_t mode_step = 0;
 static uint16_t mode_data = 0;
 static uint8_t mode_player = 0;
 static uint16_t poll_msec = 0;
@@ -137,7 +137,6 @@ static void quit_reset() {
 }
 
 static void slow_poll() {
-  poll_msec += poll_interval;
   bool button0 = controller_button(B_TEST);
   bool button1 = controller_button(B_SERVICE);
   bool changed = false;
@@ -151,10 +150,15 @@ static void slow_poll() {
     }
     case S_WAIT:
       changed = !button0 && !button1;
-      mode_step++;
-      next_mode = (mode_step > 30) ? S_LAYOUT : S_NORMAL;
-      if (mode_step > 30)
+      if (mode_step < 300)
+        mode_step++;
+      if (30 < mode_step && mode_step < 300) {
+        // 0.5 sec ~ 5 sec
+        next_mode = S_LAYOUT;
         led_mode(L_FASTER_BLINK);
+      } else {
+        led_mode(client_led_mode);
+      }
       break;
     case S_LAYOUT:
     case S_RAPID:
@@ -264,8 +268,10 @@ void settings_save() {
 }
 
 void settings_poll() {
-  if (!timer3_tick_msec_between(poll_msec, poll_msec + poll_interval))
+  if (!timer3_tick_msec_between(poll_msec, poll_msec + poll_interval)) {
+    poll_msec = timer3_tick_msec();
     slow_poll();
+  }
 
   led_poll();
 }

@@ -102,6 +102,7 @@ JVS I/Oとして利用する前、特にジャンパーピンを実装した人�
 - Ver 1.32 ロータリーコントローラ2ch追加、P1アナログX/Yを割り当てました
 - Ver 1.33 v1.20基板以降でJVSシステムとの相性問題が改善します
 - Ver 1.34 アナログを4chに減らしGuilty GearシリーズでI/Oエラーが出ないよう修正、兎でD/H/L/ポンが反応しない問題に対応した
+- Ver 1.35 SERVICE+TEST長押し中も入力が効くように修正、設定モードには0.5〜5秒押し続けた時のみ移行
 
 ## ファームウェアの互換性
 Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基本的に安定して動くはずです。
@@ -152,6 +153,7 @@ async function flash() {
     'firmwares/us_v1_32.bin',  // Ver 1.32
     'firmwares/us_v1_33.bin',  // Ver 1.33
     'firmwares/us_v1_34.bin',  // Ver 1.34
+    'firmwares/us_v1_35.bin',  // Ver 1.35
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -187,7 +189,8 @@ async function flash() {
 <option>Ver 1.31</option>
 <option>Ver 1.32</option>
 <option>Ver 1.33</option>
-<option selected>Ver 1.34</option>
+<option>Ver 1.34</option>
+<option selected>Ver 1.35</option>
 </select>
 <button onclick="flash();">書き込み</button>
 

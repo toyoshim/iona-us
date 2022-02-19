@@ -13,7 +13,7 @@
 #include "settings.h"
 #include "soft485.h"
 
-#define VER "1.34"
+#define VER "1.35"
 
 static const char id[] = "SEGA ENTERPRISES,LTD.compat;MP07-IONA-US;ver" VER;
 
@@ -80,7 +80,8 @@ static void jvs_poll(struct JVSIO_Lib* io) {
     case kCmdSwInput:
       io->pushReport(io, kReportOk);
       if (data[1] == 2 && data[2] == 2) {
-        if (settings_mode() != S_NORMAL) {
+        uint8_t mode = settings_mode();
+        if (mode != S_NORMAL && mode != S_WAIT) {
           io->pushReport(io, 0);
           io->pushReport(io, 0);
           io->pushReport(io, 0);

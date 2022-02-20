@@ -104,6 +104,7 @@ It may be ok if it does not long, but it may damage the device to connect over J
 - Ver 1.33 Improved JVS compatibility for v1.20+ PCB.
 - Ver 1.34 Reduce Analog channel to 4ch to avoid I/O error on Guilty Gear series, and fix the issue D/H/L/Pon are not responsible for Usagi.
 - Ver 1.35 Allow to send inputs even while pressing SERVICE+TEST. You can enter the settings mode iff you keep them pressed for 0.5-5.0 sec.
+- Ver 1.40 Add analog layout, option config, and screen position input support.
 
 ## Firmware Compatibility
 All controllers that conform Xbox 360, or Xbox One series protocols are expected to work fine.
@@ -157,6 +158,7 @@ async function flash() {
     'firmwares/us_v1_33.bin',  // Ver 1.33
     'firmwares/us_v1_34.bin',  // Ver 1.34
     'firmwares/us_v1_35.bin',  // Ver 1.35
+    'firmwares/us_v1_40.bin',  // Ver 1.40
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -169,10 +171,15 @@ async function flash() {
   await flasher.connect();
   await flasher.erase();
   const url = firmwares[document.getElementById('version').selectedIndex];
-  const bin = await (await fetch(url)).arrayBuffer();
-  await flasher.write(bin, rate => progressWrite.value = rate);
-  await flasher.verify(bin, rate => progressVerify.value = rate);
-  error.innerText = flasher.error ? flasher.error : 'Succeeded';
+  const response = await fetch(url);
+  if (response.ok) {
+    const bin = await response.arrayBuffer();
+    await flasher.write(bin, rate => progressWrite.value = rate);
+    await flasher.verify(bin, rate => progressVerify.value = rate);
+    error.innerText = flasher.error ? flasher.error : 'Succeeded';
+  } else {
+    error.innerText = 'Firmware not found';
+  }
 }
 </script>
 
@@ -194,6 +201,7 @@ async function flash() {
 <option>Ver 1.33</option>
 <option>Ver 1.34</option>
 <option selected>Ver 1.35</option>
+<option>Ver 1.40</option>
 </select>
 <button onclick="flash();">Flash</button>
 

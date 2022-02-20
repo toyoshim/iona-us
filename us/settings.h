@@ -20,11 +20,13 @@ enum {
   S_SPEED,
 
   S_SELECT,
+  S_ANALOG,
+  S_OPTION,
 
   S_RESET,
 };
 
-struct setting {
+struct player_setting {
   uint8_t magic;
   uint8_t speed;  // Rapid fire speed (flip per every N msec)
   uint16_t rapid_fire;
@@ -38,6 +40,8 @@ void settings_poll();
 
 uint16_t settings_rapid_mask(uint8_t player);
 uint16_t* settings_button_masks(uint8_t player);
+uint8_t settings_options_id();
+bool settings_options_pulldown();
 uint8_t settings_mode();
 void settings_rapid_sync();
 

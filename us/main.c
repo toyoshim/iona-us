@@ -47,7 +47,7 @@ static void jvs_poll(struct JVSIO_Lib* io) {
     case kCmdIoId:
       io->pushReport(io, kReportOk);
       {
-        const char* id = sega_id;
+        const char* id = settings_options_id() ? namco_id : sega_id;
         for (uint8_t i = 0; id[i]; ++i)
           io->pushReport(io, id[i]);
       }
@@ -183,7 +183,7 @@ void main() {
   controller_init();
   settings_init();
   delay(30);
-  Serial.println(sega_id);
+  Serial.println(settings_options_id() ? namco_id : sega_id);
 
   data_client(&data);
   sense_client(&sense);

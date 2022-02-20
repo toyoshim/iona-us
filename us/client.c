@@ -12,24 +12,31 @@
 #include "settings.h"
 #include "soft485.h"
 
+static bool mode_in = true;
+
+static void update_pulldown() {
+  // Activate pull-down only if the serial I/O direction is input.
+  bool activate = mode_in && settings_options_pulldown();
+  pinMode(2, 0, activate ? OUTPUT : INPUT);
+}
+
 static int data_available(struct JVSIO_DataClient* client) {
   client;
+  update_pulldown();
   return soft485_ready() ? 1 : 0;
 }
 
 static void data_setInput(struct JVSIO_DataClient* client) {
   client;
   soft485_input();
-
-  // Activate pull-down.
-  pinMode(2, 0, OUTPUT);
+  mode_in = true;
+  update_pulldown();
 }
 
 static void data_setOutput(struct JVSIO_DataClient* client) {
-  // Inactivate pull-down.
-  pinMode(2, 0, INPUT);
-
   client;
+  mode_in = false;
+  update_pulldown();
   soft485_output();
 }
 

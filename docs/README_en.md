@@ -23,6 +23,8 @@ We will try solving this issue in the next PCB update.
 
 From firmware 1.30, P1's X/Y axies are assigned to analog 0,1, and P2's X/Y axies are done to analog 2,3.  Guncon mode is also added at 1.31.
 
+From firmware 1.40, P1's left X/Y axies are assigned to analog 0,1, right X/Y axies are assigned to anlog 2,3, nad LT/RT are assigned to analog 4,5, but you can customize the map via analog layout config mode. As of this customizability, 1.40 and later deprecate the zapper mode.
+
 ### USB Gamepads
 It's expected to support all controllers for Xbox 360 and One serices, and many controllers for PS4. Also, some controllers for PS3 and Switch will be available. Guncon3 for PS3 is also available.
 Usually each USB gamepad requires a special treatment to handle it correctly, IONA could not support all devices, but the firmware is designed as flexible to be able to handle as many controllers as possible.
@@ -47,7 +49,7 @@ You can map at most 12 physical buttons to arbitrary logical buttons for JVS. Yo
 You can enable rapid-fire mode per each physical button. You can choose the speed from 30/20/15/12/10/8.5. This can not be synchronized with the video sync signal as JVS does not bring it, but as it's synchronized with the JVS bus polling, it's virtually synchronized with each frame update.
 
 ### Persistent Configurations
-You can store and restore at most 10 configuration sets of button layout, rapid-fire settings, and it's speed. When IONA boots, the last configurations are automatically restored.
+You can store and restore at most 10 configuration sets of button layout, rapid-fire settings, and it's speed. When IONA boots, the last configurations are automatically restored. All settings except for analog layout and options that are introduced at Ver 1.40 are per-player settings. Analog layout and options are common settings, but tied with the P1 settings and stored/recalled as a part of P1 settings together.
 
 ### Firmware Updates
 For bug fixes, or to improve compatibility, firmware updates are available. You don't need any special equiment to burn firmwares, but all you have to do is to connect IONA to PC over USB, then visit the support site by Google Chrome.
@@ -64,18 +66,23 @@ In this mode, the layhout is adjusted to play with mahjong games for NAOMI. Key 
 If you connect guncon3 for PS3, zapper mode will be activated automatically.
 Gun's direction will apear as X/Y and analog 0,1, and A1 will be assigned to the start button. Trigger will be mapped to the button 1.
 This is aligned with what DeathCrimson OX wants.
+This mode is deprecated at Ver 1.40. You can use the analog layout settings instead.
 
 ## Settings
 ### Transit operation modes
-![Mode Transition](mode_fsm_en.svg)
 On boot, IONA runs in the normal mode. Operation modes are transited by pussing TEST and SERVICE buttons on the IONA board.
+#### Ver 1.00 through to Ver 1.3x
+![Mode Transition](mode_fsm_en.svg)
+#### Ver 1.40 and later
+![Mode Transition](mode_fsm_en_1_4.svg)
 
 ### ① Normal mode (LED - blink or on, depending on JVS bus state)
 Works as a JVS I/O controllers with chosen settings.
 
-### ② Layout config mode (LED - fact blink)
+### ② Layout config mode (LED - fast blink)
 On pushing TEST and SERVICE together, it enters the layout config mode.
 After firmware ver 1.22, you need to press them together over 0.5 second to enter the layout config mode.
+After firmware ver 1.40, you need to press both for at least 0.5 and at most 5 seconds together.
 You don't need to push them exactly together, e.g. keeping TEST down and clicking SERVICE will work.
 
 In the button layuout mode, you will choose physical buttons in the following order, coin, start, button1 to 10. If you push multiple buttons together, you can assign multiple physical buttons into one button. You don't need to push them at the eaxctly timing as well. When you press a button, IONA starts recording all pressed buttons until all buttons are released, then assign them all to the target button. You continue this sequence until all 12 buttons are mapped. If you leave this mode before settings all, remaining buttons are remained to have no assignment. If you configure no button, exceptionally IONA doesn't update layout at all and move to the next mode.
@@ -96,6 +103,21 @@ You can enter the mode to call stored config by pushing SERVICE button outside t
 Pressing button 1 - 10 in the custom layout recall the configuration set 1 - 10.
 Initial set for the factory setting is 1.
 You can recall another config again until exiting the mode by pressing SERVICE again.
+It returns to the normal mode if the firmware is older than 1.40 by pressing SERVICE. Otherwise, ver 1.40 and later, pressing TEST moves to the analog layout config mode.
+
+### ⑦ Analog layout config mode (LED - fast blink)
+TBW
+
+### ⑧ Options config mode (LED - blink)
+You can quit the settings mode by pressing TEST, but options will be set via P1 buttons on quiting the mode as below.
+The button number is logical one based on your customized layout. Default settings are all-off.
+
+|1|2|3|Function|
+|-|-|-|-|
+|OFF|-|-|Declare SEGA compatible I/O device name against the JVS query|
+|ON|-|-|Declare namco compatible I/O device name against the JVS query|
+|-|-|OFF|Activate JVS data signal level adjustment |
+|-|-|ON|Inactivate JVS data signal level adjustment |
 
 ### Tips
 You can craft layout and rapid-fire settings for 3 button games to have another 3 for rapid-fires. For instance, you can map coin, start, button1+4, button2+5, button3+6, ..., then enable rapid-fires for button4+5+6.

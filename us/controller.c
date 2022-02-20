@@ -15,7 +15,10 @@ static uint8_t jvs_map[5] = {0, 0, 0, 0, 0};
 static uint8_t coin_sw[2] = {0, 0};
 static uint8_t coin[2] = {0, 0};
 static uint8_t mahjong[4] = {0, 0, 0, 0};
-static uint16_t analog[4] = {0x8000, 0x8000, 0x8000, 0x8000};
+static uint16_t analog[16] = {
+    0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
+    0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
+};
 
 enum {
   MODE_NORMAL,
@@ -41,7 +44,11 @@ static int8_t axis_check(const struct hub_info* info,
     return 0;
   if (info->axis_size[index] == 8) {
     uint8_t v = data[info->axis[index] >> 3];
-    analog[hub * 2 + index] = v << 8;
+    if (info->axis_sign[index])
+      v += 0x80;
+    if (info->axis_polarity[index])
+      v = 0xff - v;
+    analog[hub * 8 + index] = v << 8;
     if (v < 0x60)
       return -1;
     if (v > 0xa0)
@@ -56,7 +63,7 @@ static int8_t axis_check(const struct hub_info* info,
       v += 0x0800;
     if (info->axis_polarity[index])
       v = 0x0fff - v;
-    analog[hub * 2 + index] = v << 4;
+    analog[hub * 8 + index] = v << 4;
     if (v < 0x0600)
       return -1;
     if (v > 0x0a00)
@@ -68,7 +75,7 @@ static int8_t axis_check(const struct hub_info* info,
       v += 0x8000;
     if (info->axis_polarity[index])
       v = 0xffff - v;
-    analog[hub * 2 + index] = v;
+    analog[hub * 8 + index] = v;
     if (v < 0x6000)
       return -1;
     if (v > 0xa000)
@@ -174,6 +181,10 @@ void controller_update(uint8_t hub,
     u = 1;
   else if (y > 0)
     d = 1;
+  axis_check(info, data, hub, 2);
+  axis_check(info, data, hub, 3);
+  axis_check(info, data, hub, 4);
+  axis_check(info, data, hub, 5);
   if (info->hat != 0xffff) {
     uint8_t byte = info->hat >> 3;
     uint8_t bit = info->hat & 7;
@@ -343,7 +354,7 @@ uint8_t controller_coin(uint8_t player) {
 }
 
 uint16_t controller_analog(uint8_t index) {
-  if (index < 4)
+  if (index < 16)
     return analog[index];
   return 0x8000;
 }

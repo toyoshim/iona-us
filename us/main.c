@@ -67,7 +67,7 @@ static void jvs_poll(struct JVSIO_Lib* io) {
       io->pushReport(io, 0x00);
 
       io->pushReport(io, 0x03);  // analog inputs
-      io->pushReport(io, 0x04);  // channels
+      io->pushReport(io, 0x06);  // channels
       io->pushReport(io, 0x00);  // bits
       io->pushReport(io, 0x00);
 

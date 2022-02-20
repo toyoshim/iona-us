@@ -106,7 +106,14 @@ You can recall another config again until exiting the mode by pressing SERVICE a
 It returns to the normal mode if the firmware is older than 1.40 by pressing SERVICE. Otherwise, ver 1.40 and later, pressing TEST moves to the analog layout config mode.
 
 ### ⑦ Analog layout config mode (LED - fast blink)
-TBW
+You can choose 6 inputs for analog signal reports.
+Analog input values are remembered as base values when you enter this mode.
+You can move an analog stick or a trigger that are recognized as analog inputs.
+You may want to move it right, down, or pushed for normal polarity.
+If you want to revese it, you can move it toward the opposite side.
+Once you stop moving the stick or the trigger and make it return to the original position, the input was recorded.
+You need to repeat the same steps for analog input 1 to 6, 6 times.
+You can quit this mode by pressing TEST, and following assignments are just skiped and previous settings are uised.
 
 ### ⑧ Options config mode (LED - blink)
 You can quit the settings mode by pressing TEST, but options will be set via P1 buttons on quiting the mode as below.
@@ -115,9 +122,11 @@ The button number is logical one based on your customized layout. Default settin
 |1|2|3|Function|
 |-|-|-|-|
 |OFF|-|-|Declare SEGA compatible I/O device name against the JVS query|
-|ON|-|-|Declare namco compatible I/O device name against the JVS query|
+|ON|-|-|Declare namco compatible I/O device name against the JVS query (*1)|
 |-|-|OFF|Activate JVS data signal level adjustment |
 |-|-|ON|Inactivate JVS data signal level adjustment |
+
+(*1) Ninja Assault is know to require this configuration.
 
 ### Tips
 You can craft layout and rapid-fire settings for 3 button games to have another 3 for rapid-fires. For instance, you can map coin, start, button1+4, button2+5, button3+6, ..., then enable rapid-fires for button4+5+6.

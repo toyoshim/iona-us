@@ -18,6 +18,8 @@ static uint16_t poll_interval = 17;
 static bool last_buttons[2] = {false, false};
 static uint8_t client_led_mode = L_ON;
 static uint8_t rapid_step[2] = {0, 0};
+static uint8_t analog_base[16] = {0, 0, 0, 0, 0, 0, 0, 0,
+                                  0, 0, 0, 0, 0, 0, 0, 0};
 
 // sizeof(struct settings) should be <= 1020
 struct settings {
@@ -25,7 +27,9 @@ struct settings {
   struct player_setting settings[10];  // 32 * 10
   struct common_setting {
     uint8_t options;
-  } common[10];  // 1 * 10
+    uint8_t reserved;
+    uint8_t analog[6];
+  } common[10];  // 8 * 10
 } settings;
 
 void reset() {
@@ -40,6 +44,9 @@ void reset() {
     for (uint8_t b = 0; b < 2; ++b)
       settings.settings[i].padding[b] = 0;
     settings.common[i].options = 0;
+    settings.common[i].reserved = 0;
+    for (uint8_t b = 0; b < 6; ++b)
+      settings.common[i].analog[b] = b;
   }
   settings_save();
 }
@@ -126,6 +133,28 @@ static void mode_select() {
     settings.player_setting[mode_player] = 9;
   }
   led_mode((buttons & 0x03c0) ? L_ON : L_OFF);
+}
+
+static void mode_analog() {
+  uint8_t data = mode_data;
+  mode_data = 0;
+  int8_t diff = 0;
+  for (uint8_t i = 0; i < 16; ++i) {
+    uint8_t analog_data = controller_analog(i) >> 9;
+    int8_t diff = analog_data - analog_base[i];
+    if (diff < -16) {
+      mode_data = i + 0x81;
+      break;
+    } else if (diff > 16) {
+      mode_data = i + 0x01;
+      break;
+    }
+  }
+  if (mode_step < 6 && mode_data == 0 && data != mode_data) {
+    led_oneshot(L_PULSE_TWICE);
+    settings.common[settings.player_setting[0]].analog[mode_step] = data - 1;
+    mode_step++;
+  }
 }
 
 static void quit_option() {
@@ -232,13 +261,15 @@ static void slow_poll() {
         break;
       case S_ANALOG:
         led_mode(L_FASTER_BLINK);
+        for (uint8_t i = 0; i < 16; ++i)
+          analog_base[i] = controller_analog(i) >> 9;
         break;
       case S_OPTION:
         led_mode(L_FAST_BLINK);
         break;
     }
   }
-  if (mode_player == 0xff) {
+  if (mode_player == 0xff && mode != S_ANALOG) {
     uint16_t player1 = controller_raw(0);
     uint16_t player2 = controller_raw(1);
     if (!player1 && !player2)
@@ -257,6 +288,9 @@ static void slow_poll() {
       break;
     case S_SELECT:
       mode_select();
+      break;
+    case S_ANALOG:
+      mode_analog();
       break;
   }
 }
@@ -317,6 +351,10 @@ uint8_t settings_options_id() {
 bool settings_options_pulldown() {
   uint8_t options = settings.common[settings.player_setting[0]].options;
   return (options & 0x20) == 0;
+}
+
+uint8_t* settings_options_analog() {
+  return settings.common[settings.player_setting[0]].analog;
 }
 
 void settings_rapid_sync() {

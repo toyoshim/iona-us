@@ -111,6 +111,8 @@ Other USB HID devices support might get to be broken unexpectedly on supporting 
 We know HID descriptors on following devices, and have some automated unit tests. So, it's expected to keep better compatibility. We can add more automated tests when you report device information.
 If you find a device that isn't in the list, but works, it's a good idea to report information to get stable supports.
 
+Also, the internal format to hold the user settings is changed at firmware Ver 1.40. As a reuslt, if you write a firmware those format is different from one for current firmware, all your configurations will be reset.
+
 |Device Name|Confirmed Version|Note|
 |-|-|-|
 |(Xbox 360 protocol controllers)|1.00|1.02a and later are recommended|

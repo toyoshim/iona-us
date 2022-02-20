@@ -42,6 +42,7 @@ uint16_t settings_rapid_mask(uint8_t player);
 uint16_t* settings_button_masks(uint8_t player);
 uint8_t settings_options_id();
 bool settings_options_pulldown();
+uint8_t* settings_options_analog();
 uint8_t settings_mode();
 void settings_rapid_sync();
 

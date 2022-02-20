@@ -124,29 +124,55 @@ static void jvs_poll(struct JVSIO_Lib* io) {
       break;
     case kCmdAnalogInput:
       io->pushReport(io, kReportOk);
-      for (uint8_t channel = 0; channel < data[1]; ++channel) {
-        uint16_t analog = controller_analog(channel);
-        io->pushReport(io, analog >> 8);
-        io->pushReport(io, analog & 0xff);
+      {
+        uint8_t* analog = settings_options_analog();
+        for (uint8_t channel = 0; channel < data[1]; ++channel) {
+          uint8_t index = channel < 6 ? (analog[channel] & 0x7f) : channel;
+          bool sign = channel < 6 && analog[channel] & 0x80;
+          uint16_t value = controller_analog(index);
+          if (sign)
+            value = 0xffff - value;
+          io->pushReport(io, value >> 8);
+          io->pushReport(io, value & 0xff);
+        }
       }
       break;
     case kCmdRotaryInput:
       io->pushReport(io, kReportOk);
-      for (uint8_t channel = 0; channel < data[1]; ++channel) {
-        // Experimentally reports analog inputs.
-        uint16_t analog = controller_analog(channel);
-        io->pushReport(io, analog >> 8);
-        io->pushReport(io, analog & 0xff);
+      {
+        uint8_t* analog = settings_options_analog();
+        for (uint8_t channel = 0; channel < data[1]; ++channel) {
+          uint8_t index = channel < 6 ? (analog[channel] & 0x7f) : channel;
+          bool sign = channel < 6 && (analog[channel] & 0x80) == 0x80;
+          uint16_t value = controller_analog(index);
+          if (sign)
+            value = 0xffff - value;
+          io->pushReport(io, value >> 8);
+          io->pushReport(io, value & 0xff);
+        }
       }
       break;
     case kCmdScreenPositionInput:
       io->pushReport(io, kReportOk);
       {
         uint8_t channel = data[1] - 1;
-        uint16_t x = (controller_analog(channel * 2 + 0) + 0x8000) >> 6;
-        uint16_t y = (controller_analog(channel * 2 + 1) + 0x8000) >> 6;
+        uint8_t* analog = settings_options_analog();
+        uint8_t index =
+            channel < 3 ? (analog[channel * 2 + 0] & 0x7f) : channel * 2 + 0;
+        bool sign = channel < 3 && (analog[channel * 2 + 0] & 0x80) == 0x80;
+        uint16_t x = controller_analog(index);
+        if (sign)
+          x = 0xffff - x;
+        x = x >> 6;
         io->pushReport(io, x >> 8);
         io->pushReport(io, x & 0xff);
+        index =
+            channel < 3 ? (analog[channel * 2 + 1] & 0x7f) : channel * 2 + 1;
+        sign = channel < 3 && (analog[channel * 2 + 1] & 0x80) == 0x80;
+        uint16_t y = controller_analog(index);
+        if (sign)
+          y = 0xffff - y;
+        y = y >> 6;
         io->pushReport(io, y >> 8);
         io->pushReport(io, y & 0xff);
       }

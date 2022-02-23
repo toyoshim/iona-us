@@ -11,6 +11,7 @@ Now, you can buy IONA-US at following shops.
 
 ### Japan
 - KVCLab. - [MP07-IONA-US　（JVS I/O → USB変換コネクタ）](https://kvclab.com/shopdetail/000000000964/)
+- BEEP - Coming Soon!!
 
 ### Europe
 - Red Sun Systems - [JVS to USB converter](http://www.redsuns.be/#exausb)

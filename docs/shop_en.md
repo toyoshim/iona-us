@@ -17,3 +17,6 @@ Now, you can buy IONA-US at following shops.
 
 ### Oceania
 - Candy Cab Club - [MP07-IONA-US JVS Interface](https://www.candycabclub.com/product/mp07-iona)
+
+### USA
+- Birdland Arcade - Coming Soon!!

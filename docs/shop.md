@@ -17,3 +17,6 @@ permalink: /shop
 
 ### オセアニア
 - Candy Cab Club - [MP07-IONA-US JVS Interface](https://www.candycabclub.com/product/mp07-iona)
+
+### アメリカ
+- Birdland Arcade - Coming Soon!!

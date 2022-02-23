@@ -14,7 +14,8 @@ There are 4 through-hole on the IONA board as you can see in the white circle be
 Before supplying power, you need to shorten the yellow hole pair and the red hole pair respectively.
 This allows the JVS port to use USB data line, D+ and D-, to communicate with PC over USB protocol.
 
-![Figure](fw_fig.jpg)
+![Figure v1.xx](fw_fig.jpg)
+![Figure v2.xx](fw_fig_v2.jpg)
 
 Here, we introduce some simple ways to shorten the holes.
 
@@ -38,6 +39,9 @@ First, you need to keep the SERVICE button on the board pressed, then start supp
 If the SERVICE button is correctly kept pressed until it boots, LED will not be on.
 This is the signal that IONA boots to the firmware update mode.
 If LED blinks, IONA runs in a normal mode, and you need to power off, and retry.
+
+Alternatively, you can use a special USB cable from Type A to A.
+You can connect your PC and 1P connector by such cable with pressing SERVICE to enter the firmware update mode.
 
 Once it boots to the firmware update mode, connect IONA to your PC over USB via JVS port.
 You should not connect a gamepad to the P1 USB port. It conflicts with the USB connection to the PC host, and makes communication unstable.

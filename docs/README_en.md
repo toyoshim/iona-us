@@ -32,8 +32,13 @@ It supports 1 lever and 10 buttons at maximum. Both left analog stick and D-Pad 
 If your gamepad isn't available, you can request supporting it from the [Report](report_en) page.
 
 ## How to use
+### Ver 1.xx PCB
 ![Board](pcb_photo_en.jpg)
-① Connect micro USB port for power supply. It doesn't need data connection as it's just expected to suupply 5V power for IONA. USB charger will be available. Of course, PC USB port can support the required power. PC-based JVS system board could have a port for this use, e.g. exA-Arcadia has hidden USB ports.
+
+### Ver 2.xx PCB
+![Board](pcb_photo_v2_en.jpg)
+
+① Connect micro USB or USB Type C port for power supply. It doesn't need data connection as it's just expected to suupply 5V power for IONA. USB charger will be available. Of course, PC USB port can support the required power. PC-based JVS system board could have a port for this use, e.g. exA-Arcadia has hidden USB ports. But if you want to use a device that requires much power, supplying via USB Bus from PC may not be enough and IONA gets to be unstable.
 
 ② Connect JVS port to the JVS system board. You can use a general USB cable.
 

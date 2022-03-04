@@ -7,7 +7,7 @@ permalink: /troubleshoot_en
 ---
 ## Playbook to shoot troubles
 1. LED does not blink on power-on
-   1. Do you supply 5V power via micro USB port correctly?
+   1. Do you supply 5V power via power supply USB port correctly?
       - Supply 5V power.
    2. Don't you press SERVICE button on boot.
       - Do not press SERVICE button on booting.
@@ -28,6 +28,7 @@ permalink: /troubleshoot_en
       As this may be a compatibility issue, feel free to contact author with LED status.
    4. Other cases.
       - May be a compatibility issue for IONA-US and the arcade system board.
+      - Try with the JVS signal level adjustment disabled in the option mode config.
       It may be resolved by a firmware update if you report the issue.
       If the title is not listed at 
       [Compatibility Information](https://github.com/toyoshim/iona/wiki/Compatibility-Information),
@@ -56,7 +57,7 @@ permalink: /troubleshoot_en
       - Feel free to report the issue at the [Report](report_en) page with information for the device.
 
 4. Unstable behaviors
-   1. Power supply from the micro USB port is enough?
+   1. Power supply from the USB port is enough?
       - Try another PC, a USB hub with power supply, a more powerful charger
    2. Do you enable the twinstick mode?
       - A special layout is enforced in the twinstick mode.

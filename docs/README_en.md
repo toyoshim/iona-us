@@ -19,7 +19,11 @@ Like the previous product, [MP01-IONA-JS](../iona-js/), it support almost all JV
 
 If Ver 1.10 based PCB isn't recognized by namco's system board, this [mod](mod_en) will solve the stability issue.
 Triforce and System 2x6 may have this compatibility issue.
-We will try solving this issue in the next PCB update.
+This issue was solved in Ver 1.20 and later PCBs.
+
+Ver 1.20 and later PCBs activate namco compatible signal mode by default. But there are a few reports that this mode
+causes a connectivity issue with a certain lot of naomi. If you have a connectivity issue with naomi or SEGA boards,
+you can inactivate this signal level adjustment in the option config mode.
 
 From firmware 1.30, P1's X/Y axies are assigned to analog 0,1, and P2's X/Y axies are done to analog 2,3.  Guncon mode is also added at 1.31.
 

@@ -149,6 +149,12 @@ If you want to have an extra button to press button 1+2+3 at the exactly same ti
 - Currently we are shipping with Ver 1.35. You can check the version as a JVS I/O device name.
 - You can burn the latest or old firmwares at [Firmware Update](firmware_en) page.
 
+## Screw Holes for Fixing
+PCB Ver 2.00 has 4 screw holes for fixing. You can know the metrics below.
+Hole size is Φ3.5.
+![foot_print](foot_print.png)
+
+
 ## Contact
 Feel free to ask questions at [Twitter](https://twitter.com/toyoshim).
 Reports for compatibility issues, requests to support more devices, or any ideas are welcomed.

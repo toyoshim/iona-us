@@ -128,14 +128,23 @@ You can quit this mode by pressing TEST, and following assignments are just skip
 You can quit the settings mode by pressing TEST, but options will be set via P1 buttons on quiting the mode as below.
 The button number is logical one based on your customized layout. Default settings are all-off.
 
-|1|2|3|Function|
-|-|-|-|-|
-|OFF|-|-|Declare SEGA compatible I/O device name against the JVS query|
-|ON|-|-|Declare namco compatible I/O device name against the JVS query (*1)|
-|-|-|OFF|Activate JVS data signal level adjustment |
-|-|-|ON|Inactivate JVS data signal level adjustment |
+|1|2|3|4|5|6|Supported Version|Function|
+|-|-|-|-|-|-|-|-|
+|OFF|OFF|-|-|-|-|1.40|Declare SEGA compatible I/O device name against the JVS query|
+|ON|OFF|-|-|-|-|1.40|Declare namco JYU compatible I/O device name against the JVS query (*1)|
+|ON|ON|-|-|-|-|1.41|Declare namco NA-JV compatible I/O device name against the JVS query (*2)|
+|-|-|OFF|-|-|-|1.40|Activate JVS data signal level adjustment|
+|-|-|ON|-|-|-|1.40|Inactivate JVS data signal level adjustment|
+|-|-|-|OFF|-|-|1.41|Inactivate Rotary input support|
+|-|-|-|ON|-|-|1.41|Activate Rotary input support|
+|-|-|-|-|OFF|-|1.41|Inactivate Screen position input support|
+|-|-|-|-|ON|-|1.41|Activate Screen position input support|
+|-|-|-|-|-|OFF|1.41|Assign also analog 0 and 1 to lever input|
+|-|-|-|-|-|ON|1.41|Don't assign also analog 0 and 1 to lever input|
 
 (*1) Ninja Assault is know to require this configuration.
+
+(*2) Experimental support for Star Wars: Battle Pod.
 
 ### Tips
 You can craft layout and rapid-fire settings for 3 button games to have another 3 for rapid-fires. For instance, you can map coin, start, button1+4, button2+5, button3+6, ..., then enable rapid-fires for button4+5+6.

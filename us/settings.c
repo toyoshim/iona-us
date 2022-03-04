@@ -353,6 +353,21 @@ bool settings_options_pulldown() {
   return (options & 0x20) == 0;
 }
 
+bool settings_options_rotary() {
+  uint8_t options = settings.common[settings.player_setting[0]].options;
+  return (options & 0x10) != 0;
+}
+
+bool settings_options_screen_position() {
+  uint8_t options = settings.common[settings.player_setting[0]].options;
+  return (options & 0x08) != 0;
+}
+
+bool settings_options_analog_lever() {
+  uint8_t options = settings.common[settings.player_setting[0]].options;
+  return (options & 0x04) != 0;
+}
+
 uint8_t* settings_options_analog() {
   return settings.common[settings.player_setting[0]].analog;
 }

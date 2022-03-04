@@ -7,6 +7,8 @@
 #include "ch559.h"
 #include "serial.h"
 
+#include "settings.h"
+
 //#define _DBG_HID_REPORT_DUMP
 //#define _DBG_JVS_BUTTON_DUMP
 
@@ -172,15 +174,17 @@ void controller_update(uint8_t hub,
   uint8_t l = button_check(info->dpad[2], data) ? 1 : 0;
   uint8_t r = button_check(info->dpad[3], data) ? 1 : 0;
   int8_t x = axis_check(info, data, hub, 0);
-  if (x < 0)
-    l = 1;
-  else if (x > 0)
-    r = 1;
   int8_t y = axis_check(info, data, hub, 1);
-  if (y < 0)
-    u = 1;
-  else if (y > 0)
-    d = 1;
+  if (settings_options_analog_lever()) {
+    if (x < 0)
+      l = 1;
+    else if (x > 0)
+      r = 1;
+    if (y < 0)
+      u = 1;
+    else if (y > 0)
+      d = 1;
+  }
   axis_check(info, data, hub, 2);
   axis_check(info, data, hub, 3);
   axis_check(info, data, hub, 4);

@@ -13,12 +13,20 @@
 #include "settings.h"
 #include "soft485.h"
 
-#define VER "1.40"
+#define VER "1.41"
 
 static const char sega_id[] =
     "SEGA ENTERPRISES,LTD.compat;MP07-IONA-US;ver" VER;
-static const char namco_id[] =
+static const char namco_gun_id[] =
     "namco ltd.;JYU-PCB;compat Ver" VER ";MP07-IONA-US,2Coins 2Guns";
+static const char namco_multi_id[] =
+    "namco ltd.;NA-JV;compat Ver" VER ";MP07-IONA-US,Multipurpose.";
+static const char* ids[4] = {
+    sega_id,
+    sega_id,
+    namco_gun_id,
+    namco_multi_id,
+};
 
 static struct JVSIO_DataClient data;
 static struct JVSIO_SenseClient sense;
@@ -47,7 +55,7 @@ static void jvs_poll(struct JVSIO_Lib* io) {
     case kCmdIoId:
       io->pushReport(io, kReportOk);
       {
-        const char* id = settings_options_id() ? namco_id : sega_id;
+        const char* id = ids[settings_options_id()];
         for (uint8_t i = 0; id[i]; ++i)
           io->pushReport(io, id[i]);
       }
@@ -57,9 +65,15 @@ static void jvs_poll(struct JVSIO_Lib* io) {
       io->pushReport(io, kReportOk);
 
       io->pushReport(io, 0x01);  // sw
-      io->pushReport(io, 0x02);  // players
-      io->pushReport(io, 0x10);  // buttons
-      io->pushReport(io, 0x00);
+      if (settings_options_id() != 3) {
+        io->pushReport(io, 0x02);  // players
+        io->pushReport(io, 0x10);  // buttons
+        io->pushReport(io, 0x00);
+      } else {
+        io->pushReport(io, 0x01);  // players
+        io->pushReport(io, 0x18);  // buttons
+        io->pushReport(io, 0x00);
+      }
 
       io->pushReport(io, 0x02);  // coin
       io->pushReport(io, 0x02);  // slots
@@ -67,48 +81,68 @@ static void jvs_poll(struct JVSIO_Lib* io) {
       io->pushReport(io, 0x00);
 
       io->pushReport(io, 0x03);  // analog inputs
-      io->pushReport(io, 0x06);  // channels
-      io->pushReport(io, 0x00);  // bits
+      if (settings_options_id() != 3) {
+        io->pushReport(io, 0x06);  // channels
+        io->pushReport(io, 0x00);  // bits
+      } else {
+        io->pushReport(io, 0x08);  // channels
+        io->pushReport(io, 0x10);  // bits
+      }
       io->pushReport(io, 0x00);
 
-      io->pushReport(io, 0x04);  // rotary inputs
-      io->pushReport(io, 0x02);  // channels
-      io->pushReport(io, 0x00);
-      io->pushReport(io, 0x00);
+      if (settings_options_rotary()) {
+        io->pushReport(io, 0x04);  // rotary inputs
+        io->pushReport(io, 0x02);  // channels
+        io->pushReport(io, 0x00);
+        io->pushReport(io, 0x00);
+      }
 
-      io->pushReport(io, 0x06);  // screen position inputs
-      io->pushReport(io, 0x0a);  // Xbits
-      io->pushReport(io, 0x0a);  // Ybits
-      io->pushReport(io, 0x02);  // channels
+      if (settings_options_screen_position()) {
+        io->pushReport(io, 0x06);  // screen position inputs
+        if (settings_options_id() != 3) {
+          io->pushReport(io, 0x0a);  // Xbits
+          io->pushReport(io, 0x0a);  // Ybits
+          io->pushReport(io, 0x02);  // channels
+        } else {
+          io->pushReport(io, 0x10);  // Xbits
+          io->pushReport(io, 0x10);  // Ybits
+          io->pushReport(io, 0x01);  // channels
+        }
+      }
 
       io->pushReport(io, 0x12);  // general purpose driver
-      io->pushReport(io, 0x08);  // slots
+      io->pushReport(io, 0x12);  // slots
       io->pushReport(io, 0x00);
       io->pushReport(io, 0x00);
+
+      if (settings_options_id() == 3) {
+        io->pushReport(io, 0x13);  // analog output
+        io->pushReport(io, 0x02);  // channel
+        io->pushReport(io, 0x00);
+        io->pushReport(io, 0x00);
+
+        io->pushReport(io, 0x14);  // character output
+        io->pushReport(io, 0x10);  // character
+        io->pushReport(io, 0x01);  // line
+        io->pushReport(io, 0x00);  // code
+      }
 
       io->pushReport(io, 0x00);
       break;
     case kCmdSwInput:
       io->pushReport(io, kReportOk);
-      if (data[1] == 2 && data[2] == 2) {
+      {
+        uint8_t lines = 1 + data[1] * data[2];
         if (settings_mode() != S_NORMAL) {
-          io->pushReport(io, 0);
-          io->pushReport(io, 0);
-          io->pushReport(io, 0);
-          io->pushReport(io, 0);
-          io->pushReport(io, 0);
+          for (uint8_t i = 0; i < lines; ++i)
+            io->pushReport(io, 0);
         } else {
           settings_rapid_sync();
           controller_map(0, settings_rapid_mask(0), settings_button_masks(0));
           controller_map(1, settings_rapid_mask(1), settings_button_masks(1));
-          io->pushReport(io, controller_jvs(0, gpout));
-          io->pushReport(io, controller_jvs(1, gpout));
-          io->pushReport(io, controller_jvs(2, gpout));
-          io->pushReport(io, controller_jvs(3, gpout));
-          io->pushReport(io, controller_jvs(4, gpout));
+          for (uint8_t i = 0; i < lines; ++i)
+            io->pushReport(io, controller_jvs(i, gpout));
         }
-      } else {
-        Serial.println("Err CmdSwInput");
       }
       break;
     case kCmdCoinInput:
@@ -172,7 +206,8 @@ static void jvs_poll(struct JVSIO_Lib* io) {
         uint16_t y = controller_analog(index);
         if (sign)
           y = 0xffff - y;
-        y = y >> 6;
+        if (settings_options_id() != 3)
+          y = y >> 6;
         io->pushReport(io, y >> 8);
         io->pushReport(io, y & 0xff);
       }
@@ -194,6 +229,10 @@ static void jvs_poll(struct JVSIO_Lib* io) {
       gpout = data[2];
       io->pushReport(io, kReportOk);
       break;
+    case kCmdAnalogOutput:
+    case kCmdCharacterOutput:
+      io->pushReport(io, kReportOk);
+      break;
   }
 }
 
@@ -209,7 +248,7 @@ void main() {
   controller_init();
   settings_init();
   delay(30);
-  Serial.println(settings_options_id() ? namco_id : sega_id);
+  Serial.println(ids[settings_options_id()]);
 
   data_client(&data);
   sense_client(&sense);

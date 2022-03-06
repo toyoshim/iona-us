@@ -42,6 +42,7 @@ If LED blinks, IONA runs in a normal mode, and you need to power off, and retry.
 
 Alternatively, you can use a special USB cable from Type A to A.
 You can connect your PC and 1P connector by such cable with pressing SERVICE to enter the firmware update mode.
+You should not connect power supply and don't need jumpers.
 
 Once it boots to the firmware update mode, connect IONA to your PC over USB via JVS port.
 You should not connect a gamepad to the P1 USB port. It conflicts with the USB connection to the PC host, and makes communication unstable.

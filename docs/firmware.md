@@ -109,6 +109,7 @@ JVS I/Oとして利用する前、特にジャンパーピンを実装した人�
 - Ver 1.35 SERVICE+TEST長押し中も入力が効くように修正、設定モードには0.5〜5秒押し続けた時のみ移行
 - Ver 1.40 アナログレイアウト、オプション設定を追加し、画面ポジション入力に対応しました
 - Ver 1.41 namco NA-JV互換モードと各種オプション設定を追加しました
+- Ver 1.42 メインIDコマンドに正常応答を返すように変更しました
 
 ## ファームウェアの互換性
 Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基本的に安定して動くはずです。
@@ -141,6 +142,9 @@ Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基�
 以下は実際にファームウェア更新を行うためのUIです。書き込みボタンにより実際に更新されます。
 動作確認が不十分でバグも確認されているVer 1.03は選択できないようにしました。
 
+Ver 1.4x系列は実験用のバージョンで十分なテストは実施されていません。
+最も新しいVer 1.3x系のバージョン（デフォルトで選択済み）が最新の安定バージョンになります。
+
 <script src="https://toyoshim.github.io/CH559Flasher.js/CH559Flasher.js"></script>
 <script>
 async function flash() {
@@ -164,6 +168,7 @@ async function flash() {
     'firmwares/us_v1_35.bin',  // Ver 1.35
     'firmwares/us_v1_40.bin',  // Ver 1.40
     'firmwares/us_v1_41.bin',  // Ver 1.41
+    'firmwares/us_v1_42.bin',  // Ver 1.42
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -208,6 +213,7 @@ async function flash() {
 <option selected>Ver 1.35</option>
 <option>Ver 1.40</option>
 <option>Ver 1.41</option>
+<option>Ver 1.42</option>
 </select>
 <button onclick="flash();">書き込み</button>
 

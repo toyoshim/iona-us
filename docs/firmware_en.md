@@ -111,6 +111,7 @@ It may be ok if it does not long, but it may damage the device to connect over J
 - Ver 1.35 Allow to send inputs even while pressing SERVICE+TEST. You can enter the settings mode iff you keep them pressed for 0.5-5.0 sec.
 - Ver 1.40 Add analog layout, option config, and screen position input support.
 - Ver 1.41 Add namco NA-JV compatible mode and several option conmfigs.
+- Ver 1.42 Changed to ack with successful status for the main ID command.
 
 ## Firmware Compatibility
 All controllers that conform Xbox 360, or Xbox One series protocols are expected to work fine.
@@ -143,6 +144,8 @@ Also, the internal format to hold the user settings is changed at firmware Ver 1
 This is the real UI to update firmware. Flash button will actually flash the chosen firmware.
 Ver 1.03  is hidden as it has many known issues.
 
+Now 1.4x series are experimental versions, and the latest 1.3x series, selected by default, is expected to be the latest stable version.
+
 <script src="https://toyoshim.github.io/CH559Flasher.js/CH559Flasher.js"></script>
 <script>
 async function flash() {
@@ -166,6 +169,7 @@ async function flash() {
     'firmwares/us_v1_35.bin',  // Ver 1.35
     'firmwares/us_v1_40.bin',  // Ver 1.40
     'firmwares/us_v1_41.bin',  // Ver 1.41
+    'firmwares/us_v1_42.bin',  // Ver 1.42
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -210,6 +214,7 @@ async function flash() {
 <option selected>Ver 1.35</option>
 <option>Ver 1.40</option>
 <option>Ver 1.41</option>
+<option>Ver 1.42</option>
 </select>
 <button onclick="flash();">Flash</button>
 

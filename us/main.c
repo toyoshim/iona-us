@@ -13,7 +13,7 @@
 #include "settings.h"
 #include "soft485.h"
 
-#define VER "1.41"
+#define VER "1.42"
 
 static const char sega_id[] =
     "SEGA ENTERPRISES,LTD.compat;MP07-IONA-US;ver" VER;
@@ -21,9 +21,11 @@ static const char namco_gun_id[] =
     "namco ltd.;JYU-PCB;compat Ver" VER ";MP07-IONA-US,2Coins 2Guns";
 static const char namco_multi_id[] =
     "namco ltd.;NA-JV;compat Ver" VER ";MP07-IONA-US,Multipurpose.";
+static const char namco_multi_exact_id[] =
+    "namco ltd.;NA-JV;Ver1.00;JPN,Multipurpose.";
 static const char* ids[4] = {
     sega_id,
-    sega_id,
+    namco_multi_exact_id,  // tentative.
     namco_gun_id,
     namco_multi_id,
 };

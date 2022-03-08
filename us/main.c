@@ -13,7 +13,7 @@
 #include "settings.h"
 #include "soft485.h"
 
-#define VER "1.42c"
+#define VER "1.42d"
 
 static const char sega_id[] =
     "SEGA ENTERPRISES,LTD.compat;MP07-IONA-US;ver" VER;
@@ -21,11 +21,9 @@ static const char namco_gun_id[] =
     "namco ltd.;JYU-PCB;compat Ver" VER ";MP07-IONA-US,2Coins 2Guns";
 static const char namco_multi_id[] =
     "namco ltd.;NA-JV;Ver4.00;JPN,Multipurpose.,MP07-IONA-US,v" VER;
-static const char namco_multi_exact_id[] =
-    "namco ltd.;NA-JV;Ver4.00;JPN,Multipurpose.";
 static const char* ids[4] = {
     sega_id,
-    namco_multi_exact_id,  // tentative.
+    sega_id,
     namco_gun_id,
     namco_multi_id,
 };
@@ -67,7 +65,7 @@ static void jvs_poll(struct JVSIO_Lib* io) {
       io->pushReport(io, kReportOk);
 
       io->pushReport(io, 0x01);  // sw
-      if ((settings_options_id() & 1) == 0) {
+      if (settings_options_id() != 3) {
         io->pushReport(io, 0x02);  // players
         io->pushReport(io, 0x10);  // buttons
         io->pushReport(io, 0x00);
@@ -83,7 +81,7 @@ static void jvs_poll(struct JVSIO_Lib* io) {
       io->pushReport(io, 0x00);
 
       io->pushReport(io, 0x03);  // analog inputs
-      if ((settings_options_id() & 1) == 0) {
+      if (settings_options_id() != 3) {
         io->pushReport(io, 0x06);  // channels
         io->pushReport(io, 0x00);  // bits
       } else {
@@ -101,7 +99,7 @@ static void jvs_poll(struct JVSIO_Lib* io) {
 
       if (settings_options_screen_position()) {
         io->pushReport(io, 0x06);  // screen position inputs
-        if ((settings_options_id() & 1) == 0) {
+        if (settings_options_id() != 3) {
           io->pushReport(io, 0x0a);  // Xbits
           io->pushReport(io, 0x0a);  // Ybits
           io->pushReport(io, 0x02);  // channels
@@ -117,7 +115,7 @@ static void jvs_poll(struct JVSIO_Lib* io) {
       io->pushReport(io, 0x00);
       io->pushReport(io, 0x00);
 
-      if ((settings_options_id() & 1) == 1) {
+      if (settings_options_id() == 3) {
         io->pushReport(io, 0x13);  // analog output
         io->pushReport(io, 0x02);  // channel
         io->pushReport(io, 0x00);
@@ -208,7 +206,7 @@ static void jvs_poll(struct JVSIO_Lib* io) {
         uint16_t y = controller_analog(index);
         if (sign)
           y = 0xffff - y;
-        if ((settings_options_id() & 1) == 0)
+        if (settings_options_id() != 3)
           y = y >> 6;
         io->pushReport(io, y >> 8);
         io->pushReport(io, y & 0xff);

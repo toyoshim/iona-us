@@ -109,7 +109,7 @@ JVS I/Oとして利用する前、特にジャンパーピンを実装した人�
 - Ver 1.35 SERVICE+TEST長押し中も入力が効くように修正、設定モードには0.5〜5秒押し続けた時のみ移行
 - Ver 1.40 アナログレイアウト、オプション設定を追加し、画面ポジション入力に対応しました
 - Ver 1.41 namco NA-JV互換モードと各種オプション設定を追加しました
-- Ver 1.42c メインIDコマンドに正常応答を返すように変更しました
+- Ver 1.42d メインIDコマンドや一部のnamco固有コマンドに正常応答を返すように変更しました
 
 ## ファームウェアの互換性
 Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基本的に安定して動くはずです。
@@ -168,7 +168,7 @@ async function flash() {
     'firmwares/us_v1_35.bin',  // Ver 1.35
     'firmwares/us_v1_40.bin',  // Ver 1.40
     'firmwares/us_v1_41.bin',  // Ver 1.41
-    'firmwares/us_v1_42c.bin',  // Ver 1.42c
+    'firmwares/us_v1_42d.bin',  // Ver 1.42d
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -213,7 +213,7 @@ async function flash() {
 <option selected>Ver 1.35</option>
 <option>Ver 1.40</option>
 <option>Ver 1.41</option>
-<option>Ver 1.42c</option>
+<option>Ver 1.42d</option>
 </select>
 <button onclick="flash();">書き込み</button>
 

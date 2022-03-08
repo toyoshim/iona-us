@@ -13,7 +13,7 @@
 #include "settings.h"
 #include "soft485.h"
 
-#define VER "1.42b"
+#define VER "1.42c"
 
 static const char sega_id[] =
     "SEGA ENTERPRISES,LTD.compat;MP07-IONA-US;ver" VER;
@@ -234,6 +234,14 @@ static void jvs_poll(struct JVSIO_Lib* io) {
     case kCmdAnalogOutput:
     case kCmdCharacterOutput:
       io->pushReport(io, kReportOk);
+      break;
+    case kCmdNamco:
+      if (data[4] == 0x14) {
+        io->sendUnknownStatus(io);
+      } else {
+        io->pushReport(io, kReportOk);
+        io->pushReport(io, 0x01);
+      }
       break;
   }
 }

@@ -127,6 +127,7 @@ Also, the internal format to hold the user settings is changed at firmware Ver 1
 |(Xbox 360 protocol controllers)|1.00|1.02a and later are recommended|
 |(Xbox One series protocol controllers)|1.00|1.02a and later are recommended|
 |(Keyboard supporting boot mode)|1.20|supported by NAOMI Mahjong mode|
+|Brook XB Fighting Board|1.43|Need to specify X-360 mode manually|
 |Guncon3|1.31||designed for DeathCrimson OX|
 |Horipad FPS plus for PlayStation 4|1.00|PS3 mode also works|
 |Wireless Controller（DUALSHOCK 4 - CUH-ZCT1J）|1.02||

@@ -10,10 +10,11 @@ But if sellers respect the original project, please consider to support the proj
 - chlib ![chlib C/C++ CI](https://github.com/toyoshim/chlib/actions/workflows/c-cpp.yml/badge.svg)
 - jvsio ![jvsio C/C++ CI](https://github.com/toyoshim/jvsio/actions/workflows/c-cpp.yml/badge.svg)
 
-## Official Pages
-- [Support Page in English](https://toyoshim.github.io/iona-us/en)
+## Support
+- [Support Site in English](https://toyoshim.github.io/iona-us/en)
   + [Distributor Information](https://toyoshim.github.io/iona-us/shop_en)
   + [Firmware Update](https://toyoshim.github.io/iona-us/firmware_en)
 - [サポートページ（日本語）](https://toyoshim.github.io/iona-us/)
   + [販売店](https://toyoshim.github.io/iona-us/shop)
   + [ファーム更新](https://toyoshim.github.io/iona-us/firmware)
+- [Bug Report (English or Japanese)](https://github.com/toyoshim/iona-us/issues)

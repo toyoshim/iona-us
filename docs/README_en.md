@@ -133,8 +133,8 @@ The button number is logical one based on your customized layout. Default settin
 |OFF|OFF|-|-|-|-|1.40|Declare SEGA compatible I/O device name against the JVS query|
 |ON|OFF|-|-|-|-|1.40|Declare namco JYU compatible I/O device name against the JVS query (*1)|
 |ON|ON|-|-|-|-|1.41|Declare namco NA-JV compatible I/O device name against the JVS query (*2)|
-|-|-|OFF|-|-|-|1.40|Activate JVS data signal level adjustment|
-|-|-|ON|-|-|-|1.40|Inactivate JVS data signal level adjustment|
+|-|-|OFF|-|-|-|1.40|Activate JVS data signal level adjustment (*3)|
+|-|-|ON|-|-|-|1.40|Inactivate JVS data signal level adjustment (*3)|
 |-|-|-|OFF|-|-|1.41|Inactivate Rotary input support|
 |-|-|-|ON|-|-|1.41|Activate Rotary input support|
 |-|-|-|-|OFF|-|1.41|Inactivate Screen position input support|
@@ -145,6 +145,8 @@ The button number is logical one based on your customized layout. Default settin
 (*1) Ninja Assault is know to require this configuration.
 
 (*2) Experimental support for Star Wars: Battle Pod.
+
+(*3) On 1.43 and later, booting with the TEST button pressed will flip the current settings.
 
 ### Tips
 You can craft layout and rapid-fire settings for 3 button games to have another 3 for rapid-fires. For instance, you can map coin, start, button1+4, button2+5, button3+6, ..., then enable rapid-fires for button4+5+6.

@@ -1,8 +1,14 @@
+.DS_Store
 test/*.o
 test/out
 test/test
+??/*.bin
 *.asm
+*.ihx
+*.lk
 *.lst
+*.map
+*.mem
 *.rel
 *.rst
 *.sym

@@ -13,7 +13,7 @@
 #include "settings.h"
 #include "soft485.h"
 
-#define VER "1.42d"
+#define VER "1.43"
 
 static const char sega_id[] =
     "SEGA ENTERPRISES,LTD.compat;MP07-IONA-US;ver" VER;
@@ -270,6 +270,11 @@ void main() {
   hid.report = report;
   hid_init(&hid);
   Serial.println("USB Host ready");
+
+  if (controller_button(B_TEST)) {
+    settings_flip_options_pulldown();
+    Serial.printf("Adjust %s\n", settings_options_pulldown() ? "ON" : "OFF");
+  }
 
   for (;;) {
     hid_poll();

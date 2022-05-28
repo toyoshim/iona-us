@@ -158,7 +158,6 @@ static void mode_analog() {
 }
 
 static void quit_option() {
-  uint8_t options = 0;
   uint16_t buttons =
       ((uint16_t)controller_jvs(1, 0) << 8) | controller_jvs(2, 0);
   settings.common[settings.player_setting[0]].options = buttons >> 2;
@@ -384,4 +383,9 @@ void settings_led_mode(uint8_t client_mode) {
   client_led_mode = client_mode;
   if (mode == S_NORMAL || mode == S_WAIT)
     led_mode(client_mode);
+}
+
+void settings_flip_options_pulldown() {
+  settings.common[settings.player_setting[0]].options ^= 0x20;
+  settings_save();
 }

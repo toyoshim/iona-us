@@ -50,5 +50,6 @@ uint8_t settings_mode();
 void settings_rapid_sync();
 
 void settings_led_mode(uint8_t mode);
+void settings_flip_options_pulldown();
 
 #endif  // __settings_h__

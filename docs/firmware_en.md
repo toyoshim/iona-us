@@ -112,6 +112,7 @@ It may be ok if it does not long, but it may damage the device to connect over J
 - Ver 1.40 Add analog layout, option config, and screen position input support.
 - Ver 1.41 Add namco NA-JV compatible mode and several option conmfigs.
 - Ver 1.42d Changed to ack with successful status for the main ID command and namco vendor specific commands.
+- Ver 1.43 Changed as booting with TEST button pressed will flip the JVS signal level adjustment option.
 
 ## Firmware Compatibility
 All controllers that conform Xbox 360, or Xbox One series protocols are expected to work fine.
@@ -170,6 +171,7 @@ async function flash() {
     'firmwares/us_v1_40.bin',  // Ver 1.40
     'firmwares/us_v1_41.bin',  // Ver 1.41
     'firmwares/us_v1_42d.bin',  // Ver 1.42d
+    'firmwares/us_v1_43.bin',  // Ver 1.43
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -215,6 +217,7 @@ async function flash() {
 <option>Ver 1.40</option>
 <option>Ver 1.41</option>
 <option>Ver 1.42d</option>
+<option>Ver 1.43</option>
 </select>
 <button onclick="flash();">Flash</button>
 

@@ -158,15 +158,33 @@ If you want to have an extra button to press button 1+2+3 at the exactly same ti
 - Currently we are shipping with Ver 1.35. You can check the version as a JVS I/O device name.
 - You can burn the latest or old firmwares at [Firmware Update](firmware_en) page.
 
-## Screw Holes for Fixing
+## FYI
+### Screw Holes for Fixing
 PCB Ver 2.00 has 4 screw holes for fixing. You can know the metrics below.
 Hole size is Φ3.5.
 ![foot_print](foot_print.png)
 
-## Case
+### Case
 There are users who build own case for Ver 1.xx board and Ver 2.00 board respectively, and resources to reproduce it by yourself are published. Let me show links to the projects.
 - [MP07-IONA-US Case](https://www.thingiverse.com/thing:5251839) for Ver 1.xx by Zepherino
 - [MP07-IONA-US USB-C Case](https://www.printables.com/model/159069-mp07-iona-us-usb-c-case) for Ver 2.00 by thenullray
+
+### JVS Compatibility Details
+There are 2 kinds of compatibility issues exist on JVS and IONA.
+
+One is the case that the board isn't satisfied with IONA's capability over the negotiation.
+JVS titles communicates with I/O boards over JVS, and check boads' functions to check if the board has enough capability to play the game.
+But, we know some titles even check the I/O board name just in case, or some titles even crash due to a buffer overrun against so many functions. (Good news if you want to hack it!)
+To avoid these problems, IONA provides options to change its name, or to omit some functions.
+
+The other comes from electrical characteristics. In this case, IONA can not communicate with the board at all.
+JVS uses the SENSE signal to detect I/O boards, and also use D+/D- differencial signals to communicate.
+This differencial signals are based on EIA-RS485, and it requires accepting from -7V through to 12V, and minimum differences between D+/D- is 0.2V. It's too wide to implement with a single micro-controller.
+IONA's microcontroller has 5V tolerant 3.3V I/O, and it recognizes 2.0+ voltages as HIGH signal.
+Practically said, most boards speak among 0/5V and it fits IONA's IO capability.
+But some boards use 2.5V ± 0.5V or less to communicate. This case, HIGH and LOW both can be over 2.0V, and IONA recognizes both are HIGH signals. Thus, IONA can not recognize and receive any data from such boards.
+As a mitigation, the JVS data signal level adjustment was introduced. With this option, data signals are adjusted to lower so that IONA can detect the lower signal as LOW. But it's still mitigation, and doesn't make IONA completely comform the 485's requirement.
+As this option works only for incoming messages, it would not damage the connected boards.
 
 ## Contact
 Feel free to ask questions at [Twitter](https://twitter.com/toyoshim).

@@ -163,6 +163,10 @@ PCB Ver 2.00 has 4 screw holes for fixing. You can know the metrics below.
 Hole size is Φ3.5.
 ![foot_print](foot_print.png)
 
+## Case
+There are users who build own case for Ver 1.xx board and Ver 2.00 board respectively, and resources to reproduce it by yourself are published. Let me show links to the projects.
+- [MP07-IONA-US Case](https://www.thingiverse.com/thing:5251839) for Ver 1.xx by Zepherino
+- [MP07-IONA-US USB-C Case](https://www.printables.com/model/159069-mp07-iona-us-usb-c-case) for Ver 2.00 by thenullray
 
 ## Contact
 Feel free to ask questions at [Twitter](https://twitter.com/toyoshim).

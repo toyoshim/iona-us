@@ -158,6 +158,11 @@ Ver 2.00基板では固定用のネジ穴があります。基板の形状デー
 ネジ穴の大きさはΦ3.5になります。
 ![foot_print](foot_print.png)
 
+## ケースについて
+Ver 1.xx基板、Ver 2.00基板それぞれについてケースを自作してデータを公開しているユーザーがいるので紹介させてください。
+- [MP07-IONA-US Case](https://www.thingiverse.com/thing:5251839) for Ver 1.xx by Zepherino
+- [MP07-IONA-US USB-C Case](https://www.printables.com/model/159069-mp07-iona-us-usb-c-case) for Ver 2.00 by thenullray
+
 ## 問い合わせ
 質問は[Twitter](https://twitter.com/toyoshim)等で声をかけて頂ければできる限りお答えします。
 相性問題の報告やUSBコントローラの対応要望、機能追加のアイデアどもあればぜひご連絡ください。

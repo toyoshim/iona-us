@@ -113,6 +113,7 @@ It may be ok if it does not long, but it may damage the device to connect over J
 - Ver 1.41 Add namco NA-JV compatible mode and several option conmfigs.
 - Ver 1.42d Changed to ack with successful status for the main ID command and namco vendor specific commands.
 - Ver 1.43 Changed as booting with TEST button pressed will flip the JVS signal level adjustment option.
+- Ver 1.44 Support the Brook XB Fighting Board in the default X-One mode. Also fix detection issues on Xbox controllers.
 
 ## Firmware Compatibility
 All controllers that conform Xbox 360, or Xbox One series protocols are expected to work fine.
@@ -126,8 +127,8 @@ Also, the internal format to hold the user settings is changed at firmware Ver 1
 |-|-|-|
 |(Xbox 360 protocol controllers)|1.00|1.02a and later are recommended|
 |(Xbox One series protocol controllers)|1.00|1.02a and later are recommended|
-|(Keyboard supporting boot mode)|1.20|supported by NAOMI Mahjong mode|
-|Brook XB Fighting Board|1.43|Need to specify X-360 mode manually|
+|(Keyboard supporting boot mode)|1.20|Supported by NAOMI Mahjong mode|
+|Brook XB Fighting Board|1.44|Work with the default X-One mode, and manual X-360 mode|
 |Guncon3|1.31||designed for DeathCrimson OX|
 |Horipad FPS plus for PlayStation 4|1.00|PS3 mode also works|
 |Wireless Controller（DUALSHOCK 4 - CUH-ZCT1J）|1.02||
@@ -173,6 +174,7 @@ async function flash() {
     'firmwares/us_v1_41.bin',  // Ver 1.41
     'firmwares/us_v1_42d.bin',  // Ver 1.42d
     'firmwares/us_v1_43.bin',  // Ver 1.43
+    'firmwares/us_v1_44.bin',  // Ver 1.44
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -219,6 +221,7 @@ async function flash() {
 <option>Ver 1.41</option>
 <option>Ver 1.42d</option>
 <option>Ver 1.43</option>
+<option>Ver 1.44</option>
 </select>
 <button onclick="flash();">Flash</button>
 

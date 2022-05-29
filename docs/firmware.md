@@ -110,7 +110,8 @@ JVS I/Oとして利用する前、特にジャンパーピンを実装した人�
 - Ver 1.40 アナログレイアウト、オプション設定を追加し、画面ポジション入力に対応しました
 - Ver 1.41 namco NA-JV互換モードと各種オプション設定を追加しました
 - Ver 1.42d メインIDコマンドや一部のnamco固有コマンドに正常応答を返すように変更しました
-- Ver 1.43 TESTボタンを押しながら起動する事でJVSデータ信号レベル補正の有無を判定するよう変更しました。
+- Ver 1.43 TESTボタンを押しながら起動する事でJVSデータ信号レベル補正の有無を判定するよう変更しました
+- Ver 1.44 Brook XB Fighting BoardのX-Oneモードに対応、ほかXbox系で再接続時に起きる認識問題を修正しました
 
 ## ファームウェアの互換性
 Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基本的に安定して動くはずです。
@@ -124,7 +125,7 @@ Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基�
 |-|-|-|
 |(Xbox 360規格コントローラ)|1.00|1.02a以降推奨|
 |(Xbox Oneシリーズ規格コントローラ)|1.00|1.02a以降推奨|
-|Brook XB Fighting Board|1.43|X-360モードに手動切り替えする必要あり|
+|Brook XB Fighting Board|1.44|標準のX-Oneモードで動作、X-360モード指定でも動作可能|
 |(Bootモード対応キーボード)|1.20|NAOMI麻雀モードに対応|
 |ガンコン3|1.31||DeathCrimson OX対応|
 |ホリパッドFPSプラス for PlayStation 4|1.00|PS3モードも対応|
@@ -172,6 +173,7 @@ async function flash() {
     'firmwares/us_v1_41.bin',  // Ver 1.41
     'firmwares/us_v1_42d.bin',  // Ver 1.42d
     'firmwares/us_v1_43.bin',  // Ver 1.43
+    'firmwares/us_v1_44.bin',  // Ver 1.44
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -218,6 +220,7 @@ async function flash() {
 <option>Ver 1.41</option>
 <option>Ver 1.42d</option>
 <option>Ver 1.43</option>
+<option>Ver 1.44</option>
 </select>
 <button onclick="flash();">書き込み</button>
 

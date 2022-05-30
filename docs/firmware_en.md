@@ -136,6 +136,7 @@ Also, the internal format to hold the user settings is changed at firmware Ver 1
 |Horipad mini for Nintendo Switch|1.00||
 |Nintendo Switch Pro Controller|1.04||
 |Nintendo Switch Joy-Con Charger Glip|1.04||
+|Brook ZERO-PI Fighting Board|1.44|Work with the default Switch mode|
 |CYBER Arcade Stick|1.23||
 |6B Controller (MEGADRIVE mini)|1.02a||
 |Xin-Mo Controller (*1)|1.20||

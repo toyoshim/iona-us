@@ -134,6 +134,7 @@ Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基�
 |ホリパッドミニ for Nintendo Switch|1.00||
 |Nintendo Switch Proコントローラー|1.04||
 |Nintendo Switch Joy-Con 充電グリップ|1.04||
+|Brook ZERO-PI Fighting Board|1.44|標準のSwitchモードで動作|
 |CYBER・アーケードスティック|1.23||
 |6B Controller (メガドライブミニ)|1.02a||
 |Xin-Mo Controller (*1)|1.20||

@@ -157,7 +157,7 @@ If you want to have an extra button to press button 1+2+3 at the exactly same ti
 - Ver 1.10 and 1.20 were shipped in the past. Current version is 2.00.
 
 ### Firmware version
-- Currently we are shipping with Ver 1.35. You can check the version as a JVS I/O device name.
+- Currently we are shipping with Ver 1.44. You can check the version as a JVS I/O device name.
 - You can burn the latest or old firmwares at [Firmware Update](firmware_en) page.
 
 ## FYI

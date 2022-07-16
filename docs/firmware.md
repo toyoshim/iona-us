@@ -51,8 +51,11 @@ SERVICEボタンが正しく認識されると、LEDランプが消灯したま�
 設定方法の詳細についてはMicrosoft公式のドキュメント
 「[システム提供のデバイス クラスを指定して WinUSB をインストールする](https://docs.microsoft.com/ja-jp/windows-hardware/drivers/usbcon/winusb-installation#installing-winusb-by-specifying-the-system-provided-device-class)」
 に書かれていますので、この手順に従って設定して下さい。
+Windows 11でのインストールの様子をキャプチャーした動画があるので、[こちら](https://www.youtube.com/watch?v=5yzpc2vI_94)も参考にしてください。
+公式ページの説明が分かりにくいと感じる場合、役に立つかもしれません。10でも基本的には同じです。
 
 インストール時にエラーが発生する場合、何回か試すと成功するとの報告があります。
+またUSB3.0ポートに接続した場合に特に不安定との報告もありますので、USB2.0等のポートに接続するか、USB2.0のUSB Hubなどを通して接続してみてください。
 この不具合に関してはチップ内蔵のブートローダ、あるいはWindows側の問題のため、改善策は今の所ありません。
 
 ![デバイスマネージャー](fw_devman.png)
@@ -110,7 +113,7 @@ JVS I/Oとして利用する前、特にジャンパーピンを実装した人�
 - Ver 1.40 アナログレイアウト、オプション設定を追加し、画面ポジション入力に対応しました
 - Ver 1.41 namco NA-JV互換モードと各種オプション設定を追加しました
 - Ver 1.42d メインIDコマンドや一部のnamco固有コマンドに正常応答を返すように変更しました
-- Ver 1.43 TESTボタンを押しながら起動する事でJVSデータ信号レベル補正の有無を判定するよう変更しました
+- Ver 1.43 TESTボタンを押しながら起動する事でJVSデータ信号レベル補正の有無を反転するよう変更しました
 - Ver 1.44 Brook XB Fighting BoardのX-Oneモードに対応、ほかXbox系で再接続時に起きる認識問題を修正しました
 
 ## ファームウェアの互換性
@@ -216,12 +219,12 @@ async function flash() {
 <option>Ver 1.32</option>
 <option>Ver 1.33</option>
 <option>Ver 1.34</option>
-<option selected>Ver 1.35</option>
+<option>Ver 1.35</option>
 <option>Ver 1.40</option>
 <option>Ver 1.41</option>
 <option>Ver 1.42d</option>
 <option>Ver 1.43</option>
-<option>Ver 1.44</option>
+<option selected>Ver 1.44</option>
 </select>
 <button onclick="flash();">書き込み</button>
 

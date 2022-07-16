@@ -53,6 +53,8 @@ If there are multiple unknown devices, IONA is the one that shows `USB\VID_4348&
 You need to install the system provinding default driver called as WinUSB for the device.
 
 You can follow the instruction explained at the Microsoft official site, [Installing WinUSB by specifying the system-provided device class](https://docs.microsoft.com/en-us/windows-hardware/drivers/usbcon/winusb-installation#installing-winusb-by-specifying-the-system-provided-device-class).
+[Here](https://www.youtube.com/watch?v=5yzpc2vI_94) is a movie that captures how to install the WinUSB driver on Windows 11.
+If you feel the explanation in the site is difficult, this may help. You wouldn't see anything different on Windows 10.
 
 Some users said retry will help if installation failed.
 As this firmware update mode is provided by the chip vendor, I have no other ideas to mitigate this problem.
@@ -217,12 +219,12 @@ async function flash() {
 <option>Ver 1.32</option>
 <option>Ver 1.33</option>
 <option>Ver 1.34</option>
-<option selected>Ver 1.35</option>
+<option>Ver 1.35</option>
 <option>Ver 1.40</option>
 <option>Ver 1.41</option>
 <option>Ver 1.42d</option>
 <option>Ver 1.43</option>
-<option>Ver 1.44</option>
+<option selected>Ver 1.44</option>
 </select>
 <button onclick="flash();">Flash</button>
 

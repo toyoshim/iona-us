@@ -26,6 +26,9 @@ permalink: /troubleshoot_en
    3. Are LED blinking or off?
       - It should blink after the initial boot, blink fastly on JVS but reset, turn on when an address is assigned over JVS. Unless an address is assigned, it should not be recognized.
       As this may be a compatibility issue, feel free to contact author with LED status.
+      - Try with JVS signal level adjustment option to be enabled or disabled.
+      Some system board has a compatibility issue, and works with one of these modes.
+      You can flip the mode by making it power-on while pressing the TEST button.
    4. Other cases.
       - May be a compatibility issue for IONA-US and the arcade system board.
       - Try with the JVS signal level adjustment disabled in the option mode config.

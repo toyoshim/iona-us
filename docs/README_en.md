@@ -195,3 +195,6 @@ As this option works only for incoming messages, it would not damage the connect
 ## Contact
 Feel free to ask questions at [Twitter](https://twitter.com/toyoshim).
 Reports for compatibility issues, requests to support more devices, or any ideas are welcomed.
+
+We will push related information with the hashtag [#IONA_US](https://twitter.com/hashtag/IONA_US).
+Feel free to use the hashtag for your comments.

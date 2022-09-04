@@ -364,7 +364,12 @@ bool settings_options_screen_position() {
 
 bool settings_options_analog_lever() {
   uint8_t options = settings.common[settings.player_setting[0]].options;
-  return (options & 0x04) != 0;
+  return (options & 0x04) == 0;
+}
+
+bool settings_options_analog_input() {
+  uint8_t options = settings.common[settings.player_setting[0]].options;
+  return (options & 0x02) != 0;
 }
 
 uint8_t* settings_options_analog() {

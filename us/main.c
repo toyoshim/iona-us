@@ -13,7 +13,7 @@
 #include "settings.h"
 #include "soft485.h"
 
-#define VER "1.44"
+#define VER "1.45"
 
 static const char sega_id[] =
     "SEGA ENTERPRISES,LTD.compat;MP07-IONA-US;ver" VER;
@@ -80,15 +80,17 @@ static void jvs_poll(struct JVSIO_Lib* io) {
       io->pushReport(io, 0x00);
       io->pushReport(io, 0x00);
 
-      io->pushReport(io, 0x03);  // analog inputs
-      if (settings_options_id() != 3) {
-        io->pushReport(io, 0x06);  // channels
-        io->pushReport(io, 0x00);  // bits
-      } else {
-        io->pushReport(io, 0x08);  // channels
-        io->pushReport(io, 0x10);  // bits
+      if (settings_options_analog_input()) {
+        io->pushReport(io, 0x03);  // analog inputs
+        if (settings_options_id() != 3) {
+          io->pushReport(io, 0x06);  // channels
+          io->pushReport(io, 0x00);  // bits
+        } else {
+          io->pushReport(io, 0x08);  // channels
+          io->pushReport(io, 0x10);  // bits
+        }
+        io->pushReport(io, 0x00);
       }
-      io->pushReport(io, 0x00);
 
       if (settings_options_rotary()) {
         io->pushReport(io, 0x04);  // rotary inputs

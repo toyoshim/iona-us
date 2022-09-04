@@ -65,7 +65,9 @@ permalink: /troubleshoot_en
    2. Do you enable the twinstick mode?
       - A special layout is enforced in the twinstick mode.
       Please check the [Manual](en), and disable the twinstick mode for usual uses.
-   3. Other cases.
+   3. Seeing an I/O Error on launching a JVS Dash compatible title on the exA-Arcadia system.
+      - Try with the JVS signal level adjustment disabled in the option mode config.
+   4. Other cases.
       - Feel free to contact the author.
 
 ## Contact

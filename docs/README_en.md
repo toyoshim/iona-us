@@ -22,8 +22,10 @@ Triforce and System 2x6 may have this compatibility issue.
 This issue was solved in Ver 1.20 and later PCBs.
 
 Ver 1.20 and later PCBs activate namco compatible signal mode by default. But there are a few reports that this mode
-causes a connectivity issue with a certain lot of naomi. If you have a connectivity issue with naomi or SEGA boards,
-you can inactivate this signal level adjustment in the option config mode.
+causes a connectivity issue with a certain lot of naomi.
+__If you have a connectivity issue with naomi or SEGA boards, you can inactivate this signal level adjustment in the option config mode.__
+__We also know that exA-Arcadia shows I/O Errors on launching a newer title that supports JVS Dash even if the system menu works with the setting activated.__ Inactivating the adjustment option solves the issue.
+You can flip the adjustment setting by booting IONA with TEST button pressed, and the change is stored into the persistent storage. You can revert it again by doing the same operation on booting.
 
 From firmware 1.30, P1's X/Y axies are assigned to analog 0,1, and P2's X/Y axies are done to analog 2,3.  Guncon mode is also added at 1.31.
 
@@ -147,6 +149,8 @@ The button number is logical one based on your customized layout. Default settin
 (*2) Experimental support for Star Wars: Battle Pod.
 
 (*3) On 1.43 and later, booting with the TEST button pressed will flip the current settings.
+
+(*4) 1.44 and earliers take this bit inverted mistakenly.
 
 ### Tips
 You can craft layout and rapid-fire settings for 3 button games to have another 3 for rapid-fires. For instance, you can map coin, start, button1+4, button2+5, button3+6, ..., then enable rapid-fires for button4+5+6.

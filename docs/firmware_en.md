@@ -116,6 +116,7 @@ It may be ok if it does not long, but it may damage the device to connect over J
 - Ver 1.42d Changed to ack with successful status for the main ID command and namco vendor specific commands.
 - Ver 1.43 Changed as booting with TEST button pressed will flip the JVS signal level adjustment option.
 - Ver 1.44 Support the Brook XB Fighting Board in the default X-One mode. Also fix detection issues on Xbox controllers.
+- Ver 1.45 Fixed the analog lever config polarity, and add a new setting to disable analog inputs.
 
 ## Firmware Compatibility
 All controllers that conform Xbox 360, or Xbox One series protocols are expected to work fine.
@@ -148,9 +149,9 @@ Also, the internal format to hold the user settings is changed at firmware Ver 1
 ---
 ## Firmware Update
 This is the real UI to update firmware. Flash button will actually flash the chosen firmware.
-Ver 1.03  is hidden as it has many known issues.
+Ver 1.03 is hidden as it has many known issues.
 
-Now 1.4x series are experimental versions, and the latest 1.3x series, selected by default, is expected to be the latest stable version.
+Now 1.5x series are experimental versions (doesn't exist now), and the latest 1.4x series, selected by default, is expected to be the latest stable version.
 
 <script src="https://toyoshim.github.io/CH559Flasher.js/CH559Flasher.js"></script>
 <script>
@@ -178,6 +179,7 @@ async function flash() {
     'firmwares/us_v1_42d.bin',  // Ver 1.42d
     'firmwares/us_v1_43.bin',  // Ver 1.43
     'firmwares/us_v1_44.bin',  // Ver 1.44
+    'firmwares/us_v1_45.bin',  // Ver 1.45
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -224,7 +226,8 @@ async function flash() {
 <option>Ver 1.41</option>
 <option>Ver 1.42d</option>
 <option>Ver 1.43</option>
-<option selected>Ver 1.44</option>
+<option>Ver 1.44</option>
+<option selected>Ver 1.45</option>
 </select>
 <button onclick="flash();">Flash</button>
 

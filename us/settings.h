@@ -45,6 +45,7 @@ bool settings_options_pulldown();
 bool settings_options_rotary();
 bool settings_options_screen_position();
 bool settings_options_analog_lever();
+bool settings_options_analog_input();
 uint8_t* settings_options_analog();
 uint8_t settings_mode();
 void settings_rapid_sync();

@@ -115,6 +115,7 @@ JVS I/Oとして利用する前、特にジャンパーピンを実装した人�
 - Ver 1.42d メインIDコマンドや一部のnamco固有コマンドに正常応答を返すように変更しました
 - Ver 1.43 TESTボタンを押しながら起動する事でJVSデータ信号レベル補正の有無を反転するよう変更しました
 - Ver 1.44 Brook XB Fighting BoardのX-Oneモードに対応、ほかXbox系で再接続時に起きる認識問題を修正しました
+- Ver 1.45 アナログレバー設定がマニュアルと反対になっていたのを修正、またアナログ入力を無効にするオプションを追加しました
 
 ## ファームウェアの互換性
 Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基本的に安定して動くはずです。
@@ -149,8 +150,8 @@ Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基�
 以下は実際にファームウェア更新を行うためのUIです。書き込みボタンにより実際に更新されます。
 動作確認が不十分でバグも確認されているVer 1.03は選択できないようにしました。
 
-Ver 1.4x系列は実験用のバージョンで十分なテストは実施されていません。
-最も新しいVer 1.3x系のバージョン（デフォルトで選択済み）が最新の安定バージョンになります。
+Ver 1.5x系列は実験用のバージョンで十分なテストは実施されていません（現在は存在しません）。
+最も新しいVer 1.4x系のバージョン（デフォルトで選択済み）が最新の安定バージョンになります。
 
 <script src="https://toyoshim.github.io/CH559Flasher.js/CH559Flasher.js"></script>
 <script>
@@ -178,6 +179,7 @@ async function flash() {
     'firmwares/us_v1_42d.bin',  // Ver 1.42d
     'firmwares/us_v1_43.bin',  // Ver 1.43
     'firmwares/us_v1_44.bin',  // Ver 1.44
+    'firmwares/us_v1_45.bin',  // Ver 1.45
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -224,7 +226,8 @@ async function flash() {
 <option>Ver 1.41</option>
 <option>Ver 1.42d</option>
 <option>Ver 1.43</option>
-<option selected>Ver 1.44</option>
+<option>Ver 1.44</option>
+<option selected>Ver 1.45</option>
 </select>
 <button onclick="flash();">書き込み</button>
 

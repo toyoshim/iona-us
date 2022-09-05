@@ -20,4 +20,6 @@ uint8_t soft485_recv();
 void soft485_input();
 void soft485_output();
 
+void soft485_set_recv_speed(uint8_t mode);
+
 #endif  // __soft485_h__

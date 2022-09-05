@@ -9,10 +9,11 @@
 
 static bool receiving = true;
 static volatile uint8_t count = 20;
-static uint8_t data[] = {0, 1, 0, 0, 0, 0, 0, 1, 0, 1};  // start, 'A', stop
+static uint8_t data[] = {0, 0, 1, 0, 0, 0, 0, 0, 1, 1};  // start, 'A', stop
 static volatile uint8_t tx_buffer[8];
 static volatile uint8_t tx_wr_ptr = 0;
 static volatile uint8_t tx_rd_ptr = 0;
+static uint8_t speed_mode = 0;  // 0: 115200, 1: 1M, 2: 3M
 
 void soft485_int() __interrupt INT_NO_TMR0 __using 0 {
   if (count == 20) {
@@ -102,8 +103,31 @@ void soft485_output() {
   digitalWrite(4, 1, LOW);
   pinMode(4, 0, OUTPUT);
   pinMode(4, 1, OUTPUT);
-  TL0 = 0;
-  count = 20;
-  TR0 = 1;  // Start timer count
+  if (speed_mode == 0) {
+    TL0 = 0;
+    count = 20;
+    TR0 = 1;  // Start timer count
+  }
   receiving = false;
+}
+
+void soft485_set_recv_speed(uint8_t mode) {
+  speed_mode = mode;
+  SER1_LCR |= bLCR_DLAB;  // Allow SER1_DLL use
+  switch (mode) {
+    case 0:
+      SER1_DLL = 52;  //  115200
+      break;
+    case 1:
+      SER1_DLL = 6;  //  1M
+      break;
+    case 2:
+      SER1_DLL = 2;  //  3M
+      break;
+  }
+  SER1_LCR &= ~bLCR_DLAB;
+  if (receiving)
+    soft485_input();
+  else
+    soft485_output();
 }

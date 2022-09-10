@@ -1,4 +1,4 @@
-CFLAGS  = -V -mmcs51 --model-large --xram-size 0x1800 --xram-loc 0x0000 --code-size 0xec00 --stack-auto --Werror -I../chlib/src -D__NO_JVS_HOST__ --opt-code-size
+CFLAGS  = -V -mmcs51 --model-large --xram-size 0x1800 --xram-loc 0x0000 --code-size 0xec00 --stack-auto --Werror -I../chlib/src -D__NO_JVS_HOST__ --opt-code-speed
 CC      = sdcc
 FLASHER = ../CH55x_python_flasher/chflasher.py
 TARGET  = iona

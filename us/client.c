@@ -13,6 +13,7 @@
 #include "soft485.h"
 
 static bool mode_in = true;
+static enum JVSIO_CommSupMode comm_mode;
 
 static void update_pulldown() {
   // Activate pull-down only if the serial I/O direction is input.
@@ -56,11 +57,6 @@ static uint8_t data_read(struct JVSIO_DataClient* client) {
 static void data_write(struct JVSIO_DataClient* client, uint8_t data) {
   client;
   soft485_send(data);
-}
-
-static void data_write_1M(struct JVSIO_DataClient* client, uint8_t data) {
-  client;
-  data;
 }
 
 static void data_write_3M(struct JVSIO_DataClient* client, uint8_t data) {
@@ -131,22 +127,22 @@ static void data_delay(struct JVSIO_DataClient* client, unsigned int msec) {
 static bool data_setCommSupMode(struct JVSIO_DataClient* client,
                                 enum JVSIO_CommSupMode mode,
                                 bool dryrun) {
-  if (mode != k115200 && mode != k3M)
+  if ((mode != k115200) && (!settings_options_dash() || mode != k3M))
     return false;
   if (!dryrun) {
     soft485_set_recv_speed(mode);
+    uint8_t led_mode = L_ON;
     switch (mode) {
       case k115200:
         client->write = data_write;
         break;
-      case k1M:
-        client->write = data_write_1M;
-        break;
       case k3M:
-        led_oneshot(L_PULSE_ONCE);
         client->write = data_write_3M;
+        led_mode = L_BLINK_TWICE;
         break;
     }
+    settings_led_mode(led_mode);
+    comm_mode = mode;
   }
   return true;
 }
@@ -200,13 +196,26 @@ void sense_client(struct JVSIO_SenseClient* client) {
   client->is_connected = sense_is_connected;
 }
 
-static void led_begin(struct JVSIO_LedClient* client) {
-  client;
-}
-
 static void led_set(struct JVSIO_LedClient* client, bool ready) {
   client;
-  settings_led_mode(ready ? L_ON : L_FASTER_BLINK);
+  uint8_t mode = L_ON;
+  if (ready) {
+    switch (comm_mode) {
+      case k115200:
+        mode = L_ON;
+        break;
+      case k3M:
+        mode = L_BLINK_THREE_TIMES;
+        break;
+    }
+  } else {
+    mode = settings_options_pulldown() ? L_FASTER_BLINK : L_FAST_BLINK;
+  }
+  settings_led_mode(mode);
+}
+
+static void led_begin(struct JVSIO_LedClient* client) {
+  led_set(client, false);
 }
 
 void led_client(struct JVSIO_LedClient* client) {

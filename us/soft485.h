@@ -10,7 +10,8 @@
 
 #include "interrupt.h"
 
-extern void soft485_int() __interrupt INT_NO_TMR0 __using 0;
+extern void soft485_int_tmr0() __interrupt INT_NO_TMR0 __using 0;
+extern void soft485_int_uart() __interrupt INT_NO_UART1 __using 2;
 
 void soft485_init();
 void soft485_send(uint8_t val);

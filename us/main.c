@@ -268,6 +268,11 @@ void main() {
   sense_client(&sense);
   led_client(&led);
 
+  if (controller_button(B_TEST)) {
+    settings_flip_options_pulldown();
+    Serial.printf("Adjust %s\n", settings_options_pulldown() ? "ON" : "OFF");
+  }
+
   struct JVSIO_Lib* io = JVSIO_open(&data, &sense, &led, 1);
   io->begin(io);
   Serial.println("JVS I/O ready");
@@ -278,11 +283,6 @@ void main() {
   hid.get_flags = 0;
   hid_init(&hid);
   Serial.println("USB Host ready");
-
-  if (controller_button(B_TEST)) {
-    settings_flip_options_pulldown();
-    Serial.printf("Adjust %s\n", settings_options_pulldown() ? "ON" : "OFF");
-  }
 
   for (;;) {
     hid_poll();

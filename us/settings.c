@@ -376,6 +376,11 @@ uint8_t* settings_options_analog() {
   return settings.common[settings.player_setting[0]].analog;
 }
 
+bool settings_options_dash() {
+  uint8_t options = settings.common[settings.player_setting[0]].options;
+  return (options & 0x01) == 0;
+}
+
 void settings_rapid_sync() {
   for (uint8_t i = 0; i < 2; ++i) {
     rapid_step[i] = rapid_step[i] + 1;

@@ -13,9 +13,12 @@ static uint8_t data[] = {0, 0, 1, 0, 0, 0, 0, 0, 1, 1};  // start, 'A', stop
 static volatile uint8_t tx_buffer[8];
 static volatile uint8_t tx_wr_ptr = 0;
 static volatile uint8_t tx_rd_ptr = 0;
+static volatile uint8_t fifo[256];
+static volatile uint8_t rx_wr_ptr = 0;
+static volatile uint8_t rx_rd_ptr = 0;
 static uint8_t speed_mode = 0;  // 0: 115200, 1: 1M, 2: 3M
 
-void soft485_int() __interrupt INT_NO_TMR0 __using 0 {
+void soft485_int_tmr0() __interrupt INT_NO_TMR0 __using 0 {
   if (count == 20) {
     if (tx_wr_ptr == tx_rd_ptr)
       return;
@@ -38,6 +41,13 @@ void soft485_int() __interrupt INT_NO_TMR0 __using 0 {
   count++;
 }
 
+void soft485_int_uart() __interrupt INT_NO_UART1 __using 2 {
+  if (0 == (SER1_LSR & bLSR_DATA_RDY))
+    return;
+  P1_7 = 1;
+  fifo[rx_wr_ptr++] = SER1_FIFO;
+}
+
 void soft485_init() {
   // RXD1 connect P4.0, disable TXD1 by default
 
@@ -50,6 +60,9 @@ void soft485_init() {
 
   // no parity, stop bit 1-bit, no interrupts by default
   SER1_LCR |= bLCR_WORD_SZ0 | bLCR_WORD_SZ1;  // data length 8-bits
+
+  SER1_IER |= bIER_RECV_RDY | 4;  // Enable RX ready interrupt
+  SER1_MCR |= bMCR_OUT2;          // Enable UART1 interrupt trigger
 
   // Timer0 mode 2, 8-bit auto
   TMOD = (TMOD | bT0_M1) & ~bT0_M0;
@@ -73,13 +86,13 @@ void soft485_send(uint8_t val) {
 bool soft485_ready() {
   if (!receiving)
     return false;
-  return (SER1_LSR & bLSR_DATA_RDY) != 0;
+  return rx_rd_ptr != rx_wr_ptr;
 }
 
 uint8_t soft485_recv() {
   while (!soft485_ready())
     ;
-  return SER1_FIFO;
+  return fifo[rx_rd_ptr++];
 }
 
 void soft485_input() {
@@ -94,10 +107,12 @@ void soft485_input() {
   SER1_FCR = bFCR_R_FIFO_CLR;  // Clear FIFO
   SER1_FCR = bFCR_FIFO_EN;     // Enable FIFO
   TR0 = 0;                     // Stop timer count
+  IE_UART1 = 1;                // Enable UART1 interrupt
   receiving = true;
 }
 
 void soft485_output() {
+  IE_UART1 = 0;  // Disable UART1 interrupt
   SER1_FCR = 0;  // Disable FIFO
   digitalWrite(4, 0, HIGH);
   digitalWrite(4, 1, LOW);

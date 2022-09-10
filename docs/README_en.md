@@ -130,19 +130,24 @@ You can quit this mode by pressing TEST, and following assignments are just skip
 You can quit the settings mode by pressing TEST, but options will be set via P1 buttons on quiting the mode as below.
 The button number is logical one based on your customized layout. Default settings are all-off.
 
-|1|2|3|4|5|6|Supported Version|Function|
-|-|-|-|-|-|-|-|-|
-|OFF|OFF|-|-|-|-|1.40|Declare SEGA compatible I/O device name against the JVS query|
-|ON|OFF|-|-|-|-|1.40|Declare namco JYU compatible I/O device name against the JVS query (*1)|
-|ON|ON|-|-|-|-|1.41|Declare namco NA-JV compatible I/O device name against the JVS query (*2)|
-|-|-|OFF|-|-|-|1.40|Activate JVS data signal level adjustment (*3)|
-|-|-|ON|-|-|-|1.40|Inactivate JVS data signal level adjustment (*3)|
-|-|-|-|OFF|-|-|1.41|Inactivate Rotary input support|
-|-|-|-|ON|-|-|1.41|Activate Rotary input support|
-|-|-|-|-|OFF|-|1.41|Inactivate Screen position input support|
-|-|-|-|-|ON|-|1.41|Activate Screen position input support|
-|-|-|-|-|-|OFF|1.41|Assign also analog 0 and 1 to lever input|
-|-|-|-|-|-|ON|1.41|Don't assign also analog 0 and 1 to lever input|
+|1|2|3|4|5|6|7|8|Supported Version|Function|
+|-|-|-|-|-|-|-|-|-|-|
+|OFF|OFF|-|-|-|-|-|-|1.40|Declare SEGA compatible I/O device name against the JVS query|
+|ON|OFF|-|-|-|-|-|-|1.40|Declare namco JYU compatible I/O device name against the JVS query (*1)|
+|ON|ON|-|-|-|-|-|-|1.41|Declare namco NA-JV compatible I/O device name against the JVS query (*2)|
+|-|-|OFF|-|-|-|-|-|1.40|Activate JVS data signal level adjustment (*3)|
+|-|-|ON|-|-|-|-|-|1.40|Inactivate JVS data signal level adjustment (*3)|
+|-|-|-|OFF|-|-|-|-|1.41|Inactivate Rotary input support|
+|-|-|-|ON|-|-|-|-|1.41|Activate Rotary input support|
+|-|-|-|-|OFF|-|-|-|1.41|Inactivate Screen position input support|
+|-|-|-|-|ON|-|-|-|1.41|Activate Screen position input support|
+|-|-|-|-|-|OFF|-|-|1.41|Assign also analog 0 and 1 to lever input|
+|-|-|-|-|-|ON|-|-|1.41|Don't assign also analog 0 and 1 to lever input|
+|-|-|-|-|-|-|OFF|-|1.45|Don't support analog inputs|
+|-|-|-|-|-|-|ON|-|1.45|Support analog inputs|
+|-|-|-|-|-|-|-|OFF|1.46|Support JVS Dash(*5)|
+|-|-|-|-|-|-|-|ON|1.46|Don't support JVS Dash(*5)|
+
 
 (*1) Ninja Assault is know to require this configuration.
 
@@ -151,6 +156,8 @@ The button number is logical one based on your customized layout. Default settin
 (*3) On 1.43 and later, booting with the TEST button pressed will flip the current settings.
 
 (*4) 1.44 and earliers take this bit inverted mistakenly.
+
+(*5) High-speed mode used by exA-Arcadia, and Touhou Perfect Sakura Fantastica is the only known title that supports the mode.
 
 ### Tips
 You can craft layout and rapid-fire settings for 3 button games to have another 3 for rapid-fires. For instance, you can map coin, start, button1+4, button2+5, button3+6, ..., then enable rapid-fires for button4+5+6.

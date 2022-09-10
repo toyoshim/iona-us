@@ -116,6 +116,7 @@ JVS I/Oとして利用する前、特にジャンパーピンを実装した人�
 - Ver 1.43 TESTボタンを押しながら起動する事でJVSデータ信号レベル補正の有無を反転するよう変更しました
 - Ver 1.44 Brook XB Fighting BoardのX-Oneモードに対応、ほかXbox系で再接続時に起きる認識問題を修正しました
 - Ver 1.45 アナログレバー設定がマニュアルと反対になっていたのを修正、またアナログ入力を無効にするオプションを追加しました
+- Ver 1.46 exA-ArcadiaのJVS Dash（高速モード）に対応、合わせてオプションの追加とLEDの調整をしました
 
 ## ファームウェアの互換性
 Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基本的に安定して動くはずです。
@@ -180,6 +181,7 @@ async function flash() {
     'firmwares/us_v1_43.bin',  // Ver 1.43
     'firmwares/us_v1_44.bin',  // Ver 1.44
     'firmwares/us_v1_45.bin',  // Ver 1.45
+    'firmwares/us_v1_46.bin',  // Ver 1.46
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -227,7 +229,8 @@ async function flash() {
 <option>Ver 1.42d</option>
 <option>Ver 1.43</option>
 <option>Ver 1.44</option>
-<option selected>Ver 1.45</option>
+<option>Ver 1.45</option>
+<option selected>Ver 1.46</option>
 </select>
 <button onclick="flash();">書き込み</button>
 

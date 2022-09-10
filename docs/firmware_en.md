@@ -117,6 +117,7 @@ It may be ok if it does not long, but it may damage the device to connect over J
 - Ver 1.43 Changed as booting with TEST button pressed will flip the JVS signal level adjustment option.
 - Ver 1.44 Support the Brook XB Fighting Board in the default X-One mode. Also fix detection issues on Xbox controllers.
 - Ver 1.45 Fixed the analog lever config polarity, and add a new setting to disable analog inputs.
+- Ver 1.46 Support exA-Arcadia's JVS Dash (high-speed mode), and adjust options and led controlls.
 
 ## Firmware Compatibility
 All controllers that conform Xbox 360, or Xbox One series protocols are expected to work fine.
@@ -180,6 +181,7 @@ async function flash() {
     'firmwares/us_v1_43.bin',  // Ver 1.43
     'firmwares/us_v1_44.bin',  // Ver 1.44
     'firmwares/us_v1_45.bin',  // Ver 1.45
+    'firmwares/us_v1_46.bin',  // Ver 1.46
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -227,7 +229,8 @@ async function flash() {
 <option>Ver 1.42d</option>
 <option>Ver 1.43</option>
 <option>Ver 1.44</option>
-<option selected>Ver 1.45</option>
+<option>Ver 1.45</option>
+<option selected>Ver 1.46</option>
 </select>
 <button onclick="flash();">Flash</button>
 

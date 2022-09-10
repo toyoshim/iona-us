@@ -253,6 +253,10 @@ static void report(uint8_t hub,
   controller_update(hub, info, data, size, settings_button_masks(hub));
 }
 
+static void detected() {
+  led_oneshot(L_PULSE_ONCE);
+}
+
 void main() {
   initialize();
   controller_init();
@@ -270,6 +274,8 @@ void main() {
 
   struct hid hid;
   hid.report = report;
+  hid.detected = detected;
+  hid.get_flags = 0;
   hid_init(&hid);
   Serial.println("USB Host ready");
 

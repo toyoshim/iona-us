@@ -86,7 +86,7 @@ async function connect() {
           }
         }
         // TODO: {logical|physical}{Maximum|Minimum}, unit*
-        for (let usage of item.usages) {
+        if (!item.isRange) for (let usage of item.usages) {
           if (usage > 65535) {
             // Usage Page is encoded as an upper 16-bits
             const usagePage = (usage >> 16) & 0xffff;

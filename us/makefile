@@ -4,7 +4,9 @@ FLASHER = ../CH55x_python_flasher/chflasher.py
 TARGET  = iona
 OBJS	= main.rel client.rel controller.rel hid.rel hid_guncon3.rel hid_keyboard.rel hid_switch.rel hid_xbox.rel settings.rel soft485.rel ch559.rel flash.rel led.rel pwm1.rel serial.rel timer3.rel usb_host.rel JVSIO_c.rel
 
-all: $(TARGET).bin
+.PHONY: clean program run clean build
+
+all: build $(TARGET).bin
 
 program: $(TARGET).bin
 	$(FLASHER) -w -f $(TARGET).bin
@@ -15,16 +17,17 @@ run: program
 clean:
 	rm -rf build $(TARGET).bin
 
+.SILENT:
 build:
-	mkdir build
+	mkdir -p build
 
-build/%.rel: %.c ../jvsio/JVSIO_c.h ../chlib/src/*.h *.h build
+build/%.rel: %.c ../jvsio/JVSIO_c.h ../chlib/src/*.h *.h
 	$(CC) -c $(CFLAGS) -I../ -o $@ $<
 
-build/%.rel: ../chlib/src/%.c ../chlib/src/*.h build
+build/%.rel: ../chlib/src/%.c ../chlib/src/*.h
 	$(CC) -c $(CFLAGS) -o $@ $<
 
-build/JVSIO_c.rel: ../jvsio/JVSIO_c.c ../jvsio/JVSIO_c.h *.h build
+build/JVSIO_c.rel: ../jvsio/JVSIO_c.c ../jvsio/JVSIO_c.h *.h
 	$(CC) -c $(CFLAGS) -I ../chlib/src -o $@ $<
 
 build/$(TARGET).ihx: $(addprefix build/,$(OBJS))

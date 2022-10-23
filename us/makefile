@@ -13,19 +13,22 @@ run: program
 	$(FLASHER) -s
 
 clean:
-	rm -f *.asm *.lst *.rel *.rst *.sym $(TARGET).bin $(TARGET).ihx $(TARGET).lk $(TARGET).map $(TARGET).mem
+	rm -rf build $(TARGET).bin
 
-%.rel: %.c ../jvsio/JVSIO_c.h ../chlib/src/*.h *.h
-	$(CC) -c $(CFLAGS) -I../ $<
+build:
+	mkdir build
 
-%.rel: ../chlib/src/%.c ../chlib/src/*.h
-	$(CC) -c $(CFLAGS) $<
+build/%.rel: %.c ../jvsio/JVSIO_c.h ../chlib/src/*.h *.h build
+	$(CC) -c $(CFLAGS) -I../ -o $@ $<
 
-JVSIO_c.rel: ../jvsio/JVSIO_c.c ../jvsio/JVSIO_c.h *.h
-	$(CC) -c $(CFLAGS) -I ../chlib/src $<
+build/%.rel: ../chlib/src/%.c ../chlib/src/*.h build
+	$(CC) -c $(CFLAGS) -o $@ $<
 
-$(TARGET).ihx: $(OBJS) 
-	$(CC) $(CFLAGS) $(OBJS) -o $@
+build/JVSIO_c.rel: ../jvsio/JVSIO_c.c ../jvsio/JVSIO_c.h *.h build
+	$(CC) -c $(CFLAGS) -I ../chlib/src -o $@ $<
 
-%.bin: %.ihx
+build/$(TARGET).ihx: $(addprefix build/,$(OBJS))
+	$(CC) $(CFLAGS) $(addprefix build/,$(OBJS)) -o $@
+
+%.bin: build/%.ihx
 	sdobjcopy -I ihex -O binary $< $@

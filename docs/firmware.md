@@ -129,6 +129,7 @@ Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基�
 |デバイス名称|確認バージョン|備考|
 |-|-|-|
 |(Xbox 360規格コントローラ)|1.00|1.02a以降推奨|
+|GP2040 (*2)|1.47|Xbox 360互換モードで確認|
 |(Xbox Oneシリーズ規格コントローラ)|1.00|1.02a以降推奨|
 |Brook XB Fighting Board|1.44|標準のX-Oneモードで動作、X-360モード指定でも動作可能|
 |(Bootモード対応キーボード)|1.20|NAOMI麻雀モードに対応|
@@ -145,6 +146,7 @@ Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基�
 |Xin-Mo Controller (*1)|1.20||
 
 (*1) パソケード フルHDテーブル筐体 PS3ドッキングモデル にて仕様されているコントローラ
+(*2) Raspberry Pi Pico based open source firmware; https://gp2040.info/
 
 ---
 ## ファームウェア更新
@@ -182,6 +184,7 @@ async function flash() {
     'firmwares/us_v1_44.bin',  // Ver 1.44
     'firmwares/us_v1_45.bin',  // Ver 1.45
     'firmwares/us_v1_46.bin',  // Ver 1.46
+    'firmwares/us_v1_47.bin',  // Ver 1.47
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -230,7 +233,8 @@ async function flash() {
 <option>Ver 1.43</option>
 <option>Ver 1.44</option>
 <option>Ver 1.45</option>
-<option selected>Ver 1.46</option>
+<option>Ver 1.46</option>
+<option selected>Ver 1.47</option>
 </select>
 <button onclick="flash();">書き込み</button>
 

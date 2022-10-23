@@ -130,6 +130,7 @@ Also, the internal format to hold the user settings is changed at firmware Ver 1
 |Device Name|Confirmed Version|Note|
 |-|-|-|
 |(Xbox 360 protocol controllers)|1.00|1.02a and later are recommended|
+|GP2040 (*2)|1.47|Confirmed with Xbox 360 compatible mode|
 |(Xbox One series protocol controllers)|1.00|1.02a and later are recommended|
 |(Keyboard supporting boot mode)|1.20|Supported by NAOMI Mahjong mode|
 |Brook XB Fighting Board|1.44|Work with the default X-One mode, and manual X-360 mode|
@@ -146,6 +147,7 @@ Also, the internal format to hold the user settings is changed at firmware Ver 1
 |Xin-Mo Controller (*1)|1.20||
 
 (*1) Controller used by the Pasocade full HD table cab. PS3 dock model
+(*2) Raspberry Pi Pico based open source firmware; https://gp2040.info/
 
 ---
 ## Firmware Update
@@ -182,6 +184,7 @@ async function flash() {
     'firmwares/us_v1_44.bin',  // Ver 1.44
     'firmwares/us_v1_45.bin',  // Ver 1.45
     'firmwares/us_v1_46.bin',  // Ver 1.46
+    'firmwares/us_v1_47.bin',  // Ver 1.47
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -230,7 +233,8 @@ async function flash() {
 <option>Ver 1.43</option>
 <option>Ver 1.44</option>
 <option>Ver 1.45</option>
-<option selected>Ver 1.46</option>
+<option>Ver 1.46</option>
+<option selected>Ver 1.47</option>
 </select>
 <button onclick="flash();">Flash</button>
 

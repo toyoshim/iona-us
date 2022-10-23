@@ -6,19 +6,19 @@
 
 #include "ch559.h"
 #include "pwm1.h"
-#include "rs485.h"
+#include "uart1.h"
 
 #include "jvsio/JVSIO_c.h"
 
 static int data_available(struct JVSIO_DataClient* client) {
   client;
-  return rs485_ready() ? 1 : 0;
+  return uart1_ready() ? 1 : 0;
 }
 
 static void data_setInput(struct JVSIO_DataClient* client) {
   client;
   // Wait until all sending data go out.
-  while (!rs485_sent())
+  while (!uart1_sent())
     ;
   // Activate pull-down.
   pinMode(4, 6, OUTPUT);
@@ -40,12 +40,12 @@ static void data_endTransaction(struct JVSIO_DataClient* client) {
 
 static uint8_t data_read(struct JVSIO_DataClient* client) {
   client;
-  return rs485_recv();
+  return uart1_recv();
 }
 
 static void data_write(struct JVSIO_DataClient* client, uint8_t data) {
   client;
-  rs485_send(data);
+  uart1_send(data);
 }
 
 static void data_delayMicroseconds(struct JVSIO_DataClient* client,
@@ -70,7 +70,7 @@ void data_client(struct JVSIO_DataClient* client) {
   client->delayMicroseconds = data_delayMicroseconds;
   client->delay = data_delay;
 
-  rs485_init();
+  uart1_init(UART1_RS485, UART1_115200);
 
   // Additional D+ pull-down that is activated only on receiving.
   digitalWrite(4, 6, LOW);

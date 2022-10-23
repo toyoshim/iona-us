@@ -18,6 +18,7 @@ static const char id[] =
 static struct JVSIO_DataClient data;
 static struct JVSIO_SenseClient sense;
 static struct JVSIO_LedClient led;
+static struct JVSIO_TimeClient time;
 
 static int8_t coin_index_bias = 0;
 
@@ -126,11 +127,12 @@ void main() {
   data_client(&data);
   sense_client(&sense);
   led_client(&led);
+  time_client(&time);
 
   dipsw_init();
   jamma_init();
 
-  struct JVSIO_Lib* io = JVSIO_open(&data, &sense, &led, 1);
+  struct JVSIO_Lib* io = JVSIO_open(&data, &sense, &led, &time, 1);
   io->begin(io);
   Serial.println("boot");
 

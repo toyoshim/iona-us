@@ -8,6 +8,7 @@
 struct JVSIO_DataClient;
 struct JVSIO_SenseClient;
 struct JVSIO_LedClient;
+struct JVSIO_TimeClient;
 
 // JVS#1 - P4.3 (PWM1_) SENSE
 // JVS#2 - P5.4 (XB) D-
@@ -16,5 +17,6 @@ struct JVSIO_LedClient;
 void data_client(struct JVSIO_DataClient* client);
 void sense_client(struct JVSIO_SenseClient* client);
 void led_client(struct JVSIO_LedClient* client);
+void time_client(struct JVSIO_TimeClient* client);
 
 #endif  // __client_h__

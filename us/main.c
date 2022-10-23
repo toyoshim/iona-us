@@ -13,7 +13,7 @@
 #include "settings.h"
 #include "soft485.h"
 
-#define VER "1.46"
+#define VER "1.47"
 
 static const char sega_id[] =
     "SEGA ENTERPRISES,LTD.compat;MP07-IONA-US;ver" VER;
@@ -31,6 +31,7 @@ static const char* ids[4] = {
 static struct JVSIO_DataClient data;
 static struct JVSIO_SenseClient sense;
 static struct JVSIO_LedClient led;
+static struct JVSIO_TimeClient time;
 
 static int8_t coin_index_bias = 0;
 static uint8_t gpout = 0;
@@ -267,13 +268,14 @@ void main() {
   data_client(&data);
   sense_client(&sense);
   led_client(&led);
+  time_client(&time);
 
   if (controller_button(B_TEST)) {
     settings_flip_options_pulldown();
     Serial.printf("Adjust %s\n", settings_options_pulldown() ? "ON" : "OFF");
   }
 
-  struct JVSIO_Lib* io = JVSIO_open(&data, &sense, &led, 1);
+  struct JVSIO_Lib* io = JVSIO_open(&data, &sense, &led, &time, 1);
   io->begin(io);
   Serial.println("JVS I/O ready");
 

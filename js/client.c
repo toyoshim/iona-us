@@ -6,6 +6,7 @@
 
 #include "ch559.h"
 #include "pwm1.h"
+#include "serial.h"
 #include "uart1.h"
 
 #include "jvsio/JVSIO_c.h"
@@ -48,15 +49,29 @@ static void data_write(struct JVSIO_DataClient* client, uint8_t data) {
   uart1_send(data);
 }
 
-static void data_delayMicroseconds(struct JVSIO_DataClient* client,
-                                   unsigned int usec) {
+static bool data_setCommSupMode(struct JVSIO_DataClient* client,
+                                enum JVSIO_CommSupMode mode,
+                                bool dryrun) {
   client;
-  delayMicroseconds(usec);
+  dryrun;
+  // No Dash support.
+  return mode == k115200;
 }
 
-static void data_delay(struct JVSIO_DataClient* client, unsigned int msec) {
+static void data_dump(struct JVSIO_DataClient* client,
+                      const char* str,
+                      uint8_t* data,
+                      uint8_t len) {
   client;
-  delay(msec);
+  Serial.print(str);
+  Serial.print(": ");
+  for (uint8_t i = 0; i < len; ++i) {
+    if (data[i] < 16)
+      Serial.print("0");
+    Serial.printc(data[i], HEX);
+    Serial.print(" ");
+  }
+  Serial.println("");
 }
 
 void data_client(struct JVSIO_DataClient* client) {
@@ -67,8 +82,8 @@ void data_client(struct JVSIO_DataClient* client) {
   client->endTransaction = data_endTransaction;
   client->read = data_read;
   client->write = data_write;
-  client->delayMicroseconds = data_delayMicroseconds;
-  client->delay = data_delay;
+  client->setCommSupMode = data_setCommSupMode;
+  client->dump = data_dump;
 
   uart1_init(UART1_RS485, UART1_115200);
 
@@ -86,13 +101,13 @@ static void sense_set(struct JVSIO_SenseClient* client, bool ready) {
   pwm1_enable(!ready);
 }
 
-static bool sense_is_ready(struct JVSIO_SenseClient* client) {
+static bool sense_isReady(struct JVSIO_SenseClient* client) {
   client;
   // can be true for single node.
   return true;
 }
 
-static bool sense_is_connected(struct JVSIO_SenseClient* client) {
+static bool sense_isConnected(struct JVSIO_SenseClient* client) {
   client;
   // can be true for client mode.
   return true;
@@ -101,8 +116,8 @@ static bool sense_is_connected(struct JVSIO_SenseClient* client) {
 void sense_client(struct JVSIO_SenseClient* client) {
   client->begin = sense_begin;
   client->set = sense_set;
-  client->is_ready = sense_is_ready;
-  client->is_connected = sense_is_connected;
+  client->isReady = sense_isReady;
+  client->isConnected = sense_isConnected;
 }
 
 static void led_begin(struct JVSIO_LedClient* client) {
@@ -119,4 +134,26 @@ static void led_set(struct JVSIO_LedClient* client, bool ready) {
 void led_client(struct JVSIO_LedClient* client) {
   client->begin = led_begin;
   client->set = led_set;
+}
+
+static void time_delayMicroseconds(struct JVSIO_TimeClient* client,
+                                   unsigned int usec) {
+  client;
+  delayMicroseconds(usec);
+}
+
+static void time_delay(struct JVSIO_TimeClient* client, unsigned int msec) {
+  client;
+  delay(msec);
+}
+
+static uint32_t time_getTick(struct JVSIO_TimeClient* client) {
+  client;
+  return 0;  // not impl and not used in I/O device mode.
+}
+
+void time_client(struct JVSIO_TimeClient* client) {
+  client->delayMicroseconds = time_delayMicroseconds;
+  client->delay = time_delay;
+  client->getTick = time_getTick;
 }

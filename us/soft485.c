@@ -44,7 +44,6 @@ void soft485_int_tmr0() __interrupt INT_NO_TMR0 __using 0 {
 void soft485_int_uart() __interrupt INT_NO_UART1 __using 2 {
   if (0 == (SER1_LSR & bLSR_DATA_RDY))
     return;
-  P1_7 = 1;
   fifo[rx_wr_ptr++] = SER1_FIFO;
 }
 
@@ -61,8 +60,8 @@ void soft485_init() {
   // no parity, stop bit 1-bit, no interrupts by default
   SER1_LCR |= bLCR_WORD_SZ0 | bLCR_WORD_SZ1;  // data length 8-bits
 
-  SER1_IER |= bIER_RECV_RDY | 4;  // Enable RX ready interrupt
-  SER1_MCR |= bMCR_OUT2;          // Enable UART1 interrupt trigger
+  SER1_IER |= bIER_RECV_RDY;  // Enable RX ready interrupt
+  SER1_MCR |= bMCR_OUT2;      // Enable UART1 interrupt trigger
 
   // Timer0 mode 2, 8-bit auto
   TMOD = (TMOD | bT0_M1) & ~bT0_M0;

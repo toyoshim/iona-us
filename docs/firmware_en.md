@@ -130,10 +130,12 @@ Also, the internal format to hold the user settings is changed at firmware Ver 1
 |Device Name|Confirmed Version|Note|
 |-|-|-|
 |(Xbox 360 protocol controllers)|1.00|1.02a and later are recommended|
+|(XInput compatible controllers)|1.00|1.47 and later are recommended|
 |GP2040 (*2)|1.47|Confirmed with Xbox 360 compatible mode|
 |(Xbox One series protocol controllers)|1.00|1.02a and later are recommended|
-|(Keyboard supporting boot mode)|1.20|Supported by NAOMI Mahjong mode|
 |Brook XB Fighting Board|1.44|Work with the default X-One mode, and manual X-360 mode|
+|(Keyboard supporting boot mode)|1.20|Supported by NAOMI Mahjong mode|
+|REAL ARCADE PRO V3.SA|1.47||
 |Guncon3|1.31||designed for DeathCrimson OX|
 |Horipad FPS plus for PlayStation 4|1.00|PS3 mode also works|
 |Wireless Controller（DUALSHOCK 4 - CUH-ZCT1J）|1.02||

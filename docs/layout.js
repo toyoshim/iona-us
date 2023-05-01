@@ -1,7 +1,4 @@
 // TODO
-// - Store
-// - Select Setting
-// - Copy from another setting
 // - Rapid fire template
 // - Device support.
 // - VirtualOn template
@@ -14,6 +11,15 @@ function select(id, index) {
   select.options.selectedIndex = index;
 }
 
+function getSelect(id) {
+  const select = document.getElementById(id);
+  if (!select) {
+    console.log(id, index);
+    console.assert(false);
+  }
+  return select.options.selectedIndex;
+}
+
 function check(id, checked) {
   const checkbox = document.getElementById(id);
   if (!checkbox) {
@@ -21,6 +27,15 @@ function check(id, checked) {
     console.assert(false);
   }
   checkbox.checked = checked;
+}
+
+function isChecked(id) {
+  const checkbox = document.getElementById(id);
+  if (!checkbox) {
+    console.log(id);
+    console.assert(false);
+  }
+  return checkbox.checked;
 }
 
 function enable(id, enabled) {
@@ -36,6 +51,15 @@ function applySequenceWidth(index, width) {
   for (let i = 1; i <= 8; ++i) {
     enable('p' + (index + 1) + i, i <= width);
   }
+  select('rm' + (index + 1), width - 1);
+}
+
+function getSequencePattern(index) {
+  let data = 0;
+  for (let bit = 0; bit < 8; ++bit) {
+    data |= isChecked('p' + (index + 1) + (bit + 1)) ? (1 << bit) : 0;
+  }
+  return data;
 }
 
 function applyData(data) {
@@ -48,8 +72,8 @@ function applyData(data) {
   const screenPositionWidth = data[1] & 3;
   const analogOutputCount = (data[2] >> 6) & 3;
   const characterDisplayWidthHeight = (data[2] >> 3) & 7;
-  const JvsDashSupport = (data[2] >> 2) & 1;
-  const JvsSignalAdjust = (data[2] >> 1) & 1;
+  const jvsDashSupport = (data[2] >> 2) & 1;
+  const jvsSignalAdjust = (data[2] >> 1) & 1;
   select('id', jvsDeviceId);
   select('ainc', analogInputCount);
   select('ainw', analogInputWidth);
@@ -58,8 +82,8 @@ function applyData(data) {
   select('scrw', screenPositionWidth);
   select('aout', analogOutputCount);
   select('disp', characterDisplayWidthHeight);
-  select('jvsd', JvsDashSupport);
-  select('jvss', JvsSignalAdjust);
+  select('jvsd', jvsDashSupport);
+  select('jvss', jvsSignalAdjust);
 
   // Analog
   let offset = 3;
@@ -119,7 +143,79 @@ function applyData(data) {
   }
 }
 
+function store(index) {
+  const start = 10 + 169 * index;
+  const data = userData.subarray(start, start + 169);
+
+  // Core
+  const jvsDeviceId = getSelect('id') & 7;
+  const analogInputCount = getSelect('ainc') & 7;
+  const analogInputWidth = getSelect('ainw') & 3;
+  const rotaryInputCount = getSelect('rotc') & 7;
+  const screenPositionCount = getSelect('scrc') & 7;
+  const screenPositionWidth = getSelect('scrw') & 3;
+  const analogOutputCount = getSelect('aout') & 3;
+  const characterDisplayWidthHeight = getSelect('disp') & 7;
+  const jvsDashSuopport = getSelect('jvsd') & 1;
+  const jvsSignalAdjust = getSelect('jvss') & 1;
+  data[0] = (jvsDeviceId << 5) | (analogInputCount << 2) | analogInputWidth;
+  data[1] = (rotaryInputCount << 5) | (screenPositionCount << 2) | screenPositionWidth;
+  data[2] = (analogOutputCount << 6) | (characterDisplayWidthHeight << 3) | (jvsDashSuopport << 2) | (jvsSignalAdjust << 1);
+
+  // Analog
+  let offset = 3;
+  for (let p of [1, 2]) {
+    for (let i of [1, 2, 3, 4, 5, 6]) {
+      const type = getSelect('a' + p + i + 't') & 7;
+      const index = getSelect('a' + p + i + 'i') & 7;
+      data[offset++] = (type << 4) | index;
+    }
+  }
+
+  // Digital
+  const buttonMap = [
+    'u', 'd', 'l', 'r', '1', '2', '3', '4',
+    '5', '6', '7', '8', '9', 'a', 'b', 'c'];
+  for (let p of [1, 2]) {
+    for (let i = 0; i < 16; ++i) {
+      for (let targetP of [1, 2]) {
+        let d1 = 0;
+        let d2 = 0;
+        d1 |= isChecked('p' + p + buttonMap[i] + '_p' + targetP + 's') ? 0x80 : 0;
+        d1 |= isChecked('p' + p + buttonMap[i] + '_p' + targetP + 'u') ? 0x20 : 0;
+        d1 |= isChecked('p' + p + buttonMap[i] + '_p' + targetP + 'd') ? 0x10 : 0;
+        d1 |= isChecked('p' + p + buttonMap[i] + '_p' + targetP + 'l') ? 0x08 : 0;
+        d1 |= isChecked('p' + p + buttonMap[i] + '_p' + targetP + 'r') ? 0x04 : 0;
+        d1 |= isChecked('p' + p + buttonMap[i] + '_p' + targetP + '1') ? 0x02 : 0;
+        d1 |= isChecked('p' + p + buttonMap[i] + '_p' + targetP + '2') ? 0x01 : 0;
+        d2 |= isChecked('p' + p + buttonMap[i] + '_p' + targetP + '3') ? 0x80 : 0;
+        d2 |= isChecked('p' + p + buttonMap[i] + '_p' + targetP + '4') ? 0x40 : 0;
+        d2 |= isChecked('p' + p + buttonMap[i] + '_p' + targetP + '5') ? 0x20 : 0;
+        d2 |= isChecked('p' + p + buttonMap[i] + '_p' + targetP + '6') ? 0x10 : 0;
+        d2 |= isChecked('p' + p + buttonMap[i] + '_p' + targetP + '7') ? 0x08 : 0;
+        d2 |= isChecked('p' + p + buttonMap[i] + '_p' + targetP + '8') ? 0x04 : 0;
+        data[offset++] = d1;
+        data[offset++] = d2;
+      }
+    }
+  }
+
+  // Rapid Fire
+  for (let p of [1, 2]) {
+    for (let i = 0; i < 6; ++i) {
+      const d1 = getSelect('p' + p + buttonMap[4 + i * 2] + '_rp') & 15;
+      const d2 = getSelect('p' + p + buttonMap[5 + i * 2] + '_rp') & 15;
+      data[offset++] = (d1 << 4) | d2;
+    }
+  }
+  for (let i = 1; i < 8; ++i) {
+    data[offset++] = getSequencePattern(i - 1);
+    data[offset++] = getSelect('rm' + i);
+  }
+}
+
 const presets = [];
+const userData = new Uint8Array(1024);
 
 function appendPreset(name, data) {
   console.assert(data.length == 169);
@@ -128,6 +224,11 @@ function appendPreset(name, data) {
   option.innerText = name;
   select.appendChild(option);
   presets.push(data);
+}
+
+function applyUserData(index) {
+  const start = 10 + 169 * index;
+  applyData(userData.subarray(start, start + 169));
 }
 
 function applyPreset(index) {
@@ -197,3 +298,19 @@ for (let i = 1; i < 8; ++i) {
     applySequenceWidth(i - 1, e.target.options.selectedIndex + 1);
   });
 }
+
+document.getElementById('select').addEventListener('change', e => {
+  applyUserData(e.target.options.selectedIndex);
+});
+
+document.getElementById('copy').addEventListener('change', e => {
+  if (e.target.options.selectedIndex > 0) {
+    applyUserData(e.target.options.selectedIndex - 1);
+  }
+});
+
+document.getElementById('store').addEventListener('click', e => {
+  store(document.getElementById('select').options.selectedIndex);
+});
+
+applyUserData(0);

@@ -24,7 +24,7 @@ permalink: /setting
 
 | | | |
 |-|-|-:|
-|<select id="select"><option>設定 1</option><option>設定 2</option><option>設定 3</option><option>設定 4</option><option>設定 5</option><option>設定 6</option></select>|<button id="store" onclick="decide();">変更を確定</button>|他の設定からコピーする <select id="copy"><option>-</option><option>設定 1</option><option>設定 2</option><option>設定 3</option><option>設定 4</option><option>設定 5</option><option>設定 6</option></select><br>プリセットからコピーする<select id="preset"><option>-</option></select>|
+|<select id="select"><option>設定 1</option><option>設定 2</option><option>設定 3</option><option>設定 4</option><option>設定 5</option><option>設定 6</option></select>|<button id="store">変更を確定</button>|他の設定からコピーする <select id="copy"><option>-</option><option>設定 1</option><option>設定 2</option><option>設定 3</option><option>設定 4</option><option>設定 5</option><option>設定 6</option></select><br>プリセットからコピーする<select id="preset"><option>-</option></select>|
 
 | | | |
 |-|-|-:|

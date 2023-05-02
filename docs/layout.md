@@ -4,6 +4,8 @@ title: レイアウト設定
 permalink: /setting
 ---
 # レイアウト設定
+v2ファームウェアの実験に向けて公開中のページです。対応する正式なファームウェアは未公開で、まだ一般ユーザーの使用を想定していません。
+
 ---
 ## 接続準備
 [ファーム更新ページ](https://toyoshim.github.io/iona-us/firmware)の説明に従いファームウェア更新モードにします。頻繁に利用する場合は更新ページに書かれているType-AからType-Aに繋ぐ特殊なケーブルを利用すると楽です。
@@ -98,4 +100,6 @@ permalink: /setting
 ||P2 L3|P1<br>P2|<input type="checkbox" id="p2b_p1s"><br><input type="checkbox" id="p2b_p2s">|<input type="checkbox" id="p2b_p1u"><br><input type="checkbox" id="p2b_p2u">|<input type="checkbox" id="p2b_p1d"><br><input type="checkbox" id="p2b_p2d">|<input type="checkbox" id="p2b_p1l"><br><input type="checkbox" id="p2b_p2l">|<input type="checkbox" id="p2b_p1r"><br><input type="checkbox" id="p2b_p2r">|<input type="checkbox" id="p2b_p11"><br><input type="checkbox" id="p2b_p21">|<input type="checkbox" id="p2b_p12"><br><input type="checkbox" id="p2b_p22">|<input type="checkbox" id="p2b_p13"><br><input type="checkbox" id="p2b_p23">|<input type="checkbox" id="p2b_p14"><br><input type="checkbox" id="p2b_p24">|<input type="checkbox" id="p2b_p15"><br><input type="checkbox" id="p2b_p25">|<input type="checkbox" id="p2b_p16"><br><input type="checkbox" id="p2b_p26">|<input type="checkbox" id="p2b_p17"><br><input type="checkbox" id="p2b_p27">|<input type="checkbox" id="p2b_p18"><br><input type="checkbox" id="p2b_p28">|<select id="p2b_rp"><option>なし</option><option>パタン1</option><option>パタン2</option><option>パタン3</option><option>パタン4</option><option>パタン5</option><option>パタン6</option><option>パタン7</option></select>
 ||P2 R3|P1<br>P2|<input type="checkbox" id="p2c_p1s"><br><input type="checkbox" id="p2c_p2s">|<input type="checkbox" id="p2c_p1u"><br><input type="checkbox" id="p2c_p2u">|<input type="checkbox" id="p2c_p1d"><br><input type="checkbox" id="p2c_p2d">|<input type="checkbox" id="p2c_p1l"><br><input type="checkbox" id="p2c_p2l">|<input type="checkbox" id="p2c_p1r"><br><input type="checkbox" id="p2c_p2r">|<input type="checkbox" id="p2c_p11"><br><input type="checkbox" id="p2c_p21">|<input type="checkbox" id="p2c_p12"><br><input type="checkbox" id="p2c_p22">|<input type="checkbox" id="p2c_p13"><br><input type="checkbox" id="p2c_p23">|<input type="checkbox" id="p2c_p14"><br><input type="checkbox" id="p2c_p24">|<input type="checkbox" id="p2c_p15"><br><input type="checkbox" id="p2c_p25">|<input type="checkbox" id="p2c_p16"><br><input type="checkbox" id="p2c_p26">|<input type="checkbox" id="p2c_p17"><br><input type="checkbox" id="p2c_p27">|<input type="checkbox" id="p2c_p18"><br><input type="checkbox" id="p2c_p28">|<select id="p2c_rp"><option>なし</option><option>パタン1</option><option>パタン2</option><option>パタン3</option><option>パタン4</option><option>パタン5</option><option>パタン6</option><option>パタン7</option></select>
 
-<script src="layout.js">
+<script src="https://toyoshim.github.io/CH559Flasher.js/CH559Flasher.js"></script>
+<script src="layout.js"></script>
+<script src="layout_presets.js"></script>

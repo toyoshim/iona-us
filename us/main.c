@@ -13,7 +13,7 @@
 #include "settings.h"
 #include "soft485.h"
 
-#define VER "1.47"
+#define VER "2.00"
 
 static const char sega_id[] =
     "SEGA ENTERPRISES,LTD.compat;MP07-IONA-US;ver" VER;
@@ -36,6 +36,8 @@ static struct JVSIO_TimeClient time;
 static int8_t coin_index_bias = 0;
 static uint8_t gpout = 0;
 
+static struct settings* settings = 0;
+
 static void debug_putc(uint8_t val) {
   val;
 }
@@ -56,7 +58,7 @@ static void jvs_poll(struct JVSIO_Lib* io) {
     case kCmdIoId:
       io->pushReport(io, kReportOk);
       {
-        const char* id = ids[settings_options_id()];
+        const char* id = ids[settings->id];
         for (uint8_t i = 0; id[i]; ++i)
           io->pushReport(io, id[i]);
       }
@@ -66,7 +68,7 @@ static void jvs_poll(struct JVSIO_Lib* io) {
       io->pushReport(io, kReportOk);
 
       io->pushReport(io, 0x01);  // sw
-      if (settings_options_id() != 3) {
+      if (settings->id != 3) {
         io->pushReport(io, 0x02);  // players
         io->pushReport(io, 0x10);  // buttons
         io->pushReport(io, 0x00);
@@ -81,9 +83,9 @@ static void jvs_poll(struct JVSIO_Lib* io) {
       io->pushReport(io, 0x00);
       io->pushReport(io, 0x00);
 
-      if (settings_options_analog_input()) {
+      if (settings->analog_input_count) {
         io->pushReport(io, 0x03);  // analog inputs
-        if (settings_options_id() != 3) {
+        if (settings->id != 3) {
           io->pushReport(io, 0x06);  // channels
           io->pushReport(io, 0x00);  // bits
         } else {
@@ -93,16 +95,16 @@ static void jvs_poll(struct JVSIO_Lib* io) {
         io->pushReport(io, 0x00);
       }
 
-      if (settings_options_rotary()) {
+      if (settings->rotary_input_count) {
         io->pushReport(io, 0x04);  // rotary inputs
         io->pushReport(io, 0x02);  // channels
         io->pushReport(io, 0x00);
         io->pushReport(io, 0x00);
       }
 
-      if (settings_options_screen_position()) {
+      if (settings->screen_position_count) {
         io->pushReport(io, 0x06);  // screen position inputs
-        if (settings_options_id() != 3) {
+        if (settings->id != 3) {
           io->pushReport(io, 0x0a);  // Xbits
           io->pushReport(io, 0x0a);  // Ybits
           io->pushReport(io, 0x02);  // channels
@@ -118,7 +120,7 @@ static void jvs_poll(struct JVSIO_Lib* io) {
       io->pushReport(io, 0x00);
       io->pushReport(io, 0x00);
 
-      if (settings_options_id() == 3) {
+      if (settings->id == 3) {
         io->pushReport(io, 0x13);  // analog output
         io->pushReport(io, 0x02);  // channel
         io->pushReport(io, 0x00);
@@ -136,16 +138,11 @@ static void jvs_poll(struct JVSIO_Lib* io) {
       io->pushReport(io, kReportOk);
       {
         uint8_t lines = 1 + data[1] * data[2];
-        if (settings_mode() != S_NORMAL) {
-          for (uint8_t i = 0; i < lines; ++i)
-            io->pushReport(io, 0);
-        } else {
-          settings_rapid_sync();
-          controller_map(0, settings_rapid_mask(0), settings_button_masks(0));
-          controller_map(1, settings_rapid_mask(1), settings_button_masks(1));
-          for (uint8_t i = 0; i < lines; ++i)
-            io->pushReport(io, controller_jvs(i, gpout));
-        }
+        // settings_rapid_sync();
+        //  controller_map(0, settings_rapid_mask(0), settings_button_masks(0));
+        //  controller_map(1, settings_rapid_mask(1), settings_button_masks(1));
+        for (uint8_t i = 0; i < lines; ++i)
+          io->pushReport(io, controller_jvs(i, gpout));
       }
       break;
     case kCmdCoinInput:
@@ -162,7 +159,7 @@ static void jvs_poll(struct JVSIO_Lib* io) {
     case kCmdAnalogInput:
       io->pushReport(io, kReportOk);
       {
-        uint8_t* analog = settings_options_analog();
+        uint8_t* analog = 0;
         for (uint8_t channel = 0; channel < data[1]; ++channel) {
           uint8_t index = channel < 6 ? (analog[channel] & 0x7f) : channel;
           bool sign = channel < 6 && analog[channel] & 0x80;
@@ -177,7 +174,7 @@ static void jvs_poll(struct JVSIO_Lib* io) {
     case kCmdRotaryInput:
       io->pushReport(io, kReportOk);
       {
-        uint8_t* analog = settings_options_analog();
+        uint8_t* analog = 0;
         for (uint8_t channel = 0; channel < data[1]; ++channel) {
           uint8_t index = channel < 6 ? (analog[channel] & 0x7f) : channel;
           bool sign = channel < 6 && (analog[channel] & 0x80) == 0x80;
@@ -193,7 +190,7 @@ static void jvs_poll(struct JVSIO_Lib* io) {
       io->pushReport(io, kReportOk);
       {
         uint8_t channel = data[1] - 1;
-        uint8_t* analog = settings_options_analog();
+        uint8_t* analog = 0;
         uint8_t index =
             channel < 3 ? (analog[channel * 2 + 0] & 0x7f) : channel * 2 + 0;
         bool sign = channel < 3 && (analog[channel * 2 + 0] & 0x80) == 0x80;
@@ -209,7 +206,7 @@ static void jvs_poll(struct JVSIO_Lib* io) {
         uint16_t y = controller_analog(index);
         if (sign)
           y = 0xffff - y;
-        if (settings_options_id() != 3)
+        if (settings->id != 3)
           y = y >> 6;
         io->pushReport(io, y >> 8);
         io->pushReport(io, y & 0xff);
@@ -251,7 +248,7 @@ static void report(uint8_t hub,
                    const struct hub_info* info,
                    const uint8_t* data,
                    uint16_t size) {
-  controller_update(hub, info, data, size, settings_button_masks(hub));
+  controller_update(hub, info, data, size, 0);
 }
 
 static void detected() {
@@ -264,20 +261,23 @@ static uint8_t get_flags() {
 
 void main() {
   initialize();
-  controller_init();
-  settings_init();
-  delay(30);
-  Serial.println(ids[settings_options_id()]);
 
-  data_client(&data);
-  sense_client(&sense);
-  led_client(&led);
-  time_client(&time);
+  led_init(1, 5, LOW);
 
-  if (controller_button(B_TEST)) {
-    settings_flip_options_pulldown();
-    Serial.printf("Adjust %s\n", settings_options_pulldown() ? "ON" : "OFF");
+  if (!settings_init()) {
+    led_mode(L_BLINK_THREE_TIMES);
+    for (;;) {
+      led_poll();
+    }
   }
+  led_mode(L_BLINK);
+  settings = settings_get();
+
+  controller_init();
+  delay(30);
+  Serial.println(ids[settings->id]);
+
+  client_init(&data, &sense, &led, &time);
 
   struct JVSIO_Lib* io = JVSIO_open(&data, &sense, &led, &time, 1);
   io->begin(io);

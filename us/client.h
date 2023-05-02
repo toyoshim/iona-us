@@ -14,9 +14,9 @@ struct JVSIO_TimeClient;
 // JVS#2 - P4.1 D- (proto: P1.1)
 // JVS#3 - P4.0 (RXD1_) D+
 // JVS#4 - GND
-void data_client(struct JVSIO_DataClient* client);
-void sense_client(struct JVSIO_SenseClient* client);
-void led_client(struct JVSIO_LedClient* client);
-void time_client(struct JVSIO_TimeClient* client);
+void client_init(struct JVSIO_DataClient* data,
+                 struct JVSIO_SenseClient* sense,
+                 struct JVSIO_LedClient* led,
+                 struct JVSIO_TimeClient* time);
 
 #endif  // __client_h__

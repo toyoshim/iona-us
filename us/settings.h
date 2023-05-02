@@ -1,4 +1,4 @@
-// Copyright 2021 Takashi Toyoshima <toyoshim@gmail.com>. All rights reserved.
+// Copyright 2023 Takashi Toyoshima <toyoshim@gmail.com>. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be found
 // in the LICENSE file.
 
@@ -8,50 +8,22 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-// Should be included from the main source file to set up interrupt handler.
-#include "led.h"
-
-// Settings mode
-enum {
-  S_NORMAL,
-  S_WAIT,
-  S_LAYOUT,
-  S_RAPID,
-  S_SPEED,
-
-  S_SELECT,
-  S_ANALOG,
-  S_OPTION,
-
-  S_RESET,
+struct settings {
+  uint8_t id;
+  uint8_t analog_input_count;
+  uint8_t analog_input_width;
+  uint8_t rotary_input_count;
+  uint8_t screen_position_count;
+  uint8_t screen_position_width;
+  uint8_t analog_output;
+  uint8_t character_display_width;
+  uint8_t character_display_height;
+  bool data_signal_adjustment;
+  bool jvs_dash_support;
 };
 
-struct player_setting {
-  uint8_t magic;
-  uint8_t speed;  // Rapid fire speed (flip per every N msec)
-  uint16_t rapid_fire;
-  uint16_t button_masks[12];
-  uint16_t padding[2];
-};
-
-void settings_init();
-void settings_save();
+bool settings_init();
 void settings_poll();
-
-uint16_t settings_rapid_mask(uint8_t player);
-uint16_t* settings_button_masks(uint8_t player);
-uint8_t settings_options_id();
-bool settings_options_pulldown();
-bool settings_options_rotary();
-bool settings_options_screen_position();
-bool settings_options_analog_lever();
-bool settings_options_analog_input();
-uint8_t* settings_options_analog();
-bool settings_options_dash();
-uint8_t settings_mode();
-void settings_rapid_sync();
-
-void settings_led_mode(uint8_t mode);
-void settings_flip_options_pulldown();
+struct settings* settings_get();
 
 #endif  // __settings_h__

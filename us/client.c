@@ -6,6 +6,7 @@
 
 #include "ch559.h"
 #include "io.h"
+#include "led.h"
 #include "pwm1.h"
 
 #include "jvsio/JVSIO_c.h"
@@ -15,10 +16,11 @@
 
 static bool mode_in = true;
 static enum JVSIO_CommSupMode comm_mode;
+static struct settings* settings = 0;
 
 static void update_pulldown() {
   // Activate pull-down only if the serial I/O direction is input.
-  bool activate = mode_in && settings_options_pulldown();
+  bool activate = mode_in && settings->data_signal_adjustment;
   pinMode(2, 0, activate ? OUTPUT : INPUT);
 }
 
@@ -117,21 +119,21 @@ static void data_write_3M(struct JVSIO_DataClient* client, uint8_t data) {
 static bool data_setCommSupMode(struct JVSIO_DataClient* client,
                                 enum JVSIO_CommSupMode mode,
                                 bool dryrun) {
-  if ((mode != k115200) && (!settings_options_dash() || mode != k3M))
+  if ((mode != k115200) && (!settings->jvs_dash_support || mode != k3M))
     return false;
   if (!dryrun) {
     soft485_set_recv_speed(mode);
-    uint8_t led_mode = L_ON;
+    uint8_t led = L_ON;
     switch (mode) {
       case k115200:
         client->write = data_write;
         break;
       case k3M:
         client->write = data_write_3M;
-        led_mode = L_BLINK_TWICE;
+        led = L_BLINK_TWICE;
         break;
     }
-    settings_led_mode(led_mode);
+    led_mode(led);
     comm_mode = mode;
   }
   return true;
@@ -151,23 +153,6 @@ static void data_dump(struct JVSIO_DataClient* client,
     Serial.print(" ");
   }
   Serial.println("");
-}
-
-void data_client(struct JVSIO_DataClient* client) {
-  client->available = data_available;
-  client->setInput = data_setInput;
-  client->setOutput = data_setOutput;
-  client->startTransaction = data_startTransaction;
-  client->endTransaction = data_endTransaction;
-  client->read = data_read;
-  client->write = data_write;
-  client->setCommSupMode = data_setCommSupMode;
-  client->dump = data_dump;
-
-  soft485_init();
-
-  // Additional D+ pull-down that is activated only on receiving.
-  digitalWrite(2, 0, LOW);
 }
 
 static void sense_begin(struct JVSIO_SenseClient* client) {
@@ -194,13 +179,6 @@ static bool sense_isConnected(struct JVSIO_SenseClient* client) {
   return true;
 }
 
-void sense_client(struct JVSIO_SenseClient* client) {
-  client->begin = sense_begin;
-  client->set = sense_set;
-  client->isReady = sense_isReady;
-  client->isConnected = sense_isConnected;
-}
-
 static void led_set(struct JVSIO_LedClient* client, bool ready) {
   client;
   uint8_t mode = L_ON;
@@ -214,18 +192,13 @@ static void led_set(struct JVSIO_LedClient* client, bool ready) {
         break;
     }
   } else {
-    mode = settings_options_pulldown() ? L_FASTER_BLINK : L_FAST_BLINK;
+    mode = settings->data_signal_adjustment ? L_FASTER_BLINK : L_FAST_BLINK;
   }
-  settings_led_mode(mode);
+  led_mode(mode);
 }
 
 static void led_begin(struct JVSIO_LedClient* client) {
   led_set(client, false);
-}
-
-void led_client(struct JVSIO_LedClient* client) {
-  client->begin = led_begin;
-  client->set = led_set;
 }
 
 static void time_delayMicroseconds(struct JVSIO_TimeClient* client,
@@ -244,8 +217,36 @@ static uint32_t time_getTick(struct JVSIO_TimeClient* client) {
   return 0;  // not impl and not used in I/O device mode.
 }
 
-void time_client(struct JVSIO_TimeClient* client) {
-  client->delayMicroseconds = time_delayMicroseconds;
-  client->delay = time_delay;
-  client->getTick = time_getTick;
+void client_init(struct JVSIO_DataClient* data,
+                 struct JVSIO_SenseClient* sense,
+                 struct JVSIO_LedClient* led,
+                 struct JVSIO_TimeClient* time) {
+  settings = settings_get();
+
+  data->available = data_available;
+  data->setInput = data_setInput;
+  data->setOutput = data_setOutput;
+  data->startTransaction = data_startTransaction;
+  data->endTransaction = data_endTransaction;
+  data->read = data_read;
+  data->write = data_write;
+  data->setCommSupMode = data_setCommSupMode;
+  data->dump = data_dump;
+
+  soft485_init();
+
+  // Additional D+ pull-down that is activated only on receiving.
+  digitalWrite(2, 0, LOW);
+
+  sense->begin = sense_begin;
+  sense->set = sense_set;
+  sense->isReady = sense_isReady;
+  sense->isConnected = sense_isConnected;
+
+  led->begin = led_begin;
+  led->set = led_set;
+
+  time->delayMicroseconds = time_delayMicroseconds;
+  time->delay = time_delay;
+  time->getTick = time_getTick;
 }

@@ -1,6 +1,13 @@
 // TODO
 // - Rapid fire template
-// - Device support
+function setStatus(status) {
+  document.getElementById('status').innerText = status;
+}
+
+function setButtonStatus(status) {
+  document.getElementById('button').innerText = status;
+}
+
 function select(id, index) {
   const select = document.getElementById(id);
   if (!select) {
@@ -261,4 +268,74 @@ document.getElementById('store').addEventListener('click', e => {
   store(document.getElementById('select').options.selectedIndex);
 });
 
-applyUserData(0);
+let flasher = null;
+document.getElementById('button').addEventListener('click', async e => {
+  if (flasher) {
+    if (!await flasher.eraseData().catch(e => {
+      setStatus(uiMessages.noDevice);
+      flasher = null;
+      setButtonStatus(uiMessages.findDevice);
+      return;
+    })) {
+      setStatus(uiMessages.error + flasher.error);
+      flasher = null;
+      setButtonStatus(uiMessages.findDevice);
+      return;
+    }
+    for (let i = 0; i < 1024; i += 32) {
+      if (!await flasher.writeDataInRange(i, userData.buffer.slice(i, i + 32))) {
+        setStatus(uiMessages.error + flasher.error);
+        flasher = null;
+        setButtonStatus(uiMessages.findDevice);
+        return;
+      }
+    }
+    setStatus(uiMessages.saved);
+    return;
+  }
+  flasher = new CH559Flasher();
+  await flasher.connect();
+  if (flasher.error) {
+    setStatus(uiMessages.error + flasher.error);
+    flasher = null;
+    return;
+  }
+  for (let i = 0; i < 1024; i += 32) {
+    let buffer = await flasher.readDataInRange(0xf000 + i, 32);
+    if (!buffer) {
+      setStatus(uiMessages.errorOnRead + flasher.error);
+      flasher = null;
+      return;
+    }
+    let b8 = new Uint8Array(buffer)
+    for (let j = 0; j < 32; ++j) {
+      userData[i + j] = b8[j];
+    }
+  }
+  if (userData[0] != 'I'.charCodeAt(0) ||
+    userData[1] != 'O'.charCodeAt(0) ||
+    userData[2] != 'N'.charCodeAt(0) ||
+    userData[3] != 'C'.charCodeAt(0) ||
+    userData[4] != 1) {
+    if (!window.confirm(uiMessages.unknownContinue)) {
+      flasher = null;
+      setStatus(uiMessages.abort);
+      return;
+    }
+    // Clear data to continue.
+    userData[0] = 'I'.charCodeAt(0);
+    userData[1] = 'O'.charCodeAt(0);
+    userData[2] = 'N'.charCodeAt(0);
+    userData[3] = 'C'.charCodeAt(0);
+    userData[4] = 1;
+    for (let i = 5; i < 1024; ++i) {
+      userData[i] = 0;
+    }
+  }
+  setStatus(uiMessages.connected + flasher.bootLoader +
+    uiMessages.connectedInformation + userData[4].toString() + ')');
+  setButtonStatus(uiMessages.save);
+  applyUserData(0);
+});
+setStatus(uiMessages.idle);
+setButtonStatus(uiMessages.findDevice);

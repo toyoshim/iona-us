@@ -97,3 +97,5 @@ appendPreset('SEGA Virtual-On', [
   0xaa, 0x07,
   0xcc, 0x07,
 ]);
+
+applyPreset(0);

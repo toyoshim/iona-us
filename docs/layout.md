@@ -14,7 +14,7 @@ v2ファームウェアの実験に向けて公開中のページです。対応
 
 同じボタンが「変更を保存する」に変化するので再度ボタンを押すと設定が保存されます。
 
-<button id="button" onclick="connect();"></button>
+<button id="button"></button>
 <pre id="status"></pre>
 
 ---
@@ -101,5 +101,20 @@ v2ファームウェアの実験に向けて公開中のページです。対応
 ||P2 R3|P1<br>P2|<input type="checkbox" id="p2c_p1s"><br><input type="checkbox" id="p2c_p2s">|<input type="checkbox" id="p2c_p1u"><br><input type="checkbox" id="p2c_p2u">|<input type="checkbox" id="p2c_p1d"><br><input type="checkbox" id="p2c_p2d">|<input type="checkbox" id="p2c_p1l"><br><input type="checkbox" id="p2c_p2l">|<input type="checkbox" id="p2c_p1r"><br><input type="checkbox" id="p2c_p2r">|<input type="checkbox" id="p2c_p11"><br><input type="checkbox" id="p2c_p21">|<input type="checkbox" id="p2c_p12"><br><input type="checkbox" id="p2c_p22">|<input type="checkbox" id="p2c_p13"><br><input type="checkbox" id="p2c_p23">|<input type="checkbox" id="p2c_p14"><br><input type="checkbox" id="p2c_p24">|<input type="checkbox" id="p2c_p15"><br><input type="checkbox" id="p2c_p25">|<input type="checkbox" id="p2c_p16"><br><input type="checkbox" id="p2c_p26">|<input type="checkbox" id="p2c_p17"><br><input type="checkbox" id="p2c_p27">|<input type="checkbox" id="p2c_p18"><br><input type="checkbox" id="p2c_p28">|<select id="p2c_rp"><option>なし</option><option>パタン1</option><option>パタン2</option><option>パタン3</option><option>パタン4</option><option>パタン5</option><option>パタン6</option><option>パタン7</option></select>
 
 <script src="https://toyoshim.github.io/CH559Flasher.js/CH559Flasher.js"></script>
+<script>
+window.uiMessages = {
+  abort: '中断しました',
+  connected: '接続しました（ブートローダー： ', 
+  connectedInformation: ' / 設定フォーマット: v',
+  error: 'エラーが発生しました: ',
+  errorOnRead: '設定読込中にエラーが発生しました: ',
+  findDevice: 'デバイスを探す',
+  idle: '待機中',
+  noDevice: '例外が発生しました、デバイスが接続されているか確認して下さい',
+  save: '変更を保存する',
+  saved: '保存しました',
+  unknownContinue: '接続しましたが、対応するバージョンのIONA-USの設定データが確認できません。このまま継続して最新データで上書きしますか？',
+};
+</script>
 <script src="layout.js"></script>
 <script src="layout_presets.js"></script>

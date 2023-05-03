@@ -20,7 +20,6 @@ static uint8_t mahjong[4] = {0, 0, 0, 0};
 
 static uint8_t digital_map[2][4];
 
-static uint8_t digital[2];
 static uint16_t analog[8];
 static uint16_t rotary[2];
 static uint16_t screen[4];
@@ -136,7 +135,6 @@ static void controller_reset_digital_map(uint8_t player) {
   for (uint8_t i = 0; i < 4; ++i) {
     digital_map[player][i] = 0;
   }
-  digital[player] = 0;
 }
 
 static void update_digital_map(uint8_t* dst, uint8_t* src, bool on) {
@@ -157,7 +155,6 @@ void controller_reset() {
   }
   for (uint8_t i = 0; i < 2; ++i) {
     rotary[i] = 0;
-    digital[i] = 0;
   }
   for (uint8_t i = 0; i < 4; ++i) {
     screen[i] = 0;
@@ -212,12 +209,12 @@ void controller_update(const uint8_t hub,
 
   struct settings* settings = settings_get();
   // Analog to Digital pad map from another controller.
-  uint8_t alt_dpad = digital[(hub + 1) & 1];
-  bool u = button_check(info->dpad[0], data) || (alt_dpad & 1);
-  bool d = button_check(info->dpad[1], data) || (alt_dpad & 2);
-  bool l = button_check(info->dpad[2], data) || (alt_dpad & 4);
-  bool r = button_check(info->dpad[3], data) || (alt_dpad & 8);
+  bool u = button_check(info->dpad[0], data);
+  bool d = button_check(info->dpad[1], data);
+  bool l = button_check(info->dpad[2], data);
+  bool r = button_check(info->dpad[3], data);
 
+  uint8_t alt_digital = 0;
   for (uint8_t i = 0; i < 6; ++i) {
     uint8_t type = settings->analog_type[hub][i];
     if (type == AT_NONE) {
@@ -237,10 +234,10 @@ void controller_update(const uint8_t hub,
             d |= value > 0xa000;
             break;
           case 2:
-            digital[hub] |= (value < 0x6000) ? 4 : (value > 0xa000) ? 8 : 0;
+            alt_digital |= (value < 0x6000) ? 4 : (value > 0xa000) ? 8 : 0;
             break;
           case 3:
-            digital[hub] |= (value < 0x6000) ? 1 : (value > 0xa000) ? 2 : 0;
+            alt_digital |= (value < 0x6000) ? 1 : (value > 0xa000) ? 2 : 0;
             break;
         }
         break;
@@ -300,6 +297,25 @@ void controller_update(const uint8_t hub,
                      settings->sequence[settings->rapid_fire[hub][2]].on && l);
   update_digital_map(digital_map[hub], settings->digital_map[hub][3].data,
                      settings->sequence[settings->rapid_fire[hub][3]].on && r);
+  if (alt_digital) {
+    uint8_t alt_hub = (hub + 1) & 1;
+    bool alt_u = alt_digital & 1;
+    bool alt_d = alt_digital & 2;
+    bool alt_l = alt_digital & 4;
+    bool alt_r = alt_digital & 8;
+    update_digital_map(
+        digital_map[hub], settings->digital_map[alt_hub][0].data,
+        settings->sequence[settings->rapid_fire[alt_hub][0]].on && alt_u);
+    update_digital_map(
+        digital_map[hub], settings->digital_map[alt_hub][1].data,
+        settings->sequence[settings->rapid_fire[alt_hub][1]].on && alt_d);
+    update_digital_map(
+        digital_map[hub], settings->digital_map[alt_hub][2].data,
+        settings->sequence[settings->rapid_fire[alt_hub][2]].on && alt_l);
+    update_digital_map(
+        digital_map[hub], settings->digital_map[alt_hub][3].data,
+        settings->sequence[settings->rapid_fire[alt_hub][3]].on && alt_r);
+  }
   for (uint8_t i = 0; i < 12; ++i) {
     update_digital_map(
         digital_map[hub], settings->digital_map[hub][4 + i].data,

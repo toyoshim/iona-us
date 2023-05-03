@@ -336,9 +336,13 @@ uint16_t controller_raw(uint8_t player) {
   return raw_map[player];
 }
 
-uint8_t controller_jvs(uint8_t index, uint8_t gpout) {
+uint8_t controller_head() {
+  return jvs_map[0];
+}
+
+uint8_t controller_data(uint8_t player, uint8_t index, uint8_t gpout) {
   if (mode != MODE_MAHJONG || index == 0)
-    return jvs_map[index];
+    return jvs_map[(player << 1) + index];
   if (index != 1)
     return 0;
   uint8_t service = jvs_map[1] & 0x40;
@@ -361,6 +365,17 @@ uint16_t controller_analog(uint8_t index) {
   if (index < 16)
     return analog[index];
   return 0x8000;
+}
+
+uint16_t controller_rotary(uint8_t index) {
+  index;
+  return 0;
+}
+
+uint16_t controller_screen(uint8_t index, uint8_t axis) {
+  index;
+  axis;
+  return 0;
 }
 
 void controller_coin_add(uint8_t player, uint8_t add) {

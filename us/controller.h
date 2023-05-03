@@ -38,9 +38,12 @@ void controller_map(uint8_t player,
                     uint16_t* button_masks);
 void controller_poll();
 uint16_t controller_raw(uint8_t player);
-uint8_t controller_jvs(uint8_t index, uint8_t gpout);
+uint8_t controller_head();
+uint8_t controller_data(uint8_t player, uint8_t index, uint8_t gpout);
 uint8_t controller_coin(uint8_t player);
 uint16_t controller_analog(uint8_t index);
+uint16_t controller_rotary(uint8_t index);
+uint16_t controller_screen(uint8_t index, uint8_t axis);
 void controller_coin_add(uint8_t player, uint8_t add);
 void controller_coin_sub(uint8_t player, uint8_t sub);
 

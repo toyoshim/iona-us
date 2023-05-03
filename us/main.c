@@ -21,8 +21,7 @@ static const char namco_gun_id[] =
     "namco ltd.;JYU-PCB;compat Ver" VER ";MP07-IONA-US,2Coins 2Guns";
 static const char namco_multi_id[] =
     "namco ltd.;NA-JV;Ver4.00;JPN,Multipurpose.,MP07-IONA-US,v" VER;
-static const char* ids[4] = {
-    sega_id,
+static const char* ids[3] = {
     sega_id,
     namco_gun_id,
     namco_multi_id,
@@ -68,7 +67,7 @@ static void jvs_poll(struct JVSIO_Lib* io) {
       io->pushReport(io, kReportOk);
 
       io->pushReport(io, 0x01);  // sw
-      if (settings->id != 3) {
+      if (settings->id != IT_NAMCO_NAJV) {
         io->pushReport(io, 0x02);  // players
         io->pushReport(io, 0x10);  // buttons
         io->pushReport(io, 0x00);
@@ -85,34 +84,23 @@ static void jvs_poll(struct JVSIO_Lib* io) {
 
       if (settings->analog_input_count) {
         io->pushReport(io, 0x03);  // analog inputs
-        if (settings->id != 3) {
-          io->pushReport(io, 0x06);  // channels
-          io->pushReport(io, 0x00);  // bits
-        } else {
-          io->pushReport(io, 0x08);  // channels
-          io->pushReport(io, 0x10);  // bits
-        }
+        io->pushReport(io, settings->analog_input_count);
+        io->pushReport(io, settings->analog_input_width);
         io->pushReport(io, 0x00);
       }
 
       if (settings->rotary_input_count) {
         io->pushReport(io, 0x04);  // rotary inputs
-        io->pushReport(io, 0x02);  // channels
+        io->pushReport(io, settings->rotary_input_count);
         io->pushReport(io, 0x00);
         io->pushReport(io, 0x00);
       }
 
       if (settings->screen_position_count) {
         io->pushReport(io, 0x06);  // screen position inputs
-        if (settings->id != 3) {
-          io->pushReport(io, 0x0a);  // Xbits
-          io->pushReport(io, 0x0a);  // Ybits
-          io->pushReport(io, 0x02);  // channels
-        } else {
-          io->pushReport(io, 0x10);  // Xbits
-          io->pushReport(io, 0x10);  // Ybits
-          io->pushReport(io, 0x01);  // channels
-        }
+        io->pushReport(io, settings->screen_position_width);
+        io->pushReport(io, settings->screen_position_width);
+        io->pushReport(io, settings->screen_position_count);
       }
 
       io->pushReport(io, 0x12);  // general purpose driver
@@ -120,15 +108,17 @@ static void jvs_poll(struct JVSIO_Lib* io) {
       io->pushReport(io, 0x00);
       io->pushReport(io, 0x00);
 
-      if (settings->id == 3) {
+      if (settings->analog_output) {
         io->pushReport(io, 0x13);  // analog output
-        io->pushReport(io, 0x02);  // channel
+        io->pushReport(io, settings->analog_output);
         io->pushReport(io, 0x00);
         io->pushReport(io, 0x00);
+      }
 
+      if (settings->character_display_width) {
         io->pushReport(io, 0x14);  // character output
-        io->pushReport(io, 0x10);  // character
-        io->pushReport(io, 0x01);  // line
+        io->pushReport(io, settings->character_display_width);
+        io->pushReport(io, settings->character_display_height);
         io->pushReport(io, 0x00);  // code
       }
 
@@ -136,13 +126,12 @@ static void jvs_poll(struct JVSIO_Lib* io) {
       break;
     case kCmdSwInput:
       io->pushReport(io, kReportOk);
-      {
-        uint8_t lines = 1 + data[1] * data[2];
-        // settings_rapid_sync();
-        //  controller_map(0, settings_rapid_mask(0), settings_button_masks(0));
-        //  controller_map(1, settings_rapid_mask(1), settings_button_masks(1));
-        for (uint8_t i = 0; i < lines; ++i)
-          io->pushReport(io, controller_jvs(i, gpout));
+      settings_rapid_sync();
+      io->pushReport(io, controller_head());
+      for (uint8_t player = 0; player < data[1]; ++player) {
+        for (uint8_t i = 0; i < data[2]; ++i) {
+          io->pushReport(io, controller_data(player, i, gpout));
+        }
       }
       break;
     case kCmdCoinInput:
@@ -158,56 +147,28 @@ static void jvs_poll(struct JVSIO_Lib* io) {
       break;
     case kCmdAnalogInput:
       io->pushReport(io, kReportOk);
-      {
-        uint8_t* analog = 0;
-        for (uint8_t channel = 0; channel < data[1]; ++channel) {
-          uint8_t index = channel < 6 ? (analog[channel] & 0x7f) : channel;
-          bool sign = channel < 6 && analog[channel] & 0x80;
-          uint16_t value = controller_analog(index);
-          if (sign)
-            value = 0xffff - value;
-          io->pushReport(io, value >> 8);
-          io->pushReport(io, value & 0xff);
-        }
+      for (uint8_t i = 0; i < data[1]; ++i) {
+        uint16_t value = controller_analog(i);
+        io->pushReport(io, value >> 8);
+        io->pushReport(io, value & 0xff);
       }
       break;
     case kCmdRotaryInput:
       io->pushReport(io, kReportOk);
-      {
-        uint8_t* analog = 0;
-        for (uint8_t channel = 0; channel < data[1]; ++channel) {
-          uint8_t index = channel < 6 ? (analog[channel] & 0x7f) : channel;
-          bool sign = channel < 6 && (analog[channel] & 0x80) == 0x80;
-          uint16_t value = controller_analog(index);
-          if (sign)
-            value = 0xffff - value;
-          io->pushReport(io, value >> 8);
-          io->pushReport(io, value & 0xff);
-        }
+      for (uint8_t i = 0; i < data[1]; ++i) {
+        uint16_t value = controller_rotary(i);
+        io->pushReport(io, value >> 8);
+        io->pushReport(io, value & 0xff);
       }
       break;
     case kCmdScreenPositionInput:
       io->pushReport(io, kReportOk);
       {
-        uint8_t channel = data[1] - 1;
-        uint8_t* analog = 0;
-        uint8_t index =
-            channel < 3 ? (analog[channel * 2 + 0] & 0x7f) : channel * 2 + 0;
-        bool sign = channel < 3 && (analog[channel * 2 + 0] & 0x80) == 0x80;
-        uint16_t x = controller_analog(index);
-        if (sign)
-          x = 0xffff - x;
-        x = x >> 6;
+        uint8_t index = data[1] - 1;
+        uint16_t x = controller_screen(index, 0);
         io->pushReport(io, x >> 8);
         io->pushReport(io, x & 0xff);
-        index =
-            channel < 3 ? (analog[channel * 2 + 1] & 0x7f) : channel * 2 + 1;
-        sign = channel < 3 && (analog[channel * 2 + 1] & 0x80) == 0x80;
-        uint16_t y = controller_analog(index);
-        if (sign)
-          y = 0xffff - y;
-        if (settings->id != 3)
-          y = y >> 6;
+        uint16_t y = controller_screen(index, 1);
         io->pushReport(io, y >> 8);
         io->pushReport(io, y & 0xff);
       }
@@ -273,14 +234,12 @@ void main() {
 
   struct JVSIO_Lib* io = JVSIO_open(&data, &sense, &led, &time, 1);
   io->begin(io);
-  Serial.println("JVS I/O ready");
 
   struct hid hid;
   hid.report = report;
   hid.detected = detected;
   hid.get_flags = get_flags;
   hid_init(&hid);
-  Serial.println("USB Host ready");
 
   for (;;) {
     hid_poll();

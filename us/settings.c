@@ -46,12 +46,15 @@ static void apply() {
   }
   settings.analog_input_count = ((core0 >> 2) & 7) << 1;
   settings.analog_input_width = (core0 & 3) ? 16 : 0;
-  settings.rotary_input_count = core1 >> 5;
+  settings.rotary_input_count = (core1 & 0x20) ? 2 : 0;
   settings.screen_position_count = (core1 >> 2) & 7;
-  settings.screen_position_width = core1 & 3;
-  settings.analog_output = (core2 >> 6) & 3;
-  settings.character_display_width = (core2 >> 3) & 7;
-  settings.character_display_height;
+  if (settings.screen_position_count > 2) {
+    settings.screen_position_count = 0;
+  }
+  settings.screen_position_width = (core1 & 1) ? 16 : 10;
+  settings.analog_output = (core2 & 0x40) ? 2 : 0;
+  settings.character_display_width = (core2 & 0x08) ? 16 : 0;
+  settings.character_display_height = (core2 & 0x08) ? 1 : 0;
   settings.jvs_dash_support = core2 & 4;
   settings.data_signal_adjustment = core2 & 2;
 
@@ -141,6 +144,7 @@ void settings_poll() {
         if (current_setting > 5) {
           current_setting = 0;
         }
+        apply();
         led_oneshot(current_setting);
       }
       state_val = (cur_service ? 2 : 0) | (cur_test ? 1 : 0);
@@ -165,4 +169,8 @@ void settings_led_mode(uint8_t mode) {
   if (state == S_NORMAL) {
     led_mode(led_current_mode);
   }
+}
+
+void settings_rapid_sync() {
+  // TODO
 }

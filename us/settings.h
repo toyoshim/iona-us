@@ -10,6 +10,12 @@
 
 #include "led.h"
 
+enum IdType {
+  IT_SEGA,
+  IT_NAMCO_JYU,
+  IT_NAMCO_NAJV,
+};
+
 enum AnalogType {
   AT_NONE,
   AT_DIGITAL,
@@ -52,5 +58,6 @@ struct settings* settings_get();
 bool settings_test_pressed();
 bool settings_service_pressed();
 void settings_led_mode(uint8_t mode);
+void settings_rapid_sync();
 
 #endif  // __settings_h__

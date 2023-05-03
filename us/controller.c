@@ -32,8 +32,9 @@ enum {
 static uint8_t mode = MODE_NORMAL;
 
 static bool button_check(uint16_t index, const uint8_t* data) {
-  if (index == 0xffff)
+  if (index == 0xffff) {
     return false;
+  }
   uint8_t byte = index >> 3;
   uint8_t bit = index & 7;
   return data[byte] & (1 << bit);
@@ -46,10 +47,12 @@ uint16_t analog_check(const struct hub_info* info,
     // return 0x8000;
   } else if (info->axis_size[index] == 8) {
     uint8_t v = data[info->axis[index] >> 3];
-    if (info->axis_sign[index])
+    if (info->axis_sign[index]) {
       v += 0x80;
-    if (info->axis_polarity[index])
+    }
+    if (info->axis_polarity[index]) {
       v = 0xff - v;
+    }
     return v << 8;
   } else if (info->axis_size[index] == 12) {
     uint8_t byte_index = info->axis[index] >> 3;
@@ -57,18 +60,22 @@ uint16_t analog_check(const struct hub_info* info,
     uint16_t h = data[byte_index + 1];
     uint16_t v = ((info->axis[index] & 7) == 0) ? (((h << 8) & 0x0f00) | l)
                                                 : ((h << 4) | (l >> 4));
-    if (info->axis_sign[index])
+    if (info->axis_sign[index]) {
       v += 0x0800;
-    if (info->axis_polarity[index])
+    }
+    if (info->axis_polarity[index]) {
       v = 0x0fff - v;
+    }
     return v << 4;
   } else if (info->axis_size[index] == 16) {
     uint8_t byte = info->axis[index] >> 3;
     uint16_t v = data[byte] | ((uint16_t)data[byte + 1] << 8);
-    if (info->axis_sign[index])
+    if (info->axis_sign[index]) {
       v += 0x8000;
-    if (info->axis_polarity[index])
+    }
+    if (info->axis_polarity[index]) {
       v = 0xffff - v;
+    }
     return v;
   }
   return 0x8000;
@@ -76,36 +83,53 @@ uint16_t analog_check(const struct hub_info* info,
 
 static void mahjong_update(const uint8_t* data) {
   uint8_t i;
-  for (i = 0; i < 4; ++i)
+  for (i = 0; i < 4; ++i) {
     mahjong[i] = 0;
-  if (data[0] & 0x11)  // Ctrl: Kan
+  }
+  if (data[0] & 0x11) {
+    // Ctrl: Kan
     mahjong[0] |= 0x04;
-  if (data[0] & 0x22)  // Shift: Reach
+  }
+  if (data[0] & 0x22) {
+    // Shift: Reach
     mahjong[1] |= 0x04;
-  if (data[0] & 0x44)  // Alt: Pon
+  }
+  if (data[0] & 0x44) {
+    // Alt: Pon
     mahjong[3] |= 0x08;
+  }
   bool coin_key = false;
   for (i = 2; i < 8; ++i) {
-    if (0x04 <= data[i] && data[i] <= 0x07)  // A-D
+    if (0x04 <= data[i] && data[i] <= 0x07) {
+      // A-D
       mahjong[data[i] - 0x04] |= 0x80;
-    else if (0x08 <= data[i] && data[i] <= 0x0b)  // E-H
+    } else if (0x08 <= data[i] && data[i] <= 0x0b) {
+      // E-H
       mahjong[data[i] - 0x08] |= 0x20;
-    else if (0x0c <= data[i] && data[i] <= 0x0f)  // I-L
+    } else if (0x0c <= data[i] && data[i] <= 0x0f) {
+      // I-L
       mahjong[data[i] - 0x0c] |= 0x10;
-    else if (0x10 <= data[i] && data[i] <= 0x11)  // M-N
+    } else if (0x10 <= data[i] && data[i] <= 0x11) {
+      // M-N
       mahjong[data[i] - 0x10] |= 0x08;
-    else if (data[i] == 0x2c)  // Space: Chi
+    } else if (data[i] == 0x2c) {
+      // Space: Chi
       mahjong[2] |= 0x08;
-    else if (data[i] == 0x1d)  // Z: Ron
+    } else if (data[i] == 0x1d) {
+      // Z: Ron
       mahjong[2] |= 0x04;
-    else if (data[i] == 0x1e)  // 1: Start
+    } else if (data[i] == 0x1e) {
+      // 1: Start
       mahjong[0] |= 0x02;
-    else if (data[i] == 0x22)  // 5: Coin
+    } else if (data[i] == 0x22) {
+      // 5: Coin
       coin_key = true;
+    }
   }
   coin_sw[0] = (coin_sw[0] << 1) | (coin_key ? 1 : 0);
-  if ((coin_sw[0] & 3) == 1)
+  if ((coin_sw[0] & 3) == 1) {
     coin[0]++;
+  }
 }
 
 static void controller_reset_digital_map(uint8_t player) {
@@ -148,16 +172,19 @@ void controller_update(const uint8_t hub,
   static uint8_t old_data[256];
   bool modified = false;
   for (uint8_t i = 0; i < size; ++i) {
-    if (old_data[i] == data[i])
+    if (old_data[i] == data[i]) {
       continue;
+    }
     modified = true;
     old_data[i] = data[i];
   }
-  if (!modified)
+  if (!modified) {
     return;
+  }
   Serial.printf("Report %d Bytes: ", size);
-  for (uint8_t i = 0; i < size; ++i)
+  for (uint8_t i = 0; i < size; ++i) {
     Serial.printf("%x,", data[i]);
+  }
   Serial.println("");
 #endif  // _DBG_HID_REPORT_DUMP
   controller_reset_digital_map(hub);
@@ -275,6 +302,12 @@ void controller_update(const uint8_t hub,
                        button_check(info->button[i], data));
   }
 
+  coin_sw[hub] = (coin_sw[hub] << 1) | ((digital_map[hub][0] >> 6) & 1);
+  if ((coin_sw[hub] & 3) == 1) {
+    coin[hub]++;
+  }
+  digital_map[hub][0] &= ~0x40;
+
   if (service_sw && !hub) {
     digital_map[hub][0] |= 0x40;
   }
@@ -283,8 +316,6 @@ void controller_update(const uint8_t hub,
 void controller_poll() {
   service_sw = settings_service_pressed();
   test_sw = settings_test_pressed();
-
-  // TODO: Coin
 #ifdef _DBG_JVS_BUTTON_DUMP
   static uint8_t old_jvs_map[5] = {0, 0, 0, 0, 0};
   if (old_jvs_map[0] != jvs_map[0] || old_jvs_map[1] != jvs_map[1] ||

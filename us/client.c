@@ -6,10 +6,9 @@
 
 #include "ch559.h"
 #include "io.h"
-#include "led.h"
+#include "jvsio/JVSIO_c.h"
 #include "pwm1.h"
 
-#include "jvsio/JVSIO_c.h"
 #include "serial.h"
 #include "settings.h"
 #include "soft485.h"
@@ -133,7 +132,7 @@ static bool data_setCommSupMode(struct JVSIO_DataClient* client,
         led = L_BLINK_TWICE;
         break;
     }
-    led_mode(led);
+    settings_led_mode(led);
     comm_mode = mode;
   }
   return true;
@@ -194,7 +193,7 @@ static void led_set(struct JVSIO_LedClient* client, bool ready) {
   } else {
     mode = settings->data_signal_adjustment ? L_FASTER_BLINK : L_FAST_BLINK;
   }
-  led_mode(mode);
+  settings_led_mode(mode);
 }
 
 static void led_begin(struct JVSIO_LedClient* client) {

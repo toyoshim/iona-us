@@ -148,7 +148,6 @@ static void jvs_poll(struct JVSIO_Lib* io) {
     case kCmdAnalogInput:
       io->pushReport(io, kReportOk);
       for (uint8_t i = 0; i < data[1]; ++i) {
-        // TODO: adjust width
         uint16_t value = controller_analog(i);
         io->pushReport(io, value >> 8);
         io->pushReport(io, value & 0xff);
@@ -157,7 +156,6 @@ static void jvs_poll(struct JVSIO_Lib* io) {
     case kCmdRotaryInput:
       io->pushReport(io, kReportOk);
       for (uint8_t i = 0; i < data[1]; ++i) {
-        // TODO: adjust width
         uint16_t value = controller_rotary(i);
         io->pushReport(io, value >> 8);
         io->pushReport(io, value & 0xff);
@@ -166,12 +164,13 @@ static void jvs_poll(struct JVSIO_Lib* io) {
     case kCmdScreenPositionInput:
       io->pushReport(io, kReportOk);
       {
-        // TODO: adjust width
         uint8_t index = data[1] - 1;
-        uint16_t x = controller_screen(index, 0);
+        uint16_t x = controller_screen(index, 0) >>
+                     (16 - settings->screen_position_width);
         io->pushReport(io, x >> 8);
         io->pushReport(io, x & 0xff);
-        uint16_t y = controller_screen(index, 1);
+        uint16_t y = controller_screen(index, 1) >>
+                     (16 - settings->screen_position_width);
         io->pushReport(io, y >> 8);
         io->pushReport(io, y & 0xff);
       }

@@ -179,5 +179,12 @@ void settings_led_mode(uint8_t mode) {
 }
 
 void settings_rapid_sync() {
-  // TODO
+  for (uint8_t i = 1; i < 8; ++i) {
+    settings.sequence[i].bit <<= 1;
+    if (0 == (settings.sequence[i].bit & settings.sequence[i].mask)) {
+      settings.sequence[i].bit = 1;
+    }
+    settings.sequence[i].on =
+        settings.sequence[i].pattern & settings.sequence[i].bit;
+  }
 }

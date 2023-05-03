@@ -292,14 +292,19 @@ void controller_update(const uint8_t hub,
     }
   }
 
-  // TODO: Rapid fire.
-  update_digital_map(digital_map[hub], settings->digital_map[hub][0].data, u);
-  update_digital_map(digital_map[hub], settings->digital_map[hub][1].data, d);
-  update_digital_map(digital_map[hub], settings->digital_map[hub][2].data, l);
-  update_digital_map(digital_map[hub], settings->digital_map[hub][3].data, r);
+  update_digital_map(digital_map[hub], settings->digital_map[hub][0].data,
+                     settings->sequence[settings->rapid_fire[hub][0]].on && u);
+  update_digital_map(digital_map[hub], settings->digital_map[hub][1].data,
+                     settings->sequence[settings->rapid_fire[hub][1]].on && d);
+  update_digital_map(digital_map[hub], settings->digital_map[hub][2].data,
+                     settings->sequence[settings->rapid_fire[hub][2]].on && l);
+  update_digital_map(digital_map[hub], settings->digital_map[hub][3].data,
+                     settings->sequence[settings->rapid_fire[hub][3]].on && r);
   for (uint8_t i = 0; i < 12; ++i) {
-    update_digital_map(digital_map[hub], settings->digital_map[hub][4 + i].data,
-                       button_check(info->button[i], data));
+    update_digital_map(
+        digital_map[hub], settings->digital_map[hub][4 + i].data,
+        settings->sequence[settings->rapid_fire[hub][4 + i]].on &&
+            button_check(info->button[i], data));
   }
 
   coin_sw[hub] = (coin_sw[hub] << 1) | ((digital_map[hub][0] >> 6) & 1);

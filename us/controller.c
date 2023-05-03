@@ -12,23 +12,24 @@
 // #define _DBG_HID_REPORT_DUMP
 // #define _DBG_JVS_BUTTON_DUMP
 
-static uint16_t raw_map[2] = {0, 0};
-static uint8_t jvs_map[5] = {0, 0, 0, 0, 0};
+static bool test_sw = false;
+static bool service_sw = false;
 static uint8_t coin_sw[2] = {0, 0};
 static uint8_t coin[2] = {0, 0};
 static uint8_t mahjong[4] = {0, 0, 0, 0};
-static uint16_t analog[16] = {
-    0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
-    0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
-};
+
+static uint8_t digital_map[2][4];
+
+static uint8_t digital[2];
+static uint16_t analog[8];
+static uint16_t rotary[2];
+static uint16_t screen[4];
 
 enum {
   MODE_NORMAL,
-  MODE_TWINSTICK,
   MODE_MAHJONG,
 };
 static uint8_t mode = MODE_NORMAL;
-static bool mode_sw = false;
 
 static bool button_check(uint16_t index, const uint8_t* data) {
   if (index == 0xffff)
@@ -38,23 +39,18 @@ static bool button_check(uint16_t index, const uint8_t* data) {
   return data[byte] & (1 << bit);
 }
 
-static int8_t axis_check(const struct hub_info* info,
-                         const uint8_t* data,
-                         uint8_t hub,
-                         uint8_t index) {
-  if (info->axis[index] == 0xffff)
-    return 0;
-  if (info->axis_size[index] == 8) {
+uint16_t analog_check(const struct hub_info* info,
+                      const uint8_t* data,
+                      uint8_t index) {
+  if (info->axis[index] == 0xffff) {
+    // return 0x8000;
+  } else if (info->axis_size[index] == 8) {
     uint8_t v = data[info->axis[index] >> 3];
     if (info->axis_sign[index])
       v += 0x80;
     if (info->axis_polarity[index])
       v = 0xff - v;
-    analog[hub * 8 + index] = v << 8;
-    if (v < 0x60)
-      return -1;
-    if (v > 0xa0)
-      return 1;
+    return v << 8;
   } else if (info->axis_size[index] == 12) {
     uint8_t byte_index = info->axis[index] >> 3;
     uint16_t l = data[byte_index + 0];
@@ -65,11 +61,7 @@ static int8_t axis_check(const struct hub_info* info,
       v += 0x0800;
     if (info->axis_polarity[index])
       v = 0x0fff - v;
-    analog[hub * 8 + index] = v << 4;
-    if (v < 0x0600)
-      return -1;
-    if (v > 0x0a00)
-      return 1;
+    return v << 4;
   } else if (info->axis_size[index] == 16) {
     uint8_t byte = info->axis[index] >> 3;
     uint16_t v = data[byte] | ((uint16_t)data[byte + 1] << 8);
@@ -77,13 +69,9 @@ static int8_t axis_check(const struct hub_info* info,
       v += 0x8000;
     if (info->axis_polarity[index])
       v = 0xffff - v;
-    analog[hub * 8 + index] = v;
-    if (v < 0x6000)
-      return -1;
-    if (v > 0xa000)
-      return 1;
+    return v;
   }
-  return 0;
+  return 0x8000;
 }
 
 static void mahjong_update(const uint8_t* data) {
@@ -120,16 +108,42 @@ static void mahjong_update(const uint8_t* data) {
     coin[0]++;
 }
 
-void controller_init() {
-  pinMode(4, 6, INPUT_PULLUP);
-  pinMode(4, 7, INPUT_PULLUP);
+static void controller_reset_digital_map(uint8_t player) {
+  for (uint8_t i = 0; i < 4; ++i) {
+    digital_map[player][i] = 0;
+  }
+  digital[player] = 0;
 }
 
-void controller_update(uint8_t hub,
+static void update_digital_map(uint8_t* dst, uint8_t* src, bool on) {
+  if (!on) {
+    return;
+  }
+  for (uint8_t i = 0; i < 4; ++i) {
+    dst[i] |= src[i];
+  }
+}
+
+void controller_reset() {
+  for (uint8_t p = 0; p < 2; ++p) {
+    controller_reset_digital_map(p);
+  }
+  for (uint8_t i = 0; i < 8; ++i) {
+    analog[i] = 0;
+  }
+  for (uint8_t i = 0; i < 2; ++i) {
+    rotary[i] = 0;
+    digital[i] = 0;
+  }
+  for (uint8_t i = 0; i < 4; ++i) {
+    screen[i] = 0;
+  }
+}
+
+void controller_update(const uint8_t hub,
                        const struct hub_info* info,
                        const uint8_t* data,
-                       uint16_t size,
-                       uint16_t* mask) {
+                       uint16_t size) {
 #ifdef _DBG_HID_REPORT_DUMP
   static uint8_t old_data[256];
   bool modified = false;
@@ -146,6 +160,12 @@ void controller_update(uint8_t hub,
     Serial.printf("%x,", data[i]);
   Serial.println("");
 #endif  // _DBG_HID_REPORT_DUMP
+  controller_reset_digital_map(hub);
+
+  if (info->state != HID_STATE_READY) {
+    return;
+  }
+
   if (info->type == HID_TYPE_KEYBOARD) {
     if (size == 8) {
       mode = MODE_MAHJONG;
@@ -156,161 +176,115 @@ void controller_update(uint8_t hub,
     mode = MODE_NORMAL;
   }
 
-  if (mode == MODE_TWINSTICK && hub != 0)
-    return;
-
-  if (info->state != HID_STATE_READY) {
-    jvs_map[1 + hub * 2 + 0] = 0;
-    jvs_map[1 + hub * 2 + 1] = 0;
-    return;
-  }
   if (info->report_id) {
-    if (info->report_id != data[0])
+    if (info->report_id != data[0]) {
       return;
+    }
     data++;
   }
-  uint8_t u = button_check(info->dpad[0], data) ? 1 : 0;
-  uint8_t d = button_check(info->dpad[1], data) ? 1 : 0;
-  uint8_t l = button_check(info->dpad[2], data) ? 1 : 0;
-  uint8_t r = button_check(info->dpad[3], data) ? 1 : 0;
-  int8_t x = axis_check(info, data, hub, 0);
-  int8_t y = axis_check(info, data, hub, 1);
-  {
-    if (x < 0)
-      l = 1;
-    else if (x > 0)
-      r = 1;
-    if (y < 0)
-      u = 1;
-    else if (y > 0)
-      d = 1;
+
+  struct settings* settings = settings_get();
+  // Analog to Digital pad map from another controller.
+  uint8_t alt_dpad = digital[(hub + 1) & 1];
+  bool u = button_check(info->dpad[0], data) || (alt_dpad & 1);
+  bool d = button_check(info->dpad[1], data) || (alt_dpad & 2);
+  bool l = button_check(info->dpad[2], data) || (alt_dpad & 4);
+  bool r = button_check(info->dpad[3], data) || (alt_dpad & 8);
+
+  for (uint8_t i = 0; i < 6; ++i) {
+    uint8_t type = settings->analog_type[hub][i];
+    if (type == AT_NONE) {
+      continue;
+    }
+    uint8_t index = settings->analog_index[hub][i];
+    uint16_t value = analog_check(info, data, i);
+    switch (type) {
+      case AT_DIGITAL:
+        switch (index) {
+          case 0:
+            l |= value < 0x6000;
+            r |= value > 0xa000;
+            break;
+          case 1:
+            u |= value < 0x6000;
+            d |= value > 0xa000;
+            break;
+          case 2:
+            digital[hub] |= (value < 0x6000) ? 4 : (value > 0xa000) ? 8 : 0;
+            break;
+          case 3:
+            digital[hub] |= (value < 0x6000) ? 1 : (value > 0xa000) ? 2 : 0;
+            break;
+        }
+        break;
+      case AT_ANALOG:
+        analog[index] = value;
+        break;
+      case AT_ROTARY:
+        rotary[index] = value;
+        break;
+      case AT_SCREEN:
+        screen[index] = value;
+        break;
+    }
   }
-  axis_check(info, data, hub, 2);
-  axis_check(info, data, hub, 3);
-  axis_check(info, data, hub, 4);
-  axis_check(info, data, hub, 5);
+
   if (info->hat != 0xffff) {
     uint8_t byte = info->hat >> 3;
     uint8_t bit = info->hat & 7;
     uint8_t hat = (data[byte] >> bit) & 0xf;
     switch (hat) {
       case 0:
-        u = 1;
+        u |= true;
         break;
       case 1:
-        u = 1;
-        r = 1;
+        u |= true;
+        r |= true;
         break;
       case 2:
-        r = 1;
+        r |= true;
         break;
       case 3:
-        r = 1;
-        d = 1;
+        r |= true;
+        d |= true;
         break;
       case 4:
-        d = 1;
+        d |= true;
         break;
       case 5:
-        d = 1;
-        l = 1;
+        d |= true;
+        l |= true;
         break;
       case 6:
-        l = 1;
+        l |= true;
         break;
       case 7:
-        l = 1;
-        u = 1;
+        l |= true;
+        u |= true;
         break;
     }
   }
 
-  uint8_t service_map = hub ? 0 : (jvs_map[0] & 0x40);
-  jvs_map[1 + hub * 2 + 0] = service_map | (u ? 0x20 : 0) | (d ? 0x10 : 0) |
-                             (l ? 0x08 : 0) | (r ? 0x04 : 0);
-
-  raw_map[hub] =
-      (button_check(info->button[HID_BUTTON_SELECT], data) ? (1 << B_COIN)
-                                                           : 0) |
-      (button_check(info->button[HID_BUTTON_START], data) ? (1 << B_START)
-                                                          : 0) |
-      (button_check(info->button[HID_BUTTON_1], data) ? (1 << B_1) : 0) |
-      (button_check(info->button[HID_BUTTON_2], data) ? (1 << B_2) : 0) |
-      (button_check(info->button[HID_BUTTON_3], data) ? (1 << B_3) : 0) |
-      (button_check(info->button[HID_BUTTON_4], data) ? (1 << B_4) : 0) |
-      (button_check(info->button[HID_BUTTON_L1], data) ? (1 << B_5) : 0) |
-      (button_check(info->button[HID_BUTTON_R1], data) ? (1 << B_6) : 0) |
-      (button_check(info->button[HID_BUTTON_L2], data) ? (1 << B_7) : 0) |
-      (button_check(info->button[HID_BUTTON_R2], data) ? (1 << B_8) : 0) |
-      (button_check(info->button[HID_BUTTON_L3], data) ? (1 << B_9) : 0) |
-      (button_check(info->button[HID_BUTTON_R3], data) ? (1 << B_10) : 0);
-
-  coin_sw[hub] =
-      (coin_sw[hub] << 1) | ((raw_map[hub] & mask[B_COIN]) ? 0x01 : 0);
-  if ((coin_sw[hub] & 3) == 1)
-    coin[hub]++;
-
-  bool current_mode_sw = button_check(info->button[HID_BUTTON_META], data);
-  if (hub == 0 && info->type == HID_TYPE_PS4 && !mode_sw && current_mode_sw) {
-    if (mode == MODE_NORMAL) {
-      mode = MODE_TWINSTICK;
-      led_oneshot(L_PULSE_TWICE);
-    } else {
-      mode = MODE_NORMAL;
-      led_oneshot(L_PULSE_ONCE);
-    }
-  }
-  mode_sw = current_mode_sw;
-
-  if (mode == MODE_TWINSTICK) {
-    int8_t rx = axis_check(info, data, 0, 2);
-    int8_t ry = axis_check(info, data, 0, 3);
-    jvs_map[3] = ((ry < 0) ? 0x20 : 0) | ((ry > 0) ? 0x10 : 0) |
-                 ((rx < 0) ? 0x08 : 0) | ((rx > 0) ? 0x04 : 0);
+  // TODO: Rapid fire.
+  update_digital_map(digital_map[hub], settings->digital_map[hub][0].data, u);
+  update_digital_map(digital_map[hub], settings->digital_map[hub][1].data, d);
+  update_digital_map(digital_map[hub], settings->digital_map[hub][2].data, l);
+  update_digital_map(digital_map[hub], settings->digital_map[hub][3].data, r);
+  for (uint8_t i = 0; i < 12; ++i) {
+    update_digital_map(digital_map[hub], settings->digital_map[hub][4 + i].data,
+                       button_check(info->button[i], data));
   }
 
-  controller_map(hub, 0xffff, mask);
-}
-
-void controller_map(uint8_t player,
-                    uint16_t rapid_mask,
-                    uint16_t* button_masks) {
-  jvs_map[1 + player * 2 + 0] =
-      (jvs_map[1 + player * 2 + 0] & 0x7c) |
-      ((raw_map[player] & rapid_mask & button_masks[B_START]) ? 0x80 : 0) |
-      ((raw_map[player] & rapid_mask & button_masks[B_1]) ? 0x02 : 0) |
-      ((raw_map[player] & rapid_mask & button_masks[B_2]) ? 0x01 : 0);
-  jvs_map[1 + player * 2 + 1] =
-      ((raw_map[player] & rapid_mask & button_masks[B_3]) ? 0x80 : 0) |
-      ((raw_map[player] & rapid_mask & button_masks[B_4]) ? 0x40 : 0) |
-      ((raw_map[player] & rapid_mask & button_masks[B_5]) ? 0x20 : 0) |
-      ((raw_map[player] & rapid_mask & button_masks[B_6]) ? 0x10 : 0) |
-      ((raw_map[player] & rapid_mask & button_masks[B_7]) ? 0x08 : 0) |
-      ((raw_map[player] & rapid_mask & button_masks[B_8]) ? 0x04 : 0) |
-      ((raw_map[player] & rapid_mask & button_masks[B_9]) ? 0x02 : 0) |
-      ((raw_map[player] & rapid_mask & button_masks[B_10]) ? 0x01 : 0);
-  if (mode == MODE_TWINSTICK) {
-    jvs_map[1] = (jvs_map[1] & 0xfc) |
-                 ((raw_map[0] & rapid_mask & button_masks[B_5]) ? 0x02 : 0) |
-                 ((raw_map[0] & rapid_mask & button_masks[B_7]) ? 0x01 : 0);
-    jvs_map[2] = ((raw_map[0] & rapid_mask & button_masks[B_9]) ? 0x80 : 0);
-    jvs_map[3] = (jvs_map[3] & 0x7c) |
-                 ((raw_map[0] & rapid_mask & button_masks[B_1]) ? 0x80 : 0) |
-                 ((raw_map[0] & rapid_mask & button_masks[B_6]) ? 0x02 : 0) |
-                 ((raw_map[0] & rapid_mask & button_masks[B_8]) ? 0x01 : 0);
-    jvs_map[4] = ((raw_map[0] & rapid_mask & button_masks[B_10]) ? 0x80 : 0);
+  if (service_sw && !hub) {
+    digital_map[hub][0] |= 0x40;
   }
 }
 
 void controller_poll() {
-  if (settings_service_pressed())
-    jvs_map[1] |= 0x40;
-  else
-    jvs_map[1] &= ~0x40;
-  if (settings_test_pressed())
-    jvs_map[0] |= 0x80;
-  else
-    jvs_map[0] &= ~0x80;
+  service_sw = settings_service_pressed();
+  test_sw = settings_test_pressed();
+
+  // TODO: Coin
 #ifdef _DBG_JVS_BUTTON_DUMP
   static uint8_t old_jvs_map[5] = {0, 0, 0, 0, 0};
   if (old_jvs_map[0] != jvs_map[0] || old_jvs_map[1] != jvs_map[1] ||
@@ -332,29 +306,28 @@ void controller_poll() {
 #endif  // _DBG_JVS_BUTTON_DUMP
 }
 
-uint16_t controller_raw(uint8_t player) {
-  return raw_map[player];
-}
-
 uint8_t controller_head() {
-  return jvs_map[0];
+  return test_sw ? 0x80 : 0;
 }
 
 uint8_t controller_data(uint8_t player, uint8_t index, uint8_t gpout) {
-  if (mode != MODE_MAHJONG || index == 0)
-    return jvs_map[(player << 1) + index];
-  if (index != 1)
+  if (mode == MODE_MAHJONG) {
+    uint8_t service = service_sw ? 0x40 : 0;
+    if (gpout == 0x40)
+      return mahjong[0] | service;
+    if (gpout == 0x20)
+      return mahjong[1] | service;
+    if (gpout == 0x10)
+      return mahjong[2] | service;
+    if (gpout == 0x80 || gpout == 0x08)
+      return mahjong[3] | service;
+    return service;
+  }
+  uint8_t line = (player << 1) + index;
+  if (line >= 4) {
     return 0;
-  uint8_t service = jvs_map[1] & 0x40;
-  if (gpout == 0x40)
-    return mahjong[0] | service;
-  if (gpout == 0x20)
-    return mahjong[1] | service;
-  if (gpout == 0x10)
-    return mahjong[2] | service;
-  if (gpout == 0x80 || gpout == 0x08)
-    return mahjong[3] | service;
-  return service;
+  }
+  return digital_map[0][line] | digital_map[1][line];
 }
 
 uint8_t controller_coin(uint8_t player) {
@@ -362,20 +335,25 @@ uint8_t controller_coin(uint8_t player) {
 }
 
 uint16_t controller_analog(uint8_t index) {
-  if (index < 16)
+  if (index < 8) {
     return analog[index];
+  }
   return 0x8000;
 }
 
 uint16_t controller_rotary(uint8_t index) {
-  index;
-  return 0;
+  if (index < 2) {
+    return rotary[index];
+  }
+  return 0x8000;
 }
 
 uint16_t controller_screen(uint8_t index, uint8_t axis) {
-  index;
-  axis;
-  return 0;
+  uint8_t screen_index = (index << 1) + axis;
+  if (screen_index < 4) {
+    return screen[screen_index];
+  }
+  return 0x8000;
 }
 
 void controller_coin_add(uint8_t player, uint8_t add) {

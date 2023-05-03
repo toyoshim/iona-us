@@ -4,12 +4,12 @@
 
 #include "ch559.h"
 #include "hid.h"
+#include "jvsio/JVSIO_c.h"
 #include "led.h"
 #include "serial.h"
 
 #include "client.h"
 #include "controller.h"
-#include "jvsio/JVSIO_c.h"
 #include "settings.h"
 #include "soft485.h"
 
@@ -148,6 +148,7 @@ static void jvs_poll(struct JVSIO_Lib* io) {
     case kCmdAnalogInput:
       io->pushReport(io, kReportOk);
       for (uint8_t i = 0; i < data[1]; ++i) {
+        // TODO: adjust width
         uint16_t value = controller_analog(i);
         io->pushReport(io, value >> 8);
         io->pushReport(io, value & 0xff);
@@ -156,6 +157,7 @@ static void jvs_poll(struct JVSIO_Lib* io) {
     case kCmdRotaryInput:
       io->pushReport(io, kReportOk);
       for (uint8_t i = 0; i < data[1]; ++i) {
+        // TODO: adjust width
         uint16_t value = controller_rotary(i);
         io->pushReport(io, value >> 8);
         io->pushReport(io, value & 0xff);
@@ -164,6 +166,7 @@ static void jvs_poll(struct JVSIO_Lib* io) {
     case kCmdScreenPositionInput:
       io->pushReport(io, kReportOk);
       {
+        // TODO: adjust width
         uint8_t index = data[1] - 1;
         uint16_t x = controller_screen(index, 0);
         io->pushReport(io, x >> 8);
@@ -205,13 +208,6 @@ static void jvs_poll(struct JVSIO_Lib* io) {
   }
 }
 
-static void report(uint8_t hub,
-                   const struct hub_info* info,
-                   const uint8_t* data,
-                   uint16_t size) {
-  controller_update(hub, info, data, size, 0);
-}
-
 static void detected() {
   led_oneshot(L_PULSE_ONCE);
 }
@@ -226,9 +222,7 @@ void main() {
   settings_init();
   settings = settings_get();
 
-  controller_init();
   delay(30);
-  Serial.println(ids[settings->id]);
 
   client_init(&data, &sense, &led, &time);
 
@@ -236,7 +230,7 @@ void main() {
   io->begin(io);
 
   struct hid hid;
-  hid.report = report;
+  hid.report = controller_update;
   hid.detected = detected;
   hid.get_flags = get_flags;
   hid_init(&hid);

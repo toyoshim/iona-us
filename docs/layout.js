@@ -1,4 +1,5 @@
 // TODO
+// - Coin button setting.
 // - Rapid fire template
 // - Analog Polarity
 function setStatus(status) {

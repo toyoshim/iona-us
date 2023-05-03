@@ -27,17 +27,12 @@ enum {
   B_10,
 };
 
-void controller_init();
-void controller_update(uint8_t hub,
+void controller_reset();
+void controller_update(const uint8_t hub,
                        const struct hub_info* info,
                        const uint8_t* data,
-                       uint16_t size,
-                       uint16_t* mask);
-void controller_map(uint8_t player,
-                    uint16_t rapid_mask,
-                    uint16_t* button_masks);
+                       uint16_t size);
 void controller_poll();
-uint16_t controller_raw(uint8_t player);
 uint8_t controller_head();
 uint8_t controller_data(uint8_t player, uint8_t index, uint8_t gpout);
 uint8_t controller_coin(uint8_t player);

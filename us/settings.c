@@ -7,6 +7,8 @@
 #include "ch559.h"
 #include "timer3.h"
 
+#include "controller.h"
+
 static __code uint8_t* flash = (__code uint8_t*)0xf000;
 
 static struct settings settings;
@@ -93,9 +95,14 @@ static void apply() {
     settings.sequence[i].mask = (2 << (flash[offset++] & 7)) - 1;
     settings.sequence[i].on = true;
   }
+
+  controller_reset();
 }
 
 void settings_init() {
+  pinMode(4, 6, INPUT_PULLUP);
+  pinMode(4, 7, INPUT_PULLUP);
+
   led_init(1, 5, LOW);
 
   if (flash[0] != 'I' || flash[1] != 'O' || flash[2] != 'N' ||

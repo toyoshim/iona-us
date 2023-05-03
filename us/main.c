@@ -262,15 +262,7 @@ static uint8_t get_flags() {
 void main() {
   initialize();
 
-  led_init(1, 5, LOW);
-
-  if (!settings_init()) {
-    led_mode(L_BLINK_THREE_TIMES);
-    for (;;) {
-      led_poll();
-    }
-  }
-  led_mode(L_BLINK);
+  settings_init();
   settings = settings_get();
 
   controller_init();
@@ -291,7 +283,6 @@ void main() {
   Serial.println("USB Host ready");
 
   for (;;) {
-    led_poll();
     hid_poll();
     controller_poll();
     settings_poll();

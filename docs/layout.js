@@ -1,5 +1,6 @@
 // TODO
 // - Rapid fire template
+// - Analog Polarity
 function setStatus(status) {
   document.getElementById('status').innerText = status;
 }
@@ -98,6 +99,7 @@ function applyData(data) {
       const map = data[offset++];
       const type = (map >> 4) & 7;
       const index = map & 7;
+      // TODO: handle polarity.
       select('a' + p + i + 't', type);
       select('a' + p + i + 'i', index);
     }
@@ -141,7 +143,7 @@ function applyData(data) {
   }
   for (let i = 1; i < 8; ++i) {
     const pattern = data[offset++];
-    const width = data[offset++];
+    const width = data[offset++] & 7;
     applySequenceWidth(i - 1, width + 1);
     for (let bit = 0; bit < 8; ++bit) {
       check('p' + i + (bit + 1), pattern & (1 << bit));
@@ -174,6 +176,7 @@ function store(index) {
     for (let i of [1, 2, 3, 4, 5, 6]) {
       const type = getSelect('a' + p + i + 't') & 7;
       const index = getSelect('a' + p + i + 'i') & 7;
+      // TODO: handle polarity.
       data[offset++] = (type << 4) | index;
     }
   }
@@ -216,7 +219,7 @@ function store(index) {
   }
   for (let i = 1; i < 8; ++i) {
     data[offset++] = getSequencePattern(i - 1);
-    data[offset++] = getSelect('rm' + i);
+    data[offset++] = getSelect('rm' + i) & 7;
   }
 }
 

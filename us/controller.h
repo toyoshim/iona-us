@@ -27,12 +27,6 @@ enum {
   B_10,
 };
 
-// Button
-enum {
-  B_TEST,
-  B_SERVICE,
-};
-
 void controller_init();
 void controller_update(uint8_t hub,
                        const struct hub_info* info,
@@ -49,6 +43,5 @@ uint8_t controller_coin(uint8_t player);
 uint16_t controller_analog(uint8_t index);
 void controller_coin_add(uint8_t player, uint8_t add);
 void controller_coin_sub(uint8_t player, uint8_t sub);
-bool controller_button(uint8_t button);
 
 #endif  // __controller_h__

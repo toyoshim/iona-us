@@ -303,11 +303,11 @@ void controller_map(uint8_t player,
 }
 
 void controller_poll() {
-  if (controller_button(B_SERVICE))
+  if (settings_service_pressed())
     jvs_map[1] |= 0x40;
   else
     jvs_map[1] &= ~0x40;
-  if (controller_button(B_TEST))
+  if (settings_test_pressed())
     jvs_map[0] |= 0x80;
   else
     jvs_map[0] &= ~0x80;
@@ -369,14 +369,4 @@ void controller_coin_add(uint8_t player, uint8_t add) {
 
 void controller_coin_sub(uint8_t player, uint8_t sub) {
   coin[player] -= sub;
-}
-
-bool controller_button(uint8_t button) {
-  switch (button) {
-    case B_TEST:
-      return digitalRead(4, 7) == LOW;
-    case B_SERVICE:
-      return digitalRead(4, 6) == LOW;
-  }
-  return false;
 }

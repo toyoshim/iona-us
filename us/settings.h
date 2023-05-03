@@ -8,6 +8,17 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "led.h"
+
+enum AnalogType {
+  AT_NONE,
+  AT_DIGITAL,
+  AT_ANALOG,
+  AT_ROTARY,
+  AT_SCREEN,
+};
+
+// Decoded struct of https://github.com/toyoshim/iona-us/wiki/v2-settings
 struct settings {
   uint8_t id;
   uint8_t analog_input_count;
@@ -20,10 +31,26 @@ struct settings {
   uint8_t character_display_height;
   bool jvs_dash_support;
   bool data_signal_adjustment;
+  uint8_t analog_type[2][6];
+  uint8_t analog_index[2][6];
+  bool analog_polarity[2][6];
+  struct {
+    uint8_t data[4];
+  } digital_map[2][16];
+  uint8_t rapid_fire[2][6];
+  struct {
+    uint8_t pattern;
+    uint8_t bit;
+    uint8_t mask;
+    bool on;
+  } sequence[8];
 };
 
-bool settings_init();
+void settings_init();
 void settings_poll();
 struct settings* settings_get();
+bool settings_test_pressed();
+bool settings_service_pressed();
+void settings_led_mode(uint8_t mode);
 
 #endif  // __settings_h__

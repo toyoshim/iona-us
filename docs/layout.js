@@ -1,5 +1,4 @@
 // TODO
-// - Coin button setting.
 // - Rapid fire template
 // - Analog Polarity
 function setStatus(status) {
@@ -116,6 +115,7 @@ function applyData(data) {
         const d1 = data[offset + 0];
         const d2 = data[offset + 1];
         offset += 2;
+        check('p' + p + buttonMap[i] + '_p' + targetP + 'c', d1 & 0x40);
         check('p' + p + buttonMap[i] + '_p' + targetP + 's', d1 & 0x80);
         check('p' + p + buttonMap[i] + '_p' + targetP + 'u', d1 & 0x20);
         check('p' + p + buttonMap[i] + '_p' + targetP + 'd', d1 & 0x10);
@@ -191,6 +191,7 @@ function store(index) {
       for (let targetP of [1, 2]) {
         let d1 = 0;
         let d2 = 0;
+        d1 |= isChecked('p' + p + buttonMap[i] + '_p' + targetP + 'c') ? 0x40 : 0;
         d1 |= isChecked('p' + p + buttonMap[i] + '_p' + targetP + 's') ? 0x80 : 0;
         d1 |= isChecked('p' + p + buttonMap[i] + '_p' + targetP + 'u') ? 0x20 : 0;
         d1 |= isChecked('p' + p + buttonMap[i] + '_p' + targetP + 'd') ? 0x10 : 0;

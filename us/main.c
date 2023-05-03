@@ -291,6 +291,7 @@ void main() {
   Serial.println("USB Host ready");
 
   for (;;) {
+    led_poll();
     hid_poll();
     controller_poll();
     settings_poll();

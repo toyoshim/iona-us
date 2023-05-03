@@ -18,8 +18,8 @@ struct settings {
   uint8_t analog_output;
   uint8_t character_display_width;
   uint8_t character_display_height;
-  bool data_signal_adjustment;
   bool jvs_dash_support;
+  bool data_signal_adjustment;
 };
 
 bool settings_init();

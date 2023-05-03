@@ -43,7 +43,7 @@ struct settings {
   struct {
     uint8_t data[4];
   } digital_map[2][16];
-  uint8_t rapid_fire[2][6];
+  uint8_t rapid_fire[2][12];
   struct {
     uint8_t pattern;
     uint8_t bit;

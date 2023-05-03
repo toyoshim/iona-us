@@ -289,38 +289,25 @@ void controller_update(const uint8_t hub,
     }
   }
 
-  update_digital_map(digital_map[hub], settings->digital_map[hub][0].data,
-                     settings->sequence[settings->rapid_fire[hub][0]].on && u);
-  update_digital_map(digital_map[hub], settings->digital_map[hub][1].data,
-                     settings->sequence[settings->rapid_fire[hub][1]].on && d);
-  update_digital_map(digital_map[hub], settings->digital_map[hub][2].data,
-                     settings->sequence[settings->rapid_fire[hub][2]].on && l);
-  update_digital_map(digital_map[hub], settings->digital_map[hub][3].data,
-                     settings->sequence[settings->rapid_fire[hub][3]].on && r);
+  update_digital_map(digital_map[hub], settings->digital_map[hub][0].data, u);
+  update_digital_map(digital_map[hub], settings->digital_map[hub][1].data, d);
+  update_digital_map(digital_map[hub], settings->digital_map[hub][2].data, l);
+  update_digital_map(digital_map[hub], settings->digital_map[hub][3].data, r);
   if (alt_digital) {
     uint8_t alt_hub = (hub + 1) & 1;
-    bool alt_u = alt_digital & 1;
-    bool alt_d = alt_digital & 2;
-    bool alt_l = alt_digital & 4;
-    bool alt_r = alt_digital & 8;
-    update_digital_map(
-        digital_map[hub], settings->digital_map[alt_hub][0].data,
-        settings->sequence[settings->rapid_fire[alt_hub][0]].on && alt_u);
-    update_digital_map(
-        digital_map[hub], settings->digital_map[alt_hub][1].data,
-        settings->sequence[settings->rapid_fire[alt_hub][1]].on && alt_d);
-    update_digital_map(
-        digital_map[hub], settings->digital_map[alt_hub][2].data,
-        settings->sequence[settings->rapid_fire[alt_hub][2]].on && alt_l);
-    update_digital_map(
-        digital_map[hub], settings->digital_map[alt_hub][3].data,
-        settings->sequence[settings->rapid_fire[alt_hub][3]].on && alt_r);
+    update_digital_map(digital_map[hub], settings->digital_map[alt_hub][0].data,
+                       alt_digital & 1);
+    update_digital_map(digital_map[hub], settings->digital_map[alt_hub][1].data,
+                       alt_digital & 2);
+    update_digital_map(digital_map[hub], settings->digital_map[alt_hub][2].data,
+                       alt_digital & 4);
+    update_digital_map(digital_map[hub], settings->digital_map[alt_hub][3].data,
+                       alt_digital & 8);
   }
   for (uint8_t i = 0; i < 12; ++i) {
-    update_digital_map(
-        digital_map[hub], settings->digital_map[hub][4 + i].data,
-        settings->sequence[settings->rapid_fire[hub][4 + i]].on &&
-            button_check(info->button[i], data));
+    update_digital_map(digital_map[hub], settings->digital_map[hub][4 + i].data,
+                       settings->sequence[settings->rapid_fire[hub][i]].on &&
+                           button_check(info->button[i], data));
   }
 
   coin_sw[hub] = (coin_sw[hub] << 1) | ((digital_map[hub][0] >> 6) & 1);

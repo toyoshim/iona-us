@@ -1,4 +1,4 @@
-// Copyright 2021 Takashi Toyoshima <toyoshim@gmail.com>. All rights reserved.
+// Copyright 2023 Takashi Toyoshima <toyoshim@gmail.com>. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be found
 // in the LICENSE file.
 
@@ -9,23 +9,6 @@
 #include <stdint.h>
 
 #include "hid.h"
-#include "led.h"
-
-// Button bitmap in raw format
-enum {
-  B_COIN = 0,
-  B_START,
-  B_1,
-  B_2,
-  B_3,
-  B_4,
-  B_5,
-  B_6,
-  B_7,
-  B_8,
-  B_9,
-  B_10,
-};
 
 void controller_reset();
 void controller_update(const uint8_t hub,

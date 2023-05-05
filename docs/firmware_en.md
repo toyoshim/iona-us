@@ -136,6 +136,7 @@ Also, the internal format to hold the user settings is changed at firmware Ver 1
 |(Xbox One series protocol controllers)|1.00|1.02a and later are recommended|
 |Brook XB Fighting Board|1.44|Work with the default X-One mode, and manual X-360 mode|
 |Brook Universal Fighting Board|1.47|Work with the default PS4 mode|
+|Brook PS4+ Fighting Board|1.47|Work with the default PS4 mode|
 |(Keyboard supporting boot mode)|1.20|Supported by NAOMI Mahjong mode|
 |REAL ARCADE PRO V3.SA|1.47||
 |Guncon3|1.31||designed for DeathCrimson OX|

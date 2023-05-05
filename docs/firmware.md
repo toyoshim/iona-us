@@ -135,6 +135,7 @@ Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基�
 |(Xbox Oneシリーズ規格コントローラ)|1.00|1.02a以降推奨|
 |Brook XB Fighting Board|1.44|標準のX-Oneモードで動作、X-360モード指定でも動作可能|
 |Brook Universal Fighting Board|1.47|PS4モードで動作|
+|Brook PS4+ Fighting Board|1.47|PS4モードで動作|
 |(Bootモード対応キーボード)|1.20|NAOMI麻雀モードに対応|
 |REAL ARCADE PRO V3.SA|1.47||
 |ガンコン3|1.31||DeathCrimson OX対応|

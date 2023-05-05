@@ -72,6 +72,8 @@ To enter the setting selection mode, press TEST and SERVICE for about 1 second.
 Click TEST to take the next setting, and click SERVICE to decide the current setting and get back to the normal mode.
 You can know the setting id as the LED blinks N times on deciding the Nth set.
 
+If you see continuous 3times LED blinks, setting data will not be initialized, or broken. Please initialize it at [setting](setting_en) page.
+
 ## Features (Firmware v1.xx)
 ### Custom Button Layout
 You can map at most 12 physical buttons to arbitrary logical buttons for JVS. You can map one physical button to multiple JVS buttons, or map multiple buttons to one JVS button. It helps you to realize a button to push multiple buttons together, or to assign addition button for rapid-fires.

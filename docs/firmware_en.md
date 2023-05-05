@@ -156,7 +156,8 @@ Also, the internal format to hold the user settings is changed at firmware Ver 1
 ## Firmware Update
 This is the real UI to update firmware. Flash button will actually flash the chosen firmware.
 
-Now 2.0x series are experimental versions, and the latest 1.4x series, selected by default, is expected to be the latest stable version.
+Now 2.0x series are experimental versions, and requires up-to-date settings to be soted at the [setting](setting_en) page.
+The latest 1.4x series, selected by default, is expected to be the latest stable version.
 
 <script src="https://toyoshim.github.io/CH559Flasher.js/CH559Flasher.js"></script>
 <script>

@@ -212,6 +212,7 @@ static void detected() {
 }
 
 static uint8_t get_flags() {
+  // return USE_HUB1;
   return USE_HUB1 | USE_HUB0;
 }
 

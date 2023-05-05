@@ -1,4 +1,5 @@
 // TODO
+// - Import / Export
 // - Rapid fire template
 // - Analog Polarity
 function setStatus(status) {
@@ -335,6 +336,14 @@ document.getElementById('button').addEventListener('click', async e => {
     userData[4] = 1;
     for (let i = 5; i < 1024; ++i) {
       userData[i] = 0;
+    }
+    for (let i = 0; i < 6; ++i) {
+      if (i < 2) {
+        applyPreset(i);
+      } else {
+        applyPreset(0);
+      }
+      store(i);
     }
   }
   setStatus(uiMessages.connected + flasher.bootLoader +

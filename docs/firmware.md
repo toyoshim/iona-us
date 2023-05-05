@@ -117,6 +117,7 @@ JVS I/Oとして利用する前、特にジャンパーピンを実装した人�
 - Ver 1.44 Brook XB Fighting BoardのX-Oneモードに対応、ほかXbox系で再接続時に起きる認識問題を修正しました
 - Ver 1.45 アナログレバー設定がマニュアルと反対になっていたのを修正、またアナログ入力を無効にするオプションを追加しました
 - Ver 1.46 exA-ArcadiaのJVS Dash（高速モード）に対応、合わせてオプションの追加とLEDの調整をしました
+- Ver 1.47 GP2040に対応
 
 ## ファームウェアの互換性
 Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基本的に安定して動くはずです。
@@ -155,29 +156,16 @@ Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基�
 以下は実際にファームウェア更新を行うためのUIです。書き込みボタンにより実際に更新されます。
 動作確認が不十分でバグも確認されているVer 1.03は選択できないようにしました。
 
-Ver 1.5x系列は実験用のバージョンで十分なテストは実施されていません（現在は存在しません）。
+Ver 2.0x系列は実験用のバージョンで十分なテストは実施されていません。
 最も新しいVer 1.4x系のバージョン（デフォルトで選択済み）が最新の安定バージョンになります。
 
 <script src="https://toyoshim.github.io/CH559Flasher.js/CH559Flasher.js"></script>
 <script>
 async function flash() {
   const firmwares = [
-    'firmwares/us_v1_00.bin',  // Ver 1.00
-    'firmwares/us_v1_01.bin',  // Ver 1.01
-    'firmwares/us_v1_02.bin',  // Ver 1.02
-    'firmwares/us_v1_02a.bin',  // Ver 1.02a
     'firmwares/us_v1_04.bin',  // Ver 1.04
     'firmwares/us_v1_10.bin',  // Ver 1.10
-    'firmwares/us_v1_20.bin',  // Ver 1.20
-    'firmwares/us_v1_21.bin',  // Ver 1.21
-    'firmwares/us_v1_22.bin',  // Ver 1.22
-    'firmwares/us_v1_23.bin',  // Ver 1.23
     'firmwares/us_v1_24.bin',  // Ver 1.24
-    'firmwares/us_v1_30.bin',  // Ver 1.30
-    'firmwares/us_v1_31.bin',  // Ver 1.31
-    'firmwares/us_v1_32.bin',  // Ver 1.32
-    'firmwares/us_v1_33.bin',  // Ver 1.33
-    'firmwares/us_v1_34.bin',  // Ver 1.34
     'firmwares/us_v1_35.bin',  // Ver 1.35
     'firmwares/us_v1_40.bin',  // Ver 1.40
     'firmwares/us_v1_41.bin',  // Ver 1.41
@@ -187,6 +175,7 @@ async function flash() {
     'firmwares/us_v1_45.bin',  // Ver 1.45
     'firmwares/us_v1_46.bin',  // Ver 1.46
     'firmwares/us_v1_47.bin',  // Ver 1.47
+    'firmwares/us_v2_00.bin',  // Ver 2.00
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -212,22 +201,9 @@ async function flash() {
 </script>
 
 <select id="version">
-<option>Ver 1.00</option>
-<option>Ver 1.01</option>
-<option>Ver 1.02</option>
-<option>Ver 1.02a</option>
 <option>Ver 1.04</option>
 <option>Ver 1.10</option>
-<option>Ver 1.20</option>
-<option>Ver 1.21</option>
-<option>Ver 1.22</option>
-<option>Ver 1.23</option>
 <option>Ver 1.24</option>
-<option>Ver 1.30</option>
-<option>Ver 1.31</option>
-<option>Ver 1.32</option>
-<option>Ver 1.33</option>
-<option>Ver 1.34</option>
 <option>Ver 1.35</option>
 <option>Ver 1.40</option>
 <option>Ver 1.41</option>
@@ -237,6 +213,7 @@ async function flash() {
 <option>Ver 1.45</option>
 <option>Ver 1.46</option>
 <option selected>Ver 1.47</option>
+<option>Ver 2.00</option>
 </select>
 <button onclick="flash();">書き込み</button>
 

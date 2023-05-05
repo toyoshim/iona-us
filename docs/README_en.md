@@ -9,13 +9,18 @@ permalink: /en
 # Manual
 ---
 
+## Caution
+Following instructions contain version dependent information. You need to pay
+attention that there are two kind of versions, one is for PCB, and the other is
+for firmware. Any PCB can use the latest firmware as you want.
+
 ## Overview
 IONA-US is a board to connect USB gamepads to JVS based arcade systems.
 For JVS based system having standard power supply, video and audio outputs, such as exA-Arcadia, controller I/O is the only incommon interface for end users. But with this small board, you can use standard USB gamepads to play games.
 
 ## Compatibility
 ### JVS Systems
-Like the previous product, [MP01-IONA-JS](../iona-js/), it support almost all JVS based systems. Also, now it supports special I/O layouts such as Cyber Troopers Virtual-On Oratorio Tangram for NAOMI and Mahjong mode used by e.g. Idol Janshi Suchipai III for NAOMI. See later sections to know how these mode works. If you connect Guncon3, zapper mode will be activated.
+Like the previous product, [MP01-IONA-JS](../iona-js/), it supports almost all JVS based systems. Also, now it supports special I/O layouts such as Cyber Troopers Virtual-On Oratorio Tangram for NAOMI, Mahjong layout used by e.g. Idol Janshi Suchipai III for NAOMI, whell and padals for racing games, and zapper for shooring.
 
 If Ver 1.10 based PCB isn't recognized by namco's system board, this [mod](mod_en) will solve the stability issue.
 Triforce and System 2x6 may have this compatibility issue.
@@ -52,7 +57,22 @@ If your gamepad isn't available, you can request supporting it from the [Report]
 
 When power is supplied, LED starts blinking. Once an address is assinged via JVS bus, LED gets on. It will start blinking again if IONA receives reset signal via JVS bus.
 
-## Features
+## Features (Firmware v2.xx)
+### Customize Settings
+[Setting](setting_en) page allows you to configure 6 sets of your customized settings. You can call one of the 6 sets on using the device. Each set contains
+- Device name declared to the host
+- Supported features declared to the host (e.g., how many analog inputs, how many bits for each input)
+- Button map from each button to any combination of P1 and P2 switches.
+- Rapid fire assignment
+- Rapid fire definitions (patterns and cycles)
+- A map from analog sticks and triggers, to lever, or various analog inputs
+
+### Select a Setting
+To enter the setting selection mode, press TEST and SERVICE for about 1 second.
+Click TEST to take the next setting, and click SERVICE to decide the current setting and get back to the normal mode.
+You can know the setting id as the LED blinks N times on deciding the Nth set.
+
+## Features (Firmware v1.xx)
 ### Custom Button Layout
 You can map at most 12 physical buttons to arbitrary logical buttons for JVS. You can map one physical button to multiple JVS buttons, or map multiple buttons to one JVS button. It helps you to realize a button to push multiple buttons together, or to assign addition button for rapid-fires.
 
@@ -168,8 +188,9 @@ If you want to have an extra button to press button 1+2+3 at the exactly same ti
 - Ver 1.10 and 1.20 were shipped in the past. Current version is 2.00.
 
 ### Firmware version
-- Currently we are shipping with Ver 1.44. You can check the version as a JVS I/O device name.
+- Currently we are shipping with Ver 1.47. You can check the version as a JVS I/O device name.
 - You can burn the latest or old firmwares at [Firmware Update](firmware_en) page.
+- Ver 2.00 and later allow you to configure several settions at [Setting](setting) page to have more details configurations.
 
 ## FYI
 ### Screw Holes for Fixing

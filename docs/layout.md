@@ -4,7 +4,9 @@ title: レイアウト設定
 permalink: /setting
 ---
 # レイアウト設定
-v2ファームウェアの実験に向けて公開中のページです。対応する正式なファームウェアは未公開で、まだ一般ユーザーの使用を想定していません。
+v2系ファームウェアに対応した設定ページを実験的に公開しています。
+十分な動作確認はできていないため、不具合の報告や機能の要望は歓迎します。
+また特定ゲーム向けの設定をご報告いただければ、プリセット追加させて頂きます。
 
 ---
 ## 接続準備
@@ -18,15 +20,21 @@ v2ファームウェアの実験に向けて公開中のページです。対応
 <pre id="status"></pre>
 
 ---
-## ボタン配置
-- 変更したい設定番号を選び、配置を編集した後に「変更を確定」ボタンを押して下さい。
-- 確定しない変更は設定番号を選び直した際に破棄されます。
-- 他の設定からコピーした場合にも確定は必要です。
+## 設定
+#### 設定の選択・コピー
+- 変更したい設定１〜６のうち１つを選び、編集した後に「変更を確定」ボタンを押して下さい。
+- 確定していない変更は、設定番号を選び直した際に破棄されます。
+- 他の設定やプリセットからコピーした場合にも確定は必要です。
 - 全ての変更が確定したら「変更を保存する」ボタンでデバイスに保存されます。
 
 | | | |
 |-|-|-:|
 |<select id="select"><option>設定 1</option><option>設定 2</option><option>設定 3</option><option>設定 4</option><option>設定 5</option><option>設定 6</option></select>|<button id="store">変更を確定</button>|他の設定からコピーする <select id="copy"><option>-</option><option>設定 1</option><option>設定 2</option><option>設定 3</option><option>設定 4</option><option>設定 5</option><option>設定 6</option></select><br>プリセットからコピーする<select id="preset"><option>-</option></select>|
+
+#### 基本設定
+宣言するデバイス名やサポートする機能をカスタマイズします。
+JVSデータ信号レベル補正はLOW信号の電圧が高めのnamco系基板でONにしないと認識されない事があります。それ以外ではOFFが推奨です。
+特殊入力は不要な際は0を指定した方が、動作時の遅延や負荷は小さくなります。
 
 | | | |
 |-|-|-:|
@@ -40,6 +48,11 @@ v2ファームウェアの実験に向けて公開中のページです。対応
 ||文字表示ディスプレイサイズ（ダミー）|<select id="disp"><option>なし</option><option>16 x 1</option></select>
 ||JVS Dash サポート|<select id="jvsd"><option>OFF</option><option>ON</option></select>
 ||JVSデータ信号レベル補正|<select id="jvss"><option>OFF</option><option>ON</option></select>
+
+#### アナログ設定
+1Pと2Pそれぞれ6種類のアナログ入力の役割を設定します。
+レバー（デジタル）の0と1を選ぶことで、アナログスティックを上下、左右のレバーに割り当てられます。ここで割り当てたレバー操作も、後段のボタン配置により展開されます。
+アナログはレースゲームのハンドルやペダル、ロータリーはDJコントローラやパドル、画面座標入力はガンコントローラなどがアサインされますが、実際の使われ方はゲームによって様々です。
 
 ||入力|出力タイプ|出力番号|
 ||P1 アナログ 1 (LX)|<select id="a11t"><option>なし</option><option>レバー（デジタル）</option><option>アナログ入力</option><option>ロータリー入力</option><option>画面座標入力</option></select>|<select id="a11i"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select>
@@ -55,6 +68,12 @@ v2ファームウェアの実験に向けて公開中のページです。対応
 ||P2 アナログ 5 (LT)|<select id="a25t"><option>なし</option><option>レバー（デジタル）</option><option>アナログ入力</option><option>ロータリー入力</option><option>画面座標入力</option></select>|<select id="a25i"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select>
 ||P2 アナログ 6 (RT)|<select id="a26t"><option>なし</option><option>レバー（デジタル）</option><option>アナログ入力</option><option>ロータリー入力</option><option>画面座標入力</option></select>|<select id="a26i"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select>
 
+#### 連射設定
+連射のパタンを7種類設定できます。次のセクションで各ボタンごとに連射を使わないか、ここで定義されたパタンのどれかをアサインするか選べまます。
+シーケンスは左から右に１フレームごとに入力を通すかマスクするかをチェックボックスで指定します。
+指定した周期でシーケンスがループします。
+全てチェックすれば実質連射はオフになり、１つ飛ばしでチェックすれば30連射になります。
+
 ||連射設定|シーケンス|周期|
 ||パタン1|<input type="checkbox" id="p11"><input type="checkbox" id="p12"><input type="checkbox" id="p13"><input type="checkbox" id="p14"><input type="checkbox" id="p15"><input type="checkbox" id="p16"><input type="checkbox" id="p17"><input type="checkbox" id="p18">|<select id="rm1"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
 ||パタン2|<input type="checkbox" id="p21"><input type="checkbox" id="p22"><input type="checkbox" id="p23"><input type="checkbox" id="p24"><input type="checkbox" id="p25"><input type="checkbox" id="p26"><input type="checkbox" id="p27"><input type="checkbox" id="p28">|<select id="rm2"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
@@ -63,6 +82,10 @@ v2ファームウェアの実験に向けて公開中のページです。対応
 ||パタン5|<input type="checkbox" id="p51"><input type="checkbox" id="p52"><input type="checkbox" id="p53"><input type="checkbox" id="p54"><input type="checkbox" id="p55"><input type="checkbox" id="p56"><input type="checkbox" id="p57"><input type="checkbox" id="p58">|<select id="rm5"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
 ||パタン6|<input type="checkbox" id="p61"><input type="checkbox" id="p62"><input type="checkbox" id="p63"><input type="checkbox" id="p64"><input type="checkbox" id="p65"><input type="checkbox" id="p66"><input type="checkbox" id="p67"><input type="checkbox" id="p68">|<select id="rm6"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
 ||パタン7|<input type="checkbox" id="p71"><input type="checkbox" id="p72"><input type="checkbox" id="p73"><input type="checkbox" id="p74"><input type="checkbox" id="p75"><input type="checkbox" id="p76"><input type="checkbox" id="p77"><input type="checkbox" id="p78">|<select id="rm7"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
+
+#### ボタン配置
+P1、P2それぞれの上下左右入力とボタン入力に対し、押された際にゲーム側に押されたと通達するボタンを指定します。任意の組み合わせで指定でき、P1側の入力をP2側の入力として配置することもできます。
+ボタンはそれぞれ連射の設定を持つことができます。
 
 ||&nbsp;\出力<br>入力||Coin|Start|↑|↓|←|→|1|2|3|4|5|6|7|8|連射|
 |-|-|-|:-:|:-:|-|-|-|-|-|-|-|-|-|-|-|-|-|

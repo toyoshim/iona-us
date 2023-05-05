@@ -118,6 +118,7 @@ It may be ok if it does not long, but it may damage the device to connect over J
 - Ver 1.44 Support the Brook XB Fighting Board in the default X-One mode. Also fix detection issues on Xbox controllers.
 - Ver 1.45 Fixed the analog lever config polarity, and add a new setting to disable analog inputs.
 - Ver 1.46 Support exA-Arcadia's JVS Dash (high-speed mode), and adjust options and led controlls.
+- Ver 1.47 Support GP2040.
 
 ## Firmware Compatibility
 All controllers that conform Xbox 360, or Xbox One series protocols are expected to work fine.
@@ -154,30 +155,16 @@ Also, the internal format to hold the user settings is changed at firmware Ver 1
 ---
 ## Firmware Update
 This is the real UI to update firmware. Flash button will actually flash the chosen firmware.
-Ver 1.03 is hidden as it has many known issues.
 
-Now 1.5x series are experimental versions (doesn't exist now), and the latest 1.4x series, selected by default, is expected to be the latest stable version.
+Now 2.0x series are experimental versions, and the latest 1.4x series, selected by default, is expected to be the latest stable version.
 
 <script src="https://toyoshim.github.io/CH559Flasher.js/CH559Flasher.js"></script>
 <script>
 async function flash() {
   const firmwares = [
-    'firmwares/us_v1_00.bin',  // Ver 1.00
-    'firmwares/us_v1_01.bin',  // Ver 1.01
-    'firmwares/us_v1_02.bin',  // Ver 1.02
-    'firmwares/us_v1_02a.bin',  // Ver 1.02a
     'firmwares/us_v1_04.bin',  // Ver 1.04
     'firmwares/us_v1_10.bin',  // Ver 1.10
-    'firmwares/us_v1_20.bin',  // Ver 1.20
-    'firmwares/us_v1_21.bin',  // Ver 1.21
-    'firmwares/us_v1_22.bin',  // Ver 1.22
-    'firmwares/us_v1_23.bin',  // Ver 1.23
     'firmwares/us_v1_24.bin',  // Ver 1.24
-    'firmwares/us_v1_30.bin',  // Ver 1.30
-    'firmwares/us_v1_31.bin',  // Ver 1.31
-    'firmwares/us_v1_32.bin',  // Ver 1.32
-    'firmwares/us_v1_33.bin',  // Ver 1.33
-    'firmwares/us_v1_34.bin',  // Ver 1.34
     'firmwares/us_v1_35.bin',  // Ver 1.35
     'firmwares/us_v1_40.bin',  // Ver 1.40
     'firmwares/us_v1_41.bin',  // Ver 1.41
@@ -187,6 +174,7 @@ async function flash() {
     'firmwares/us_v1_45.bin',  // Ver 1.45
     'firmwares/us_v1_46.bin',  // Ver 1.46
     'firmwares/us_v1_47.bin',  // Ver 1.47
+    'firmwares/us_v2_00.bin',  // Ver 2.00
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -212,22 +200,9 @@ async function flash() {
 </script>
 
 <select id="version">
-<option>Ver 1.00</option>
-<option>Ver 1.01</option>
-<option>Ver 1.02</option>
-<option>Ver 1.02a</option>
 <option>Ver 1.04</option>
 <option>Ver 1.10</option>
-<option>Ver 1.20</option>
-<option>Ver 1.21</option>
-<option>Ver 1.22</option>
-<option>Ver 1.23</option>
 <option>Ver 1.24</option>
-<option>Ver 1.30</option>
-<option>Ver 1.31</option>
-<option>Ver 1.32</option>
-<option>Ver 1.33</option>
-<option>Ver 1.34</option>
 <option>Ver 1.35</option>
 <option>Ver 1.40</option>
 <option>Ver 1.41</option>
@@ -237,6 +212,7 @@ async function flash() {
 <option>Ver 1.45</option>
 <option>Ver 1.46</option>
 <option selected>Ver 1.47</option>
+<option>Ver 2.00</option>
 </select>
 <button onclick="flash();">Flash</button>
 

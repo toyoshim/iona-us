@@ -314,11 +314,6 @@ void controller_update(const uint8_t hub,
   if ((coin_sw[hub] & 3) == 1) {
     coin[hub]++;
   }
-  digital_map[hub][0] &= ~0x40;
-
-  if (service_sw && !hub) {
-    digital_map[hub][0] |= 0x40;
-  }
 }
 
 void controller_poll() {
@@ -366,7 +361,11 @@ uint8_t controller_data(uint8_t player, uint8_t index, uint8_t gpout) {
   if (line >= 4) {
     return 0;
   }
-  return digital_map[0][line] | digital_map[1][line];
+  uint8_t data = digital_map[0][line] | digital_map[1][line];
+  if (!line && service_sw) {
+    data |= 0x40;
+  }
+  return data;
 }
 
 uint8_t controller_coin(uint8_t player) {

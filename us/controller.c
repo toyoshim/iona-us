@@ -45,6 +45,7 @@ uint16_t analog_check(const struct hub_info* info,
     // return 0x8000;
   } else if (info->axis_size[index] == 8) {
     uint8_t v = data[info->axis[index] >> 3];
+    v <<= info->axis_shift[index];
     if (info->axis_sign[index]) {
       v += 0x80;
     }
@@ -58,6 +59,7 @@ uint16_t analog_check(const struct hub_info* info,
     uint16_t h = data[byte_index + 1];
     uint16_t v = ((info->axis[index] & 7) == 0) ? (((h << 8) & 0x0f00) | l)
                                                 : ((h << 4) | (l >> 4));
+    v <<= info->axis_shift[index];
     if (info->axis_sign[index]) {
       v += 0x0800;
     }
@@ -68,6 +70,7 @@ uint16_t analog_check(const struct hub_info* info,
   } else if (info->axis_size[index] == 16) {
     uint8_t byte = info->axis[index] >> 3;
     uint16_t v = data[byte] | ((uint16_t)data[byte + 1] << 8);
+    v <<= info->axis_shift[index];
     if (info->axis_sign[index]) {
       v += 0x8000;
     }

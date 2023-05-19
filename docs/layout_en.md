@@ -30,9 +30,9 @@ The same button will be changed to show 'Save Changes' to memorize the modified 
 - You will need to press 'Decide' also after copying data from other sets or presetrs.
 - Once you finish all edits, click 'Save Changes' to store all changes into the IONA-US device.
 
-| | | | |
-|-|-|-|-:|
-|<select id="select"><option>Set 1</option><option>Set 2</option><option>Set 3</option><option>Set 4</option><option>Set 5</option><option>Set 6</option></select>|<button id="store">Decide</button>|<button id="storeToFile">Export to a File</button><br><button id="loadFromFile">Import from a File</button>|Copy from Another Set <select id="copy"><option>-</option><option>Set 1</option><option>Set 2</option><option>Set 3</option><option>Set 4</option><option>Set 5</option><option>Set 6</option></select><br>Copy from a Preset<select id="preset"><option>-</option></select>|
+| | | |
+|-|-|-:|
+|<select id="select"><option>Set 1</option><option>Set 2</option><option>Set 3</option><option>Set 4</option><option>Set 5</option><option>Set 6</option></select><br><button id="store">Decide</button>|<button id="storeToFile">Export to a File</button><br><button id="loadFromFile">Import from a File</button>|Copy from Another Set <select id="copy"><option>-</option><option>Set 1</option><option>Set 2</option><option>Set 3</option><option>Set 4</option><option>Set 5</option><option>Set 6</option></select><br>Copy from a Preset<select id="preset"><option>-</option></select>|
 
 #### Core Settings
 You can customize declaring device name, and supporting features.

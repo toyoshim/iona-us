@@ -10,6 +10,7 @@
 #include "settings.h"
 
 // #define _DBG_HID_REPORT_DUMP
+// #define _DBG_HID_DECODE_DUMP
 
 static bool test_sw = false;
 static bool service_sw = false;
@@ -186,6 +187,17 @@ void controller_update(const uint8_t hub,
   }
   Serial.println("");
 #endif  // _DBG_HID_REPORT_DUMP
+#ifdef _DBG_HID_DECODE_DUMP
+  for (uint8_t i = 0; i < 6; ++i) {
+    uint16_t value = analog_check(info, data, i);
+    Serial.printf("analog %d: %x%x\n", i, value >> 8, value & 0xff);
+  }
+  Serial.printf("digital: ");
+  for (uint8_t i = 0; i < 13; ++i) {
+    Serial.printf("%d ", button_check(info->button[i], data) ? 1 : 0);
+  }
+  Serial.println("");
+#endif  // _DBG_HID_DECODE_DUMP
   controller_reset_digital_map(hub);
 
   if (info->state != HID_STATE_READY) {

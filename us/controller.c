@@ -10,7 +10,6 @@
 #include "settings.h"
 
 // #define _DBG_HID_REPORT_DUMP
-// #define _DBG_JVS_BUTTON_DUMP
 
 static bool test_sw = false;
 static bool service_sw = false;
@@ -319,25 +318,6 @@ void controller_update(const uint8_t hub,
 void controller_poll() {
   service_sw = settings_service_pressed();
   test_sw = settings_test_pressed();
-#ifdef _DBG_JVS_BUTTON_DUMP
-  static uint8_t old_jvs_map[5] = {0, 0, 0, 0, 0};
-  if (old_jvs_map[0] != jvs_map[0] || old_jvs_map[1] != jvs_map[1] ||
-      old_jvs_map[2] != jvs_map[2] || old_jvs_map[3] != jvs_map[3] ||
-      old_jvs_map[4] != jvs_map[4]) {
-    for (uint8_t i = 0; i < 5; ++i)
-      old_jvs_map[i] = jvs_map[i];
-    Serial.printc(jvs_map[0], BIN);
-    Serial.putc('_');
-    Serial.printc(jvs_map[1], BIN);
-    Serial.putc('_');
-    Serial.printc(jvs_map[2], BIN);
-    Serial.putc('_');
-    Serial.printc(jvs_map[3], BIN);
-    Serial.putc('_');
-    Serial.printc(jvs_map[4], BIN);
-    Serial.println("");
-  }
-#endif  // _DBG_JVS_BUTTON_DUMP
 }
 
 uint8_t controller_head() {

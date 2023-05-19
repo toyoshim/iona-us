@@ -166,6 +166,7 @@ async function flash() {
   const firmwares = [
     'firmwares/us_v1_04.bin',  // Ver 1.04
     'firmwares/us_v1_10.bin',  // Ver 1.10
+    'firmwares/us_v1_20.bin',  // Ver 1.20
     'firmwares/us_v1_24.bin',  // Ver 1.24
     'firmwares/us_v1_35.bin',  // Ver 1.35
     'firmwares/us_v1_40.bin',  // Ver 1.40
@@ -204,6 +205,7 @@ async function flash() {
 <select id="version">
 <option>Ver 1.04</option>
 <option>Ver 1.10</option>
+<option>Ver 1.20</option>
 <option>Ver 1.24</option>
 <option>Ver 1.35</option>
 <option>Ver 1.40</option>

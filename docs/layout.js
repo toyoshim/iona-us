@@ -70,6 +70,19 @@ function getSequencePattern(index) {
   return data;
 }
 
+function isModified() {
+  const currentData = new Uint8Array(169);
+  storeTo(currentData);
+  const currentIndex = getSelect('select');
+  const currentDataOffset = 10 + 169 * currentIndex;
+  for (let i = 0; i < 169; ++i) {
+    if (currentData[i] != userData[currentDataOffset + i]) {
+      return true;
+    }
+  }
+  return false;
+}
+
 function applyData(data) {
   // Core
   const jvsDeviceId = (data[0] >> 5) & 7;
@@ -153,10 +166,120 @@ function applyData(data) {
   }
 }
 
+async function loadFromFile() {
+  const handle = (await window.showOpenFilePicker({
+    types: [
+      {
+        description: 'IONA JVS Patch File',
+        accept: { '*/*': ['.jp'] }
+      }
+    ]
+  }))[0];
+  const file = await handle.getFile();
+  const data = new Uint8Array(await file.arrayBuffer());
+  if (data[0] != 'I'.charCodeAt(0) ||
+    data[1] != 'O'.charCodeAt(0) ||
+    data[2] != 'N'.charCodeAt(0) ||
+    data[3] != 'C'.charCodeAt(0) ||
+    data[4] != 1) {
+    window.alert(uiMessages.unknownFileFormat);
+    return;
+  }
+  const index = getSelect('select');
+  const offset = 10 + 169 * index;
+  for (let i = 0; i < 169; ++i) {
+    userData[offset + i] = data[10 + i];
+  }
+  applyUserData(index);
+}
+
+function dump(data, begin, end) {
+  const items = [];
+  for (let i = begin; i < end; ++i) {
+    const s = '0' + data[i].toString(16);
+    items.push('0x' + s.substring(s.length - 2));
+  }
+  return items.join(', ');
+}
+
+function writeAsPreset() {
+  const data = new Uint8Array(169);
+  storeTo(data);
+  console.log('appendPreset(\'Name\', [');
+  console.log('  // Core');
+  console.log('  ' + dump(data, 0, 3) + ',');
+  console.log('  // Analog Map');
+  console.log('  ' + dump(data, 3, 15) + ',');
+  console.log('  // Digital Map');
+  console.log('  ' + dump(data, 15, 19) + ',  // 1P Up');
+  console.log('  ' + dump(data, 19, 23) + ',  // 1P Down');
+  console.log('  ' + dump(data, 23, 27) + ',  // 1P Left');
+  console.log('  ' + dump(data, 27, 31) + ',  // 1P Right');
+  console.log('  ' + dump(data, 31, 35) + ',  // 1P B1');
+  console.log('  ' + dump(data, 35, 39) + ',  // 1P B2');
+  console.log('  ' + dump(data, 39, 43) + ',  // 1P B3');
+  console.log('  ' + dump(data, 43, 47) + ',  // 1P B4');
+  console.log('  ' + dump(data, 47, 51) + ',  // 1P B5');
+  console.log('  ' + dump(data, 51, 55) + ',  // 1P B6');
+  console.log('  ' + dump(data, 55, 59) + ',  // 1P B7');
+  console.log('  ' + dump(data, 59, 63) + ',  // 1P B8');
+  console.log('  ' + dump(data, 63, 67) + ',  // 1P SHARE');
+  console.log('  ' + dump(data, 67, 71) + ',  // 1P OPTION');
+  console.log('  ' + dump(data, 71, 75) + ',  // 1P L3');
+  console.log('  ' + dump(data, 75, 79) + ',  // 1P R3');
+  console.log('  ' + dump(data, 79, 83) + ',  // 2P Up');
+  console.log('  ' + dump(data, 83, 87) + ',  // 2P Down');
+  console.log('  ' + dump(data, 87, 91) + ',  // 2P Left');
+  console.log('  ' + dump(data, 91, 95) + ',  // 2P Right');
+  console.log('  ' + dump(data, 95, 99) + ',  // 2P B1');
+  console.log('  ' + dump(data, 99, 103) + ',  // 2P B2');
+  console.log('  ' + dump(data, 103, 107) + ',  // 2P B3');
+  console.log('  ' + dump(data, 107, 111) + ',  // 2P B4');
+  console.log('  ' + dump(data, 111, 115) + ',  // 2P B5');
+  console.log('  ' + dump(data, 115, 119) + ',  // 2P B6');
+  console.log('  ' + dump(data, 119, 123) + ',  // 2P B7');
+  console.log('  ' + dump(data, 123, 127) + ',  // 2P B8');
+  console.log('  ' + dump(data, 127, 131) + ',  // 2P SHARE');
+  console.log('  ' + dump(data, 131, 135) + ',  // 2P OPTION');
+  console.log('  ' + dump(data, 135, 139) + ',  // 2P L3');
+  console.log('  ' + dump(data, 139, 143) + ',  // 2P R3');
+  console.log('  // Rapid File');
+  console.log('  ' + dump(data, 143, 149) + ',');
+  console.log('  ' + dump(data, 149, 155) + ',');
+  console.log('  ' + dump(data, 155, 157) + ',');
+  console.log('  ' + dump(data, 157, 159) + ',');
+  console.log('  ' + dump(data, 159, 161) + ',');
+  console.log('  ' + dump(data, 161, 163) + ',');
+  console.log('  ' + dump(data, 163, 165) + ',');
+  console.log('  ' + dump(data, 165, 167) + ',');
+  console.log('  ' + dump(data, 167, 169) + ',');
+  console.log(']);');
+}
+
+function storeToFile() {
+  if (isModified() && !window.confirm(uiMessages.modifiedOnStore)) {
+    return;
+  }
+  const data = new Uint8Array(10 + 169);
+  for (let i = 0; i < 10; ++i) {
+    data[i] = userData[i];
+  }
+  storeTo(data.subarray(10, 10 + 169));
+  const a = document.createElement('a');
+  const blob = new Blob([data], { type: 'octet/stream' });
+  const url = window.URL.createObjectURL(blob);
+  a.href = url;
+  a.download = 'iona-jvs-patch-' + getSelect('select') + '.jp';
+  a.click();
+}
+
 function store(index) {
   const start = 10 + 169 * index;
   const data = userData.subarray(start, start + 169);
+  storeTo(data);
+}
 
+function storeTo(data) {
   // Core
   const jvsDeviceId = getSelect('id') & 7;
   const analogInputCount = getSelect('ainc') & 7;
@@ -274,9 +397,23 @@ document.getElementById('store').addEventListener('click', e => {
   store(document.getElementById('select').options.selectedIndex);
 });
 
+document.getElementById('storeToFile').addEventListener('click', e => {
+  storeToFile();
+});
+
+document.getElementById('loadFromFile').addEventListener('click', e => {
+  loadFromFile();
+});
+
 let flasher = null;
 document.getElementById('button').addEventListener('click', async e => {
   if (flasher) {
+    // Check if there is non-stored data in editing.
+    if (isModified() && !window.confirm(uiMessages.modifiedOnSave)) {
+      setStatus(uiMessages.abort);
+      return;
+    }
+    // Erase old data.
     if (!await flasher.eraseData().catch(e => {
       setStatus(uiMessages.noDevice);
       flasher = null;
@@ -288,6 +425,7 @@ document.getElementById('button').addEventListener('click', async e => {
       setButtonStatus(uiMessages.findDevice);
       return;
     }
+    // Write new data.
     for (let i = 0; i < 1024; i += 32) {
       if (!await flasher.writeDataInRange(i, userData.buffer.slice(i, i + 32))) {
         setStatus(uiMessages.error + flasher.error);
@@ -350,6 +488,7 @@ document.getElementById('button').addEventListener('click', async e => {
     uiMessages.connectedInformation + userData[4].toString() + ')');
   setButtonStatus(uiMessages.save);
   applyUserData(0);
+  select('select', 0);
 });
 setStatus(uiMessages.idle);
 setButtonStatus(uiMessages.findDevice);

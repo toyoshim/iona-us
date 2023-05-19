@@ -30,9 +30,9 @@ The same button will be changed to show 'Save Changes' to memorize the modified 
 - You will need to press 'Decide' also after copying data from other sets or presetrs.
 - Once you finish all edits, click 'Save Changes' to store all changes into the IONA-US device.
 
-| | | |
-|-|-|-:|
-|<select id="select"><option>Set 1</option><option>Set 2</option><option>Set 3</option><option>Set 4</option><option>Set 5</option><option>Set 6</option></select>|<button id="store">Decide</button>|Copy from Another Set <select id="copy"><option>-</option><option>Set 1</option><option>Set 2</option><option>Set 3</option><option>Set 4</option><option>Set 5</option><option>Set 6</option></select><br>Copy from a Preset<select id="preset"><option>-</option></select>|
+| | | | |
+|-|-|-|-:|
+|<select id="select"><option>Set 1</option><option>Set 2</option><option>Set 3</option><option>Set 4</option><option>Set 5</option><option>Set 6</option></select>|<button id="store">Decide</button>|<button id="storeToFile">Export to a File</button><br><button id="loadFromFile">Import from a File</button>|Copy from Another Set <select id="copy"><option>-</option><option>Set 1</option><option>Set 2</option><option>Set 3</option><option>Set 4</option><option>Set 5</option><option>Set 6</option></select><br>Copy from a Preset<select id="preset"><option>-</option></select>|
 
 #### Core Settings
 You can customize declaring device name, and supporting features.
@@ -139,10 +139,13 @@ window.uiMessages = {
   errorOnRead: 'Error on reading settings: ',
   findDevice: 'Find IONA-US',
   idle: 'Waiting for connecting to IONA-US',
+  modifiedOnStore: 'Undecided changes exist. Do you save to a file without these changes?',
+  modifiedOnSave: 'Undecided changes exist. Do you save without these changes?',
   noDevice: 'Unexpected error. Make sure your IONA-US is still connected',
   save: 'Save Changes',
   saved: 'Saved',
   unknownContinue: 'Connected, but cannot confirm known versions of IONA-US setting data. Do you agree to override it with the latest setting data?',
+  unknownFileFormat: 'Unknown file format.',
 };
 </script>
 <script src="layout.js"></script>

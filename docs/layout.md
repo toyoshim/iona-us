@@ -27,9 +27,9 @@ v2系ファームウェアに対応した設定ページを実験的に公開し
 - 他の設定やプリセットからコピーした場合にも確定は必要です。
 - 全ての変更が確定したら「変更を保存する」ボタンでデバイスに保存されます。
 
-| | | |
-|-|-|-:|
-|<select id="select"><option>設定 1</option><option>設定 2</option><option>設定 3</option><option>設定 4</option><option>設定 5</option><option>設定 6</option></select>|<button id="store">変更を確定</button>|他の設定からコピーする <select id="copy"><option>-</option><option>設定 1</option><option>設定 2</option><option>設定 3</option><option>設定 4</option><option>設定 5</option><option>設定 6</option></select><br>プリセットからコピーする<select id="preset"><option>-</option></select>|
+| | | | |
+|-|-|-|-:|
+|<select id="select"><option>設定 1</option><option>設定 2</option><option>設定 3</option><option>設定 4</option><option>設定 5</option><option>設定 6</option></select>|<button id="store">変更を確定</button>|<button id="storeToFile">ファイルに保存</button><br><button id="loadFromFile">ファイルから読込</button>|他の設定からコピー<select id="copy"><option>-</option><option>設定 1</option><option>設定 2</option><option>設定 3</option><option>設定 4</option><option>設定 5</option><option>設定 6</option></select><br>プリセットからコピー<select id="preset"><option>-</option></select>|
 
 #### 基本設定
 宣言するデバイス名やサポートする機能をカスタマイズします。
@@ -133,10 +133,13 @@ window.uiMessages = {
   errorOnRead: '設定読込中にエラーが発生しました: ',
   findDevice: 'デバイスを探す',
   idle: '待機中',
+  modifiedOnStore: '未確定のデータが存在しますが、確定前のデータをファイルに保存しますか？',
+  modifiedOnSave: '未確定のデータが存在しますが、確定前のデータを保存しますか？',
   noDevice: '例外が発生しました、デバイスが接続されているか確認して下さい',
   save: '変更を保存する',
   saved: '保存しました',
   unknownContinue: '接続しましたが、対応するバージョンのIONA-USの設定データが確認できません。このまま継続して最新データで上書きしますか？',
+  unknownFileFormat: '未知のファイルフォーマットです',
 };
 </script>
 <script src="layout.js"></script>

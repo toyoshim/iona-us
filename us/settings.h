@@ -48,6 +48,7 @@ struct settings {
     uint8_t pattern;
     uint8_t bit;
     uint8_t mask;
+    bool invert;
     bool on;
   } sequence[8];
 };

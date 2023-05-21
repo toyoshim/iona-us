@@ -13,7 +13,7 @@
 #include "settings.h"
 #include "soft485.h"
 
-#define VER "2.01"
+#define VER "2.02"
 
 static const char sega_id[] =
     "SEGA ENTERPRISES,LTD.compat;MP07-IONA-US;ver" VER;
@@ -21,10 +21,13 @@ static const char namco_gun_id[] =
     "namco ltd.;JYU-PCB;compat Ver" VER ";MP07-IONA-US,2Coins 2Guns";
 static const char namco_multi_id[] =
     "namco ltd.;NA-JV;Ver4.00;JPN,Multipurpose.,MP07-IONA-US,v" VER;
-static const char* ids[3] = {
+static const char namco_tss_id[] =
+    "namco ltd.;TSS-I/O;Ver2.02;JPN,GUN-EXTENTION,MP07-IONA-US,v" VER;
+static const char* ids[4] = {
     sega_id,
     namco_gun_id,
     namco_multi_id,
+    namco_tss_id,
 };
 
 static struct JVSIO_DataClient data;

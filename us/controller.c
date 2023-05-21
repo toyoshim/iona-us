@@ -319,9 +319,11 @@ void controller_update(const uint8_t hub,
                        alt_digital & 8);
   }
   for (uint8_t i = 0; i < 12; ++i) {
+    uint8_t rapid_fire = settings->rapid_fire[hub][i];
     update_digital_map(digital_map[hub], settings->digital_map[hub][4 + i].data,
-                       settings->sequence[settings->rapid_fire[hub][i]].on &&
-                           button_check(info->button[i], data));
+                       (settings->sequence[rapid_fire].on &&
+                        button_check(info->button[i], data)) ^
+                           settings->sequence[rapid_fire].invert);
   }
 
   coin_sw[hub] = (coin_sw[hub] << 1) | ((digital_map[hub][0] >> 6) & 1);

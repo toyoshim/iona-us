@@ -43,7 +43,7 @@ static void apply() {
   const uint8_t core1 = flash[offset++];
   const uint8_t core2 = flash[offset++];
   settings.id = core0 >> 5;
-  if (settings.id > 2) {
+  if (settings.id > 3) {
     settings.id = 0;
   }
   settings.analog_input_count = ((core0 >> 2) & 7) << 1;
@@ -88,11 +88,13 @@ static void apply() {
   settings.sequence[0].pattern = 0xff;
   settings.sequence[0].bit = 1;
   settings.sequence[0].mask = 0xff;
+  settings.sequence[0].invert = false;
   settings.sequence[0].on = true;
   for (uint8_t i = 1; i < 8; ++i) {
     settings.sequence[i].pattern = flash[offset++];
     settings.sequence[i].bit = 1;
-    settings.sequence[i].mask = (2 << (flash[offset++] & 7)) - 1;
+    settings.sequence[i].mask = (2 << (flash[offset] & 7)) - 1;
+    settings.sequence[i].invert = flash[offset++] & 0x80;
     settings.sequence[i].on = true;
   }
 

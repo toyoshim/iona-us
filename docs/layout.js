@@ -158,8 +158,10 @@ function applyData(data) {
   }
   for (let i = 1; i < 8; ++i) {
     const pattern = data[offset++];
+    const invert = data[offset] & 0x80;
     const width = data[offset++] & 7;
     applySequenceWidth(i - 1, width + 1);
+    check('inv' + i, invert);
     for (let bit = 0; bit < 8; ++bit) {
       check('p' + i + (bit + 1), pattern & (1 << bit));
     }
@@ -345,7 +347,8 @@ function storeTo(data) {
   }
   for (let i = 1; i < 8; ++i) {
     data[offset++] = getSequencePattern(i - 1);
-    data[offset++] = getSelect('rm' + i) & 7;
+    data[offset] = isChecked('inv' + i) ? 0x80 : 0x00;
+    data[offset++] |= getSelect('rm' + i) & 7;
   }
 }
 

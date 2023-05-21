@@ -120,6 +120,7 @@ JVS I/Oとして利用する前、特にジャンパーピンを実装した人�
 - Ver 1.47 GP2040に対応
 - Ver 2.00 設定をウェブから行うように大改訂
 - Ver 2.01 コントローラが接続されていない時にSERVICEボタンが効かない問題を修正、Xboxコントローラのトリガー入力値が最大値に達するよう補正、Guncon3対応強化とバグ修正を行いました
+- Ver 2.02 namco TSS-I/O互換のIDを追加、入力反転機能を追加
 
 ## ファームウェアの互換性
 Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基本的に安定して動くはずです。
@@ -180,6 +181,7 @@ async function flash() {
     'firmwares/us_v1_46.bin',  // Ver 1.46
     'firmwares/us_v1_47.bin',  // Ver 1.47
     'firmwares/us_v2_01.bin',  // Ver 2.01
+    'firmwares/us_v2_02.bin',  // Ver 2.02
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -219,6 +221,7 @@ async function flash() {
 <option>Ver 1.46</option>
 <option selected>Ver 1.47</option>
 <option>Ver 2.01</option>
+<option>Ver 2.02</option>
 </select>
 <button onclick="flash();">書き込み</button>
 

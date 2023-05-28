@@ -398,3 +398,7 @@ void controller_coin_add(uint8_t player, uint8_t add) {
 void controller_coin_sub(uint8_t player, uint8_t sub) {
   coin[player] -= sub;
 }
+
+void controller_coin_set(uint8_t player, uint8_t value) {
+  coin[player] = value;
+}

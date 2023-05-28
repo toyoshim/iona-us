@@ -4,7 +4,9 @@
 
 #include "ch559.h"
 #include "hid.h"
-#include "jvsio/JVSIO_c.h"
+#include "jvsio_client.h"
+#include "jvsio_common.h"
+#include "jvsio_node.h"
 #include "led.h"
 #include "serial.h"
 
@@ -13,7 +15,7 @@
 #include "settings.h"
 #include "soft485.h"
 
-#define VER "2.02"
+#define VER "2.10"
 
 static const char sega_id[] =
     "SEGA ENTERPRISES,LTD.compat;MP07-IONA-US;ver" VER;
@@ -30,13 +32,10 @@ static const char* ids[4] = {
     namco_tss_id,
 };
 
-static struct JVSIO_DataClient data;
-static struct JVSIO_SenseClient sense;
-static struct JVSIO_LedClient led;
-static struct JVSIO_TimeClient time;
-
 static int8_t coin_index_bias = 0;
 static uint8_t gpout = 0;
+static int8_t reserved_coin_index_bias = 0;
+static uint8_t reserved_coin[2] = {0, 0};
 
 static struct settings* settings = 0;
 
@@ -44,138 +43,145 @@ static void debug_putc(uint8_t val) {
   val;
 }
 
-static void jvs_poll(struct JVSIO_Lib* io) {
-  void (*original_putc)() = Serial.putc;
-  Serial.putc = debug_putc;
-  uint8_t len;
-  uint8_t* data = io->getNextCommand(io, &len, 0);
-  Serial.putc = original_putc;
-  if (!data)
-    return;
+bool JVSIO_Client_receiveCommand(uint8_t node,
+                                 uint8_t* data,
+                                 uint8_t len,
+                                 bool commit) {
+  node;
+  len;
+  if (!data) {
+    coin_index_bias = reserved_coin_index_bias;
+    controller_coin_set(0, reserved_coin[0]);
+    controller_coin_set(1, reserved_coin[1]);
+    return true;
+  }
+
+  bool handled = true;
 
   switch (*data) {
     case kCmdReset:
       coin_index_bias = 0;
       break;
     case kCmdIoId:
-      io->pushReport(io, kReportOk);
+      JVSIO_Node_pushReport(kReportOk);
       {
         const char* id = ids[settings->id];
-        for (uint8_t i = 0; id[i]; ++i)
-          io->pushReport(io, id[i]);
+        for (uint8_t i = 0; id[i]; ++i) {
+          JVSIO_Node_pushReport(id[i]);
+        }
       }
-      io->pushReport(io, 0x00);
+      JVSIO_Node_pushReport(0x00);
       break;
     case kCmdFunctionCheck:
-      io->pushReport(io, kReportOk);
+      JVSIO_Node_pushReport(kReportOk);
 
-      io->pushReport(io, 0x01);  // sw
+      JVSIO_Node_pushReport(0x01);  // sw
       if (settings->id != IT_NAMCO_NAJV) {
-        io->pushReport(io, 0x02);  // players
-        io->pushReport(io, 0x10);  // buttons
-        io->pushReport(io, 0x00);
+        JVSIO_Node_pushReport(0x02);  // players
+        JVSIO_Node_pushReport(0x10);  // buttons
+        JVSIO_Node_pushReport(0x00);
       } else {
-        io->pushReport(io, 0x01);  // players
-        io->pushReport(io, 0x18);  // buttons
-        io->pushReport(io, 0x00);
+        JVSIO_Node_pushReport(0x01);  // players
+        JVSIO_Node_pushReport(0x18);  // buttons
+        JVSIO_Node_pushReport(0x00);
       }
 
-      io->pushReport(io, 0x02);  // coin
-      io->pushReport(io, 0x02);  // slots
-      io->pushReport(io, 0x00);
-      io->pushReport(io, 0x00);
+      JVSIO_Node_pushReport(0x02);  // coin
+      JVSIO_Node_pushReport(0x02);  // slots
+      JVSIO_Node_pushReport(0x00);
+      JVSIO_Node_pushReport(0x00);
 
       if (settings->analog_input_count) {
-        io->pushReport(io, 0x03);  // analog inputs
-        io->pushReport(io, settings->analog_input_count);
-        io->pushReport(io, settings->analog_input_width);
-        io->pushReport(io, 0x00);
+        JVSIO_Node_pushReport(0x03);  // analog inputs
+        JVSIO_Node_pushReport(settings->analog_input_count);
+        JVSIO_Node_pushReport(settings->analog_input_width);
+        JVSIO_Node_pushReport(0x00);
       }
 
       if (settings->rotary_input_count) {
-        io->pushReport(io, 0x04);  // rotary inputs
-        io->pushReport(io, settings->rotary_input_count);
-        io->pushReport(io, 0x00);
-        io->pushReport(io, 0x00);
+        JVSIO_Node_pushReport(0x04);  // rotary inputs
+        JVSIO_Node_pushReport(settings->rotary_input_count);
+        JVSIO_Node_pushReport(0x00);
+        JVSIO_Node_pushReport(0x00);
       }
 
       if (settings->screen_position_count) {
-        io->pushReport(io, 0x06);  // screen position inputs
-        io->pushReport(io, settings->screen_position_width);
-        io->pushReport(io, settings->screen_position_width);
-        io->pushReport(io, settings->screen_position_count);
+        JVSIO_Node_pushReport(0x06);  // screen position inputs
+        JVSIO_Node_pushReport(settings->screen_position_width);
+        JVSIO_Node_pushReport(settings->screen_position_width);
+        JVSIO_Node_pushReport(settings->screen_position_count);
       }
 
-      io->pushReport(io, 0x12);  // general purpose driver
-      io->pushReport(io, 0x12);  // slots
-      io->pushReport(io, 0x00);
-      io->pushReport(io, 0x00);
+      JVSIO_Node_pushReport(0x12);  // general purpose driver
+      JVSIO_Node_pushReport(0x12);  // slots
+      JVSIO_Node_pushReport(0x00);
+      JVSIO_Node_pushReport(0x00);
 
       if (settings->analog_output) {
-        io->pushReport(io, 0x13);  // analog output
-        io->pushReport(io, settings->analog_output);
-        io->pushReport(io, 0x00);
-        io->pushReport(io, 0x00);
+        JVSIO_Node_pushReport(0x13);  // analog output
+        JVSIO_Node_pushReport(settings->analog_output);
+        JVSIO_Node_pushReport(0x00);
+        JVSIO_Node_pushReport(0x00);
       }
 
       if (settings->character_display_width) {
-        io->pushReport(io, 0x14);  // character output
-        io->pushReport(io, settings->character_display_width);
-        io->pushReport(io, settings->character_display_height);
-        io->pushReport(io, 0x00);  // code
+        JVSIO_Node_pushReport(0x14);  // character output
+        JVSIO_Node_pushReport(settings->character_display_width);
+        JVSIO_Node_pushReport(settings->character_display_height);
+        JVSIO_Node_pushReport(0x00);  // code
       }
 
-      io->pushReport(io, 0x00);
+      JVSIO_Node_pushReport(0x00);
       break;
     case kCmdSwInput:
-      io->pushReport(io, kReportOk);
+      JVSIO_Node_pushReport(kReportOk);
       settings_rapid_sync();
-      io->pushReport(io, controller_head());
+      JVSIO_Node_pushReport(controller_head());
       for (uint8_t player = 0; player < data[1]; ++player) {
         for (uint8_t i = 0; i < data[2]; ++i) {
-          io->pushReport(io, controller_data(player, i, gpout));
+          JVSIO_Node_pushReport(controller_data(player, i, gpout));
         }
       }
       break;
     case kCmdCoinInput:
-      io->pushReport(io, kReportOk);
+      JVSIO_Node_pushReport(kReportOk);
       if (data[1] <= 2) {
         for (uint8_t i = 0; i < data[1]; ++i) {
-          io->pushReport(io, (0 << 6) | 0);
-          io->pushReport(io, controller_coin(i));
+          JVSIO_Node_pushReport((0 << 6) | 0);
+          JVSIO_Node_pushReport(controller_coin(i));
         }
       } else {
         Serial.println("Err CmdCoinInput");
       }
       break;
     case kCmdAnalogInput:
-      io->pushReport(io, kReportOk);
+      JVSIO_Node_pushReport(kReportOk);
       for (uint8_t i = 0; i < data[1]; ++i) {
         uint16_t value = controller_analog(i);
-        io->pushReport(io, value >> 8);
-        io->pushReport(io, value & 0xff);
+        JVSIO_Node_pushReport(value >> 8);
+        JVSIO_Node_pushReport(value & 0xff);
       }
       break;
     case kCmdRotaryInput:
-      io->pushReport(io, kReportOk);
+      JVSIO_Node_pushReport(kReportOk);
       for (uint8_t i = 0; i < data[1]; ++i) {
         uint16_t value = controller_rotary(i);
-        io->pushReport(io, value >> 8);
-        io->pushReport(io, value & 0xff);
+        JVSIO_Node_pushReport(value >> 8);
+        JVSIO_Node_pushReport(value & 0xff);
       }
       break;
     case kCmdScreenPositionInput:
-      io->pushReport(io, kReportOk);
+      JVSIO_Node_pushReport(kReportOk);
       {
         uint8_t index = data[1] - 1;
         uint16_t x = controller_screen(index, 0) >>
                      (16 - settings->screen_position_width);
-        io->pushReport(io, x >> 8);
-        io->pushReport(io, x & 0xff);
+        JVSIO_Node_pushReport(x >> 8);
+        JVSIO_Node_pushReport(x & 0xff);
         uint16_t y = controller_screen(index, 1) >>
                      (16 - settings->screen_position_width);
-        io->pushReport(io, y >> 8);
-        io->pushReport(io, y & 0xff);
+        JVSIO_Node_pushReport(y >> 8);
+        JVSIO_Node_pushReport(y & 0xff);
       }
       break;
     case kCmdCoinSub:
@@ -189,25 +195,33 @@ static void jvs_poll(struct JVSIO_Lib* io) {
         controller_coin_sub(data[1] + coin_index_bias - 1, data[3]);
       else
         controller_coin_add(data[1] + coin_index_bias - 1, data[3]);
-      io->pushReport(io, kReportOk);
+      JVSIO_Node_pushReport(kReportOk);
       break;
     case kCmdDriverOutput:
       gpout = data[2];
-      io->pushReport(io, kReportOk);
+      JVSIO_Node_pushReport(kReportOk);
       break;
     case kCmdAnalogOutput:
     case kCmdCharacterOutput:
-      io->pushReport(io, kReportOk);
+      JVSIO_Node_pushReport(kReportOk);
       break;
     case kCmdNamco:
       if (data[4] == 0x14) {
-        io->sendUnknownStatus(io);
+        handled = false;
       } else {
-        io->pushReport(io, kReportOk);
-        io->pushReport(io, 0x01);
+        JVSIO_Node_pushReport(kReportOk);
+        JVSIO_Node_pushReport(0x01);
       }
       break;
+    default:
+      handled = false;
   }
+  if (commit) {
+    reserved_coin_index_bias = coin_index_bias;
+    reserved_coin[0] = controller_coin(0);
+    reserved_coin[1] = controller_coin(1);
+  }
+  return handled;
 }
 
 static void detected() {
@@ -227,10 +241,7 @@ void main() {
 
   delay(30);
 
-  client_init(&data, &sense, &led, &time);
-
-  struct JVSIO_Lib* io = JVSIO_open(&data, &sense, &led, &time, 1);
-  io->begin(io);
+  client_init();
 
   struct hid hid;
   hid.report = controller_update;
@@ -238,10 +249,17 @@ void main() {
   hid.get_flags = get_flags;
   hid_init(&hid);
 
+  void (*original_putc)() = Serial.putc;
+  Serial.putc = debug_putc;
+
   for (;;) {
-    hid_poll();
-    controller_poll();
-    settings_poll();
-    jvs_poll(io);
+    JVSIO_Node_run(true);
+    if (!JVSIO_Node_isBusy()) {
+      // Serial.putc = original_putc;
+      hid_poll();
+      // Serial.putc = debug_putc;
+      settings_poll();
+      controller_poll();
+    }
   }
 }

@@ -24,5 +24,6 @@ uint16_t controller_rotary(uint8_t index);
 uint16_t controller_screen(uint8_t index, uint8_t axis);
 void controller_coin_add(uint8_t player, uint8_t add);
 void controller_coin_sub(uint8_t player, uint8_t sub);
+void controller_coin_set(uint8_t player, uint8_t value);
 
 #endif  // __controller_h__

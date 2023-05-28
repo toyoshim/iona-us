@@ -6,7 +6,8 @@
 
 #include "ch559.h"
 #include "io.h"
-#include "jvsio/JVSIO_c.h"
+#include "jvsio_client.h"
+#include "jvsio_node.h"
 #include "pwm1.h"
 
 #include "serial.h"
@@ -14,7 +15,7 @@
 #include "soft485.h"
 
 static bool mode_in = true;
-static enum JVSIO_CommSupMode comm_mode;
+static enum JVSIO_CommSupMode comm_mode = k115200;
 static struct settings* settings = 0;
 
 static void update_pulldown() {
@@ -23,45 +24,7 @@ static void update_pulldown() {
   pinMode(2, 0, activate ? OUTPUT : INPUT);
 }
 
-static int data_available(struct JVSIO_DataClient* client) {
-  client;
-  update_pulldown();
-  return soft485_ready() ? 1 : 0;
-}
-
-static void data_setInput(struct JVSIO_DataClient* client) {
-  client;
-  soft485_input();
-  mode_in = true;
-  update_pulldown();
-}
-
-static void data_setOutput(struct JVSIO_DataClient* client) {
-  client;
-  mode_in = false;
-  update_pulldown();
-  soft485_output();
-}
-
-static void data_startTransaction(struct JVSIO_DataClient* client) {
-  client;
-}
-
-static void data_endTransaction(struct JVSIO_DataClient* client) {
-  client;
-}
-
-static uint8_t data_read(struct JVSIO_DataClient* client) {
-  client;
-  return soft485_recv();
-}
-
-static void data_write(struct JVSIO_DataClient* client, uint8_t data) {
-  client;
-  soft485_send(data);
-}
-
-static void data_write_3M(struct JVSIO_DataClient* client, uint8_t data) {
+static void data_write_3M(void* client, uint8_t data) {
   client;
   data;
   // clang-format off
@@ -115,34 +78,36 @@ static void data_write_3M(struct JVSIO_DataClient* client, uint8_t data) {
   // clang-format on
 }
 
-static bool data_setCommSupMode(struct JVSIO_DataClient* client,
-                                enum JVSIO_CommSupMode mode,
-                                bool dryrun) {
-  if ((mode != k115200) && (!settings->jvs_dash_support || mode != k3M))
-    return false;
-  if (!dryrun) {
-    soft485_set_recv_speed(mode);
-    uint8_t led = L_ON;
-    switch (mode) {
-      case k115200:
-        client->write = data_write;
-        break;
-      case k3M:
-        client->write = data_write_3M;
-        led = L_BLINK_TWICE;
-        break;
-    }
-    settings_led_mode(led);
-    comm_mode = mode;
-  }
-  return true;
+int JVSIO_Client_isDataAvailable() {
+  update_pulldown();
+  return soft485_ready() ? 1 : 0;
 }
 
-static void data_dump(struct JVSIO_DataClient* client,
-                      const char* str,
-                      uint8_t* data,
-                      uint8_t len) {
-  client;
+void JVSIO_Client_willSend() {
+  mode_in = false;
+  update_pulldown();
+  soft485_output();
+}
+
+void JVSIO_Client_willReceive() {
+  soft485_input();
+  mode_in = true;
+  update_pulldown();
+}
+
+void JVSIO_Client_send(uint8_t data) {
+  if (comm_mode == k3M) {
+    data_write_3M(0, data);
+  } else {
+    soft485_send(data);
+  }
+}
+
+uint8_t JVSIO_Client_receive() {
+  return soft485_recv();
+}
+
+void JVSIO_Client_dump(const char* str, uint8_t* data, uint8_t len) {
   Serial.print(str);
   Serial.print(": ");
   for (uint8_t i = 0; i < len; ++i) {
@@ -154,32 +119,28 @@ static void data_dump(struct JVSIO_DataClient* client,
   Serial.println("");
 }
 
-static void sense_begin(struct JVSIO_SenseClient* client) {
-  client;
-  pwm1_init();
-  pwm1_duty(3, 4);
-}
-
-static void sense_set(struct JVSIO_SenseClient* client, bool ready) {
-  client;
-  P5_IN |= bP4_DRV;
-  pwm1_enable(!ready);
-}
-
-static bool sense_isReady(struct JVSIO_SenseClient* client) {
-  client;
+bool JVSIO_Client_isSenseReady() {
   // can be true for single node.
   return true;
 }
 
-static bool sense_isConnected(struct JVSIO_SenseClient* client) {
-  client;
-  // can be true for client mode.
+bool JVSIO_Client_setCommSupMode(enum JVSIO_CommSupMode mode, bool dryrun) {
+  if ((mode != k115200) && (!settings->jvs_dash_support || mode != k3M))
+    return false;
+  if (!dryrun) {
+    soft485_set_recv_speed(mode);
+    settings_led_mode((mode == k3M) ? L_BLINK_TWICE : L_ON);
+    comm_mode = mode;
+  }
   return true;
 }
 
-static void led_set(struct JVSIO_LedClient* client, bool ready) {
-  client;
+void JVSIO_Client_setSense(bool ready) {
+  P5_IN |= bP4_DRV;
+  pwm1_enable(!ready);
+}
+
+void JVSIO_Client_setLed(bool ready) {
   uint8_t mode = L_ON;
   if (ready) {
     switch (comm_mode) {
@@ -196,56 +157,25 @@ static void led_set(struct JVSIO_LedClient* client, bool ready) {
   settings_led_mode(mode);
 }
 
-static void led_begin(struct JVSIO_LedClient* client) {
-  led_set(client, false);
+void JVSIO_Client_delayMicroseconds(unsigned int usec) {
+  usec;
+  // Omit delay as it isn't needed practically.
+  // delayMicroseconds(usec);
 }
 
-static void time_delayMicroseconds(struct JVSIO_TimeClient* client,
-                                   unsigned int usec) {
-  client;
-  delayMicroseconds(usec);
-}
-
-static void time_delay(struct JVSIO_TimeClient* client, unsigned int msec) {
-  client;
-  delay(msec);
-}
-
-static uint32_t time_getTick(struct JVSIO_TimeClient* client) {
-  client;
-  return 0;  // not impl and not used in I/O device mode.
-}
-
-void client_init(struct JVSIO_DataClient* data,
-                 struct JVSIO_SenseClient* sense,
-                 struct JVSIO_LedClient* led,
-                 struct JVSIO_TimeClient* time) {
+void client_init() {
   settings = settings_get();
-
-  data->available = data_available;
-  data->setInput = data_setInput;
-  data->setOutput = data_setOutput;
-  data->startTransaction = data_startTransaction;
-  data->endTransaction = data_endTransaction;
-  data->read = data_read;
-  data->write = data_write;
-  data->setCommSupMode = data_setCommSupMode;
-  data->dump = data_dump;
 
   soft485_init();
 
   // Additional D+ pull-down that is activated only on receiving.
   digitalWrite(2, 0, LOW);
 
-  sense->begin = sense_begin;
-  sense->set = sense_set;
-  sense->isReady = sense_isReady;
-  sense->isConnected = sense_isConnected;
+  // Drive sense signal.
+  pwm1_init();
+  pwm1_duty(3, 4);
 
-  led->begin = led_begin;
-  led->set = led_set;
+  JVSIO_Client_setLed(false);
 
-  time->delayMicroseconds = time_delayMicroseconds;
-  time->delay = time_delay;
-  time->getTick = time_getTick;
+  JVSIO_Node_init(1);
 }

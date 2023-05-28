@@ -17,6 +17,7 @@
 static bool mode_in = true;
 static enum JVSIO_CommSupMode comm_mode = k115200;
 static struct settings* settings = 0;
+static void (*data_write)(uint8_t data) = 0;
 
 static void update_pulldown() {
   // Activate pull-down only if the serial I/O direction is input.
@@ -24,24 +25,19 @@ static void update_pulldown() {
   pinMode(2, 0, activate ? OUTPUT : INPUT);
 }
 
-static void data_write_3M(void* client, uint8_t data) {
-  client;
+static void data_write_3M(uint8_t data) {
   data;
   // clang-format off
   __asm
-    ; prepare for sending loop (1)
-    mov r1, #0x01  ; const r1 = 1
-    mov r2, #0x02  ; const r2 = 2
-
     ; start bit
     mov _P4_OUT, r2  ; 2t
 
-    ; prepare for sending loop (2)
+    ; prepare for sending loop
+    ; r1 = 1, r2 = 2
+    mov r1, #0x01  ; 4t
+    mov r2, #0x02  ; 4t
     ; a = data
-    mov a, _bp  ; 2t
-    add a, #0xfd  ; 4t
-    mov r0, a  ; 2t
-    mov a, @r0  ; 2t
+    mov a, dpl  ; 2t
     ; r7 = 8
     mov r7, #0x08  ; 4t
 
@@ -96,11 +92,7 @@ void JVSIO_Client_willReceive() {
 }
 
 void JVSIO_Client_send(uint8_t data) {
-  if (comm_mode == k3M) {
-    data_write_3M(0, data);
-  } else {
-    soft485_send(data);
-  }
+  data_write(data);
 }
 
 uint8_t JVSIO_Client_receive() {
@@ -129,7 +121,17 @@ bool JVSIO_Client_setCommSupMode(enum JVSIO_CommSupMode mode, bool dryrun) {
     return false;
   if (!dryrun) {
     soft485_set_recv_speed(mode);
-    settings_led_mode((mode == k3M) ? L_BLINK_TWICE : L_ON);
+    uint8_t led_mode = L_ON;
+    switch (mode) {
+      case k115200:
+        data_write = soft485_send;
+        break;
+      case k3M:
+        led_mode = L_BLINK_TWICE;
+        data_write = data_write_3M;
+        break;
+    }
+    settings_led_mode(led_mode);
     comm_mode = mode;
   }
   return true;
@@ -167,6 +169,7 @@ void client_init() {
   settings = settings_get();
 
   soft485_init();
+  data_write = soft485_send;
 
   // Additional D+ pull-down that is activated only on receiving.
   digitalWrite(2, 0, LOW);

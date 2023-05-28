@@ -359,8 +359,11 @@ uint8_t controller_data(uint8_t player, uint8_t index, uint8_t gpout) {
     return 0;
   }
   uint8_t data = digital_map[0][line] | digital_map[1][line];
-  if (!line && service_sw) {
-    data |= 0x40;
+  if (!line) {
+    data &= ~0x40;
+    if (!player && service_sw) {
+      data |= 0x40;
+    }
   }
   return data;
 }

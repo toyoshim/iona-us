@@ -15,7 +15,7 @@
 #include "settings.h"
 #include "soft485.h"
 
-#define VER "2.10"
+#define VER "2.11"
 
 static const char sega_id[] =
     "SEGA ENTERPRISES,LTD.compat;MP07-IONA-US;ver" VER;
@@ -72,22 +72,32 @@ bool JVSIO_Client_receiveCommand(uint8_t node,
       }
       JVSIO_Node_pushReport(0x00);
       break;
-    case kCmdFunctionCheck:
+    case kCmdFunctionCheck: {
       JVSIO_Node_pushReport(kReportOk);
 
       JVSIO_Node_pushReport(0x01);  // sw
-      if (settings->id != IT_NAMCO_NAJV) {
-        JVSIO_Node_pushReport(0x02);  // players
-        JVSIO_Node_pushReport(0x10);  // buttons
-        JVSIO_Node_pushReport(0x00);
-      } else {
+      uint8_t players = 2;
+      uint8_t gpouts = 18;
+      if (settings->id == IT_NAMCO_NAJV) {
         JVSIO_Node_pushReport(0x01);  // players
         JVSIO_Node_pushReport(0x18);  // buttons
         JVSIO_Node_pushReport(0x00);
+        gpouts = 18;
+        players = 1;
+      } else if (settings->id == IT_NAMCO_TSS) {
+        JVSIO_Node_pushReport(0x01);  // players
+        JVSIO_Node_pushReport(0x0c);  // buttons
+        JVSIO_Node_pushReport(0x00);
+        gpouts = 3;
+        players = 1;
+      } else {
+        JVSIO_Node_pushReport(0x02);  // players
+        JVSIO_Node_pushReport(0x10);  // buttons
+        JVSIO_Node_pushReport(0x00);
       }
 
-      JVSIO_Node_pushReport(0x02);  // coin
-      JVSIO_Node_pushReport(0x02);  // slots
+      JVSIO_Node_pushReport(0x02);     // coin
+      JVSIO_Node_pushReport(players);  // slots
       JVSIO_Node_pushReport(0x00);
       JVSIO_Node_pushReport(0x00);
 
@@ -112,8 +122,8 @@ bool JVSIO_Client_receiveCommand(uint8_t node,
         JVSIO_Node_pushReport(settings->screen_position_count);
       }
 
-      JVSIO_Node_pushReport(0x12);  // general purpose driver
-      JVSIO_Node_pushReport(0x12);  // slots
+      JVSIO_Node_pushReport(0x12);    // general purpose driver
+      JVSIO_Node_pushReport(gpouts);  // slots
       JVSIO_Node_pushReport(0x00);
       JVSIO_Node_pushReport(0x00);
 
@@ -132,7 +142,7 @@ bool JVSIO_Client_receiveCommand(uint8_t node,
       }
 
       JVSIO_Node_pushReport(0x00);
-      break;
+    } break;
     case kCmdSwInput:
       JVSIO_Node_pushReport(kReportOk);
       settings_rapid_sync();
@@ -176,10 +186,14 @@ bool JVSIO_Client_receiveCommand(uint8_t node,
         uint8_t index = data[1] - 1;
         uint16_t x = controller_screen(index, 0) >>
                      (16 - settings->screen_position_width);
-        JVSIO_Node_pushReport(x >> 8);
-        JVSIO_Node_pushReport(x & 0xff);
         uint16_t y = controller_screen(index, 1) >>
                      (16 - settings->screen_position_width);
+        if (settings->id == IT_NAMCO_NAJV || settings->id == IT_NAMCO_TSS) {
+          x >>= 6;  // 10-bits
+          y >>= 8;  // 8-bits
+        }
+        JVSIO_Node_pushReport(x >> 8);
+        JVSIO_Node_pushReport(x & 0xff);
         JVSIO_Node_pushReport(y >> 8);
         JVSIO_Node_pushReport(y & 0xff);
       }
@@ -261,5 +275,6 @@ void main() {
       settings_poll();
       controller_poll();
     }
+    client_poll();
   }
 }

@@ -14,6 +14,7 @@ enum IdType {
   IT_SEGA,
   IT_NAMCO_JYU,
   IT_NAMCO_NAJV,
+  IT_NAMCO_TSS,
 };
 
 enum AnalogType {

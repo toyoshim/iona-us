@@ -6,5 +6,6 @@
 #define __client_h__
 
 void client_init();
+void client_poll();
 
 #endif  // __client_h__

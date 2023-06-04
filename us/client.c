@@ -4,6 +4,7 @@
 
 #include "client.h"
 
+#include "adc.h"
 #include "ch559.h"
 #include "io.h"
 #include "jvsio_client.h"
@@ -14,15 +15,34 @@
 #include "settings.h"
 #include "soft485.h"
 
+// #define FORCE_V3
+
+#if defined(FORCE_V3)
+static bool v3 = true;
+#else
+static bool v3 = false;
+#endif
 static bool mode_in = true;
+static uint16_t sense = 0xffff;
 static enum JVSIO_CommSupMode comm_mode = k115200;
 static struct settings* settings = 0;
 static void (*data_write)(uint8_t data) = 0;
 
-static void update_pulldown() {
+static void update_direction() {
   // Activate pull-down only if the serial I/O direction is input.
   bool activate = mode_in && settings->data_signal_adjustment;
   pinMode(2, 0, activate ? OUTPUT : INPUT);
+
+  // External RS485 controller DE-/RE (for v3 board)
+  if (v3) {
+    digitalWrite(4, 1, mode_in ? LOW : HIGH);
+  }
+}
+
+static void txd1_send(uint8_t data) {
+  while (!(SER1_LSR & bLSR_T_FIFO_EMP))
+    ;
+  SER1_FIFO = data;
 }
 
 static void data_write_3M(uint8_t data) {
@@ -75,20 +95,27 @@ static void data_write_3M(uint8_t data) {
 }
 
 int JVSIO_Client_isDataAvailable() {
-  update_pulldown();
+  update_direction();
   return soft485_ready() ? 1 : 0;
 }
 
 void JVSIO_Client_willSend() {
   mode_in = false;
-  update_pulldown();
-  soft485_output();
+  update_direction();
+  if (!v3) {
+    soft485_output();
+  }
 }
 
 void JVSIO_Client_willReceive() {
-  soft485_input();
+  if (v3) {
+    while (0 == (SER1_LSR & bLSR_T_ALL_EMP))
+      ;
+  } else {
+    soft485_input();
+  }
   mode_in = true;
-  update_pulldown();
+  update_direction();
 }
 
 void JVSIO_Client_send(uint8_t data) {
@@ -112,8 +139,21 @@ void JVSIO_Client_dump(const char* str, uint8_t* data, uint8_t len) {
 }
 
 bool JVSIO_Client_isSenseReady() {
-  // can be true for single node.
-  return true;
+  if (!v3) {
+    return true;
+  }
+
+  client_poll();
+  // The downstream SENSE seems > 3V, maybe pull-up 5V, in disconnected state.
+  if (sense > 55000) {
+    return true;
+  }
+  // The downstream SENSE seems < 1V, in readystate.
+  if (sense < 20000) {
+    return true;
+  }
+  // Otherwise, it's still under address configuration.
+  return false;
 }
 
 bool JVSIO_Client_setCommSupMode(enum JVSIO_CommSupMode mode, bool dryrun) {
@@ -121,14 +161,23 @@ bool JVSIO_Client_setCommSupMode(enum JVSIO_CommSupMode mode, bool dryrun) {
     return false;
   if (!dryrun) {
     soft485_set_recv_speed(mode);
+    if (v3) {
+      // External RS485 controller setup restore
+      update_direction();
+      pinMode(4, 1, OUTPUT);
+    }
     uint8_t led_mode = L_ON;
     switch (mode) {
       case k115200:
-        data_write = soft485_send;
+        if (!v3) {
+          data_write = soft485_send;
+        }
         break;
       case k3M:
         led_mode = L_BLINK_TWICE;
-        data_write = data_write_3M;
+        if (!v3) {
+          data_write = data_write_3M;
+        }
         break;
     }
     settings_led_mode(led_mode);
@@ -167,9 +216,36 @@ void JVSIO_Client_delayMicroseconds(unsigned int usec) {
 
 void client_init() {
   settings = settings_get();
+#if !defined(FORCE_V3)
+  // Check V3 board that P4_2 is connected to GND.
+  pinMode(4, 2, INPUT_PULLUP);
+  delayMicroseconds(1000);
+  if (digitalRead(4, 2) == LOW) {
+    v3 = true;
+  }
+  pinMode(4, 2, INPUT);
+#endif
+  if (v3) {
+    // Assign TXD1 to P4.4.
+    SER1_IER |= bIER_PIN_MOD0;
+    SER1_IER &= ~bIER_PIN_MOD1;
 
-  soft485_init();
-  data_write = soft485_send;
+    soft485_init();
+    data_write = txd1_send;
+    pinMode(4, 4, OUTPUT);
+
+    // External RS485 controller setup
+    digitalWrite(4, 1, LOW);
+    pinMode(4, 1, OUTPUT);
+
+    // Pull-up for downstream JVS sense (for v3 board)
+    adc_init();
+    adc_select(7);
+    pinMode(3, 0, INPUT_PULLUP);
+  } else {
+    data_write = soft485_send;
+    soft485_init();
+  }
 
   // Additional D+ pull-down that is activated only on receiving.
   digitalWrite(2, 0, LOW);
@@ -181,4 +257,11 @@ void client_init() {
   JVSIO_Client_setLed(false);
 
   JVSIO_Node_init(1);
+}
+
+void client_poll() {
+  if (v3 && adc_peek(&sense)) {
+    // Extends to 16-bit range.
+    sense <<= 5;
+  }
 }

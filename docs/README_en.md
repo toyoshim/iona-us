@@ -74,6 +74,14 @@ You can know the setting id as the LED blinks N times on deciding the Nth set.
 
 If you see continuous 3times LED blinks, setting data will not be initialized, or broken. Please initialize it at [setting](setting_en) page.
 
+### Zapper Calibratrion Mode
+There are some titles that uses TSS-I/O mode and they don't provide zapper calibration.
+As a workaround, IONA provides a built-in zapper calibration mode.
+Pressing TEST and SERVICE for 3 seconmds to see the LED gets off, and blinks again.
+Now the device is in calbration mode.
+You can shoot 4 corners on your monitor in your favorite order to complete the calibration.
+Settings such as currently selected configuration, or calibration data are stored persistently.
+
 ## Features (Firmware v1.xx)
 ### Custom Button Layout
 You can map at most 12 physical buttons to arbitrary logical buttons for JVS. You can map one physical button to multiple JVS buttons, or map multiple buttons to one JVS button. It helps you to realize a button to push multiple buttons together, or to assign addition button for rapid-fires.

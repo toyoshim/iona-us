@@ -5,11 +5,13 @@
 #include "settings.h"
 
 #include "ch559.h"
+#include "io.h"
 #include "timer3.h"
 
 #include "controller.h"
 
 static __code uint8_t* flash = (__code uint8_t*)0xf000;
+static __code uint8_t* opt_flash = (__code uint8_t*)0xec00;
 
 static struct settings settings;
 static uint8_t current_setting;  // valid range is [0...5]
@@ -33,6 +35,40 @@ static bool test_pressed() {
 
 static bool service_pressed() {
   return digitalRead(4, 6) == LOW;
+}
+
+static void opt_flash_write(uint16_t addr, uint8_t val_l, uint8_t val_h) {
+  ROM_ADDR_H = addr >> 8;
+  ROM_ADDR_L = addr & 0xff;
+  ROM_DATA_H = val_h;
+  ROM_DATA_L = val_l;
+  ROM_CTRL = 0x9a;
+}
+
+static void opt_flash_write_w(uint16_t addr, uint16_t val) {
+  opt_flash_write(addr, val & 0xff, val >> 8);
+}
+
+static void store_opt() {
+  SAFE_MOD = 0x55;
+  SAFE_MOD = 0xaa;
+  GLOBAL_CFG |= bCODE_WE;
+  ROM_ADDR_H = 0xec;
+  ROM_ADDR_L = 0x00;
+  ROM_CTRL = 0xa6;
+
+  if (ROM_STATUS == 0xc0) {
+    opt_flash_write(0xec00, 'i', 'o');
+    opt_flash_write(0xec02, 'n', '@');
+    opt_flash_write(0xec04, 0, current_setting);
+    opt_flash_write_w(0xec06, adjust[0]);
+    opt_flash_write_w(0xec08, adjust[1]);
+    opt_flash_write_w(0xec0a, adjust[2]);
+    opt_flash_write_w(0xec0c, adjust[3]);
+  }
+
+  GLOBAL_CFG &= ~bCODE_WE;
+  SAFE_MOD = 0x00;
 }
 
 static void apply() {
@@ -116,6 +152,14 @@ void settings_init() {
     }
   }
   current_setting = 0;
+  if (opt_flash[0] == 'i' && opt_flash[1] == 'o' && opt_flash[2] == 'n' &&
+      opt_flash[3] == '@') {
+    current_setting = opt_flash[5];
+    adjust[0] = (opt_flash[7] << 8) | opt_flash[6];
+    adjust[1] = (opt_flash[9] << 8) | opt_flash[8];
+    adjust[2] = (opt_flash[11] << 8) | opt_flash[10];
+    adjust[3] = (opt_flash[13] << 8) | opt_flash[12];
+  }
   apply();
 
   settings_led_mode(L_BLINK);
@@ -163,6 +207,7 @@ void settings_poll() {
         state = S_NORMAL;
         state_val = 0;
         led_mode(led_current_mode);
+        store_opt();
       } else if (!test && cur_test) {
         current_setting++;
         if (current_setting > 5) {
@@ -205,6 +250,7 @@ void settings_poll() {
           scale /= (adjust[3] - adjust[1]);
           adjust[3] = scale;
           state_val = 0;
+          store_opt();
           led_mode(led_current_mode);
         }
       }

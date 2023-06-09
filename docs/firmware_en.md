@@ -121,9 +121,10 @@ It may be ok if it does not long, but it may damage the device to connect over J
 - Ver 1.47 Support GP2040.
 - Ver 2.00 Major update to modify user settings at the support web page.
 - Ver 2.01 Fix a bug that service button doesn't work if no gamepad is connected, adjust Xbox controller's trigger input range so to reach the peak, and Guncon3 support improvements with a bug fix.
-- Ver 2.02 Add namco TSS-I/I compat ID, and support button state invert feature.
+- Ver 2.02 Add namco TSS-I/O compat ID, and support button state invert feature.
 - Ver 2.10 Improve JVS response latency to stabilize. This will resolve I/O error issues.
 - Ver 2.11 Improve functional compability on 3 namco modes.
+- Ver 2.12 Zapper calibration and better compatibility for TSS-I/O, and persistent settings.
 
 ## Firmware Compatibility
 All controllers that conform Xbox 360, or Xbox One series protocols are expected to work fine.
@@ -187,6 +188,7 @@ async function flash() {
     'firmwares/us_v2_02.bin',  // Ver 2.02
     'firmwares/us_v2_10.bin',  // Ver 2.10
     'firmwares/us_v2_11.bin',  // Ver 2.11
+    'firmwares/us_v2_12.bin',  // Ver 2.12
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -229,6 +231,7 @@ async function flash() {
 <option>Ver 2.02</option>
 <option>Ver 2.10</option>
 <option>Ver 2.11</option>
+<option>Ver 2.12</option>
 </select>
 <button onclick="flash();">Flash</button>
 

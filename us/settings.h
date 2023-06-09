@@ -61,5 +61,7 @@ bool settings_test_pressed();
 bool settings_service_pressed();
 void settings_led_mode(uint8_t mode);
 void settings_rapid_sync();
+uint16_t settings_adjust_x(uint16_t x);
+uint16_t settings_adjust_y(uint16_t y);
 
 #endif  // __settings_h__

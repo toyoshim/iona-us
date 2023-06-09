@@ -15,13 +15,14 @@ static struct settings settings;
 static uint8_t current_setting;  // valid range is [0...5]
 static uint16_t poll_msec = 0;
 static uint8_t led_current_mode = 0;
+static uint16_t adjust[4] = {0x0000, 0x0000, 0x0400, 0x0400};
 
 // NORMAL
 //   ↓ Press TEST and SERVICE for 1sec
 // CONFIG (Click Test increase the setting ID)
 //   ↓ Click TEST
 // NORMAL
-enum state { S_NORMAL = 0, S_CONFIG };
+enum state { S_NORMAL = 0, S_PRE_CONFIG, S_CONFIG, S_ADJUST };
 
 static uint8_t state = S_NORMAL;
 static uint8_t state_val = 0;
@@ -131,14 +132,28 @@ void settings_poll() {
       if (service_pressed() && test_pressed()) {
         state_val++;
         if (state_val >= 60) {
-          state = S_CONFIG;
-          state_val = 3;
+          state = S_PRE_CONFIG;
           led_mode(L_OFF);
         }
       } else {
         state_val = 0;
       }
       break;
+    case S_PRE_CONFIG: {
+      if (service_pressed() && test_pressed()) {
+        state_val++;
+        if (state_val >= 180) {
+          state = S_ADJUST;
+          state_val = 0;
+          adjust[0] = adjust[1] = 0xffff;  // min x, y
+          adjust[2] = adjust[3] = 0x0000;  // max x, y
+          led_mode(L_BLINK);
+        }
+      } else {
+        state_val = 3;
+        state = S_CONFIG;
+      }
+    } break;
     case S_CONFIG: {
       bool service = state_val & 2;
       bool test = state_val & 1;
@@ -157,6 +172,42 @@ void settings_poll() {
         led_oneshot(current_setting);
       }
       state_val = (cur_service ? 2 : 0) | (cur_test ? 1 : 0);
+    } break;
+    case S_ADJUST: {
+      uint8_t data = controller_data(0, 0, 0) & 0x03;
+      data |= controller_data(0, 1, 0);
+      state_val =
+          (state_val & 0xf0) | ((state_val << 1) & 0x0f) | (data ? 1 : 0);
+      if ((state_val & 0x0f) == 1) {
+        uint16_t x = controller_screen(0, 0);
+        if (x < adjust[0]) {
+          adjust[0] = x;
+        }
+        if (adjust[2] < x) {
+          adjust[2] = x;
+        }
+        uint16_t y = controller_screen(0, 1);
+        if (y < adjust[1]) {
+          adjust[1] = y;
+        }
+        if (adjust[3] < y) {
+          adjust[3] = y;
+        }
+        state_val += 0x10;
+        if (state_val >= 0x40) {
+          uint16_t a = adjust[2] - adjust[0];
+          state = S_NORMAL;
+          uint32_t scale;
+          scale = (uint32_t)640 << 16;
+          scale /= (adjust[2] - adjust[0]);
+          adjust[2] = scale;
+          scale = (uint32_t)960 << 16;
+          scale /= (adjust[3] - adjust[1]);
+          adjust[3] = scale;
+          state_val = 0;
+          led_mode(led_current_mode);
+        }
+      }
     } break;
   }
 }
@@ -189,4 +240,28 @@ void settings_rapid_sync() {
     settings.sequence[i].on =
         settings.sequence[i].pattern & settings.sequence[i].bit;
   }
+}
+
+uint16_t settings_adjust_x(uint16_t x) {
+  if (x < adjust[0]) {
+    return 0;
+  }
+  x -= adjust[0];
+  uint32_t ax = (uint32_t)x * adjust[2];
+  if (ax > ((uint32_t)639 << 16)) {
+    return 639;
+  }
+  return ax >> 16;
+}
+
+uint16_t settings_adjust_y(uint16_t y) {
+  if (y < adjust[1]) {
+    return 0;
+  }
+  y -= adjust[1];
+  uint32_t ay = (uint32_t)y * adjust[3];
+  if (ay > ((uint32_t)959 << 16)) {
+    return 959;
+  }
+  return ay >> 16;
 }

@@ -15,7 +15,7 @@
 #include "settings.h"
 #include "soft485.h"
 
-#define VER "2.11"
+#define VER "2.12"
 
 static const char sega_id[] =
     "SEGA ENTERPRISES,LTD.compat;MP07-IONA-US;ver" VER;
@@ -189,8 +189,8 @@ bool JVSIO_Client_receiveCommand(uint8_t node,
         uint16_t y = controller_screen(index, 1) >>
                      (16 - settings->screen_position_width);
         if (settings->id == IT_NAMCO_NAJV || settings->id == IT_NAMCO_TSS) {
-          x >>= 6;  // 10-bits
-          y >>= 8;  // 8-bits
+          x = settings_adjust_x(x);
+          y = settings_adjust_y(y);
         }
         JVSIO_Node_pushReport(x >> 8);
         JVSIO_Node_pushReport(x & 0xff);
@@ -218,14 +218,6 @@ bool JVSIO_Client_receiveCommand(uint8_t node,
     case kCmdAnalogOutput:
     case kCmdCharacterOutput:
       JVSIO_Node_pushReport(kReportOk);
-      break;
-    case kCmdNamco:
-      if (data[4] == 0x14) {
-        handled = false;
-      } else {
-        JVSIO_Node_pushReport(kReportOk);
-        JVSIO_Node_pushReport(0x01);
-      }
       break;
     default:
       handled = false;
@@ -271,9 +263,9 @@ void main() {
     if (!JVSIO_Node_isBusy()) {
       // Serial.putc = original_putc;
       hid_poll();
-      // Serial.putc = debug_putc;
       settings_poll();
       controller_poll();
+      // Serial.putc = debug_putc;
     }
     client_poll();
   }

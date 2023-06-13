@@ -11,6 +11,7 @@
 
 // #define _DBG_HID_REPORT_DUMP
 // #define _DBG_HID_DECODE_DUMP
+// #define _DBG_HUB1_ONLY
 
 static bool test_sw = false;
 static bool service_sw = false;
@@ -164,10 +165,16 @@ void controller_reset() {
   }
 }
 
-void controller_update(const uint8_t hub,
+void controller_update(const uint8_t hub_index,
                        const struct hub_info* info,
                        const uint8_t* data,
                        uint16_t size) {
+#ifdef _DBG_HUB1_ONLY
+  const uint8_t hub = 0;
+  hub_index;
+#else
+  const uint8_t hub = hub_index;
+#endif
 #ifdef _DBG_HID_REPORT_DUMP
   static uint8_t old_data[256];
   bool modified = false;

@@ -15,6 +15,8 @@
 #include "settings.h"
 #include "soft485.h"
 
+// #define _DBG_HUB1_ONLY
+
 #define VER "2.12"
 
 static const char sega_id[] =
@@ -235,8 +237,11 @@ static void detected() {
 }
 
 static uint8_t get_flags() {
-  // return USE_HUB1;
+#ifdef _DBG_HUB1_ONLY
+  return USE_HUB1;
+#else
   return USE_HUB1 | USE_HUB0;
+#endif
 }
 
 void main() {
@@ -255,6 +260,8 @@ void main() {
   hid.get_flags = get_flags;
   hid_init(&hid);
 
+  Serial.printf("%s\n", ids[settings->id]);
+
   void (*original_putc)() = Serial.putc;
   Serial.putc = debug_putc;
 
@@ -266,6 +273,32 @@ void main() {
       settings_poll();
       controller_poll();
       // Serial.putc = debug_putc;
+#ifdef _DBG_NAMCO_TSS
+      {
+        Serial.putc = original_putc;
+        uint16_t x =
+            controller_screen(0, 0) >> (16 - settings->screen_position_width);
+        uint16_t y =
+            controller_screen(0, 1) >> (16 - settings->screen_position_width);
+        if (settings->id == IT_NAMCO_NAJV || settings->id == IT_NAMCO_TSS) {
+          x = settings_adjust_x(x);
+          y = settings_adjust_y(y);
+        }
+        Serial.printf("%x%x,%x%x\r", (x >> 8) & 0xff, x & 0xff, (y >> 8) & 0xff,
+                      y & 0xff);
+        Serial.putc = debug_putc;
+      }
+#endif
+#ifdef _DBG_ANALOG
+      {
+        Serial.putc = original_putc;
+        uint16_t x = controller_analog(0);
+        uint16_t y = controller_analog(1);
+        Serial.printf("%x%x,%x%x\r", (x >> 8) & 0xff, x & 0xff, (y >> 8) & 0xff,
+                      y & 0xff);
+        Serial.putc = debug_putc;
+      }
+#endif
     }
     client_poll();
   }

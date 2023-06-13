@@ -125,6 +125,7 @@ It may be ok if it does not long, but it may damage the device to connect over J
 - Ver 2.10 Improve JVS response latency to stabilize. This will resolve I/O error issues.
 - Ver 2.11 Improve functional compability on 3 namco modes.
 - Ver 2.12 Zapper calibration and better compatibility for TSS-I/O, and persistent settings.
+- Ver 2.13 CYBER STICK support for After Burner Climax!
 
 ## Firmware Compatibility
 All controllers that conform Xbox 360, or Xbox One series protocols are expected to work fine.
@@ -155,6 +156,7 @@ Also, the internal format to hold the user settings is changed at firmware Ver 1
 |Brook ZERO-PI Fighting Board|1.44|Work with the default Switch mode|
 |CYBER Arcade Stick|1.23||
 |6B Controller (MEGADRIVE mini)|1.02a||
+|CYBER STICK (MEGADRIVE mini2)|2.13||
 |Xin-Mo Controller (*1)|1.20||
 
 (*1) Controller used by the Pasocade full HD table cab. PS3 dock model
@@ -189,6 +191,7 @@ async function flash() {
     'firmwares/us_v2_10.bin',  // Ver 2.10
     'firmwares/us_v2_11.bin',  // Ver 2.11
     'firmwares/us_v2_12.bin',  // Ver 2.12
+    'firmwares/us_v2_13.bin',  // Ver 2.13
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -232,6 +235,7 @@ async function flash() {
 <option>Ver 2.10</option>
 <option>Ver 2.11</option>
 <option>Ver 2.12</option>
+<option>Ver 2.13</option>
 </select>
 <button onclick="flash();">Flash</button>
 

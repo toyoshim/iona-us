@@ -124,6 +124,7 @@ JVS I/Oとして利用する前、特にジャンパーピンを実装した人�
 - Ver 2.10 JVS応答の高速化によるI/Oエラーの低減
 - Ver 2.11 各namcoボードを名乗った際の互換性向上
 - Ver 2.12 TSS-I/O向けのガンコンキャリブレーション機能、互換性の向上と、設定保存機能の追加
+- Ver 2.13 After Burner Climax向けにCYBER STICKをサポート!
 
 ## ファームウェアの互換性
 Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基本的に安定して動くはずです。
@@ -154,6 +155,7 @@ Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基�
 |Brook ZERO-PI Fighting Board|1.44|標準のSwitchモードで動作|
 |CYBER・アーケードスティック|1.23||
 |6B Controller (メガドライブミニ)|1.02a||
+|CYBER STICK (MEGADRIVE mini2)|2.13||
 |Xin-Mo Controller (*1)|1.20||
 
 (*1) パソケード フルHDテーブル筐体 PS3ドッキングモデル にて仕様されているコントローラ
@@ -188,6 +190,7 @@ async function flash() {
     'firmwares/us_v2_10.bin',  // Ver 2.10
     'firmwares/us_v2_11.bin',  // Ver 2.11
     'firmwares/us_v2_12.bin',  // Ver 2.12
+    'firmwares/us_v2_13.bin',  // Ver 2.13
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -231,6 +234,7 @@ async function flash() {
 <option>Ver 2.10</option>
 <option>Ver 2.11</option>
 <option>Ver 2.12</option>
+<option>Ver 2.13</option>
 </select>
 <button onclick="flash();">書き込み</button>
 

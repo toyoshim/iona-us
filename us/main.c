@@ -16,8 +16,9 @@
 #include "soft485.h"
 
 // #define _DBG_HUB1_ONLY
+// #define _DBG_ANALOG
 
-#define VER "2.12"
+#define VER "2.13"
 
 static const char sega_id[] =
     "SEGA ENTERPRISES,LTD.compat;MP07-IONA-US;ver" VER;

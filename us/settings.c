@@ -17,6 +17,17 @@ static struct settings settings;
 static uint8_t current_setting;  // valid range is [0...5]
 static uint16_t poll_msec = 0;
 static uint8_t led_current_mode = 0;
+enum adjust_index {
+  AI_X_MIN = 0,
+  AI_Y_MIN = 1,
+  AI_X_MAX = 2,
+  AI_Y_MAX = 3,
+
+  AI_X_BASE = 0,
+  AI_Y_BASE = 1,
+  AI_X_SCALE = 2,
+  AI_Y_SCALE = 3,
+};
 static uint16_t adjust[4] = {0x0000, 0x0000, 0x0400, 0x0400};
 
 // NORMAL
@@ -189,8 +200,8 @@ void settings_poll() {
         if (state_val >= 180) {
           state = S_ADJUST;
           state_val = 0;
-          adjust[0] = adjust[1] = 0xffff;  // min x, y
-          adjust[2] = adjust[3] = 0x0000;  // max x, y
+          adjust[AI_X_MIN] = adjust[AI_Y_MIN] = 0xffff;
+          adjust[AI_X_MAX] = adjust[AI_Y_MAX] = 0x0000;
           led_mode(L_BLINK);
         }
       } else {
@@ -223,32 +234,33 @@ void settings_poll() {
       data |= controller_data(0, 1, 0);
       state_val =
           (state_val & 0xf0) | ((state_val << 1) & 0x0f) | (data ? 1 : 0);
+      // Take 4 corner positions on triggers.
       if ((state_val & 0x0f) == 1) {
         uint16_t x = controller_screen(0, 0);
-        if (x < adjust[0]) {
-          adjust[0] = x;
+        if (x < adjust[AI_X_MIN]) {
+          adjust[AI_X_MIN] = x;
         }
-        if (adjust[2] < x) {
-          adjust[2] = x;
+        if (adjust[AI_X_MAX] < x) {
+          adjust[AI_X_MAX] = x;
         }
         uint16_t y = controller_screen(0, 1);
-        if (y < adjust[1]) {
-          adjust[1] = y;
+        if (y < adjust[AI_Y_MIN]) {
+          adjust[AI_Y_MIN] = y;
         }
-        if (adjust[3] < y) {
-          adjust[3] = y;
+        if (adjust[AI_Y_MAX] < y) {
+          adjust[AI_Y_MAX] = y;
         }
         state_val += 0x10;
         if (state_val >= 0x40) {
-          uint16_t a = adjust[2] - adjust[0];
+          // Obtains base and scale.
           state = S_NORMAL;
           uint32_t scale;
           scale = (uint32_t)640 << 16;
-          scale /= (adjust[2] - adjust[0]);
-          adjust[2] = scale;
+          scale /= (adjust[AI_X_MAX] - adjust[AI_X_MIN]);
+          adjust[AI_X_SCALE] = scale;
           scale = (uint32_t)960 << 16;
-          scale /= (adjust[3] - adjust[1]);
-          adjust[3] = scale;
+          scale /= (adjust[AI_Y_MAX] - adjust[AI_Y_MIN]);
+          adjust[AI_Y_SCALE] = scale;
           state_val = 0;
           store_opt();
           led_mode(led_current_mode);
@@ -289,11 +301,11 @@ void settings_rapid_sync() {
 }
 
 uint16_t settings_adjust_x(uint16_t x) {
-  if (x < adjust[0]) {
+  if (x < adjust[AI_X_BASE]) {
     return 0;
   }
-  x -= adjust[0];
-  uint32_t ax = (uint32_t)x * adjust[2];
+  x -= adjust[AI_X_BASE];
+  uint32_t ax = (uint32_t)x * adjust[AI_X_SCALE];
   if (ax > ((uint32_t)639 << 16)) {
     return 639;
   }
@@ -301,11 +313,11 @@ uint16_t settings_adjust_x(uint16_t x) {
 }
 
 uint16_t settings_adjust_y(uint16_t y) {
-  if (y < adjust[1]) {
+  if (y < adjust[AI_Y_BASE]) {
     return 0;
   }
-  y -= adjust[1];
-  uint32_t ay = (uint32_t)y * adjust[3];
+  y -= adjust[AI_Y_BASE];
+  uint32_t ay = (uint32_t)y * adjust[AI_Y_SCALE];
   if (ay > ((uint32_t)959 << 16)) {
     return 959;
   }

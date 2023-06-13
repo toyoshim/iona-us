@@ -12,6 +12,7 @@ permalink: /shop
 ### 日本
 - KVCLab. - [MP07-IONA-US　（JVS I/O → USB変換コネクタ）](https://kvclab.com/shopdetail/000000000964/)
 - BEEP - [MP-07-IONA-US Ver2.00(firmware v1.35)](https://www.beep-shop.com/ec/products/detail/20256)
+- トップス - [JVS基板へのUSBコントローラー接続用変換デバイス(基板) 【MP07-IONA-US (Ver 2.00)】](https://www.tops-game.jp/products/detail.php?product_id=6997)
 
 ### ヨーロッパ
 - Red Sun Systems - [JVS to USB converter](http://www.redsuns.be/#exausb)

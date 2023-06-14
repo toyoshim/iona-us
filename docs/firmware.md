@@ -146,7 +146,7 @@ Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基�
 |Brook PS4+ Fighting Board|1.47|PS4モードで動作|
 |(Bootモード対応キーボード)|1.20|NAOMI麻雀モードに対応|
 |REAL ARCADE PRO V3.SA|1.47||
-|ガンコン3|1.31||DeathCrimson OX対応|
+|ガンコン3|2.01||
 |ホリパッドFPSプラス for PlayStation 4|1.00|PS3モードも対応|
 |ワイヤレスコントローラー（DUALSHOCK 4 - CUH-ZCT1J）|1.02||
 |ワイヤレスコントローラー（DUALSHOCK 4 - CUH-ZCT2J）|1.03||

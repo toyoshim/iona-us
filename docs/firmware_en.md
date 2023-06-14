@@ -147,7 +147,7 @@ Also, the internal format to hold the user settings is changed at firmware Ver 1
 |Brook PS4+ Fighting Board|1.47|Work with the default PS4 mode|
 |(Keyboard supporting boot mode)|1.20|Supported by NAOMI Mahjong mode|
 |REAL ARCADE PRO V3.SA|1.47||
-|Guncon3|1.31||designed for DeathCrimson OX|
+|Guncon3|2.01||
 |Horipad FPS plus for PlayStation 4|1.00|PS3 mode also works|
 |Wireless Controller（DUALSHOCK 4 - CUH-ZCT1J）|1.02||
 |Wireless Controller（DUALSHOCK 4 - CUH-ZCT2J）|1.03||

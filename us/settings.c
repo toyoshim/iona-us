@@ -96,6 +96,8 @@ static void apply() {
   }
   settings.analog_input_count = ((core0 >> 2) & 7) << 1;
   settings.analog_input_width = (core0 & 3) ? 16 : 0;
+  settings.analog_input_mask =
+      (settings.analog_input_width == 1) ? 0xffff : 0xff00;
   settings.rotary_input_count = (core1 & 0x20) ? 2 : 0;
   settings.screen_position_count = (core1 >> 2) & 7;
   if (settings.screen_position_count > 2) {

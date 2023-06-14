@@ -126,6 +126,7 @@ It may be ok if it does not long, but it may damage the device to connect over J
 - Ver 2.11 Improve functional compability on 3 namco modes.
 - Ver 2.12 Zapper calibration and better compatibility for TSS-I/O, and persistent settings.
 - Ver 2.13 CYBER STICK support for After Burner Climax!
+- Ver 2.14 G29 Driving Force Race Wheel support for racing games.
 
 ## Firmware Compatibility
 All controllers that conform Xbox 360, or Xbox One series protocols are expected to work fine.
@@ -150,6 +151,7 @@ Also, the internal format to hold the user settings is changed at firmware Ver 1
 |Horipad FPS plus for PlayStation 4|1.00|PS3 mode also works|
 |Wireless Controller（DUALSHOCK 4 - CUH-ZCT1J）|1.02||
 |Wireless Controller（DUALSHOCK 4 - CUH-ZCT2J）|1.03||
+|G29 Driving Force Race Wheel|2.14|Both PS4/PS4 modes|
 |Horipad mini for Nintendo Switch|1.00||
 |Nintendo Switch Pro Controller|1.04||
 |Nintendo Switch Joy-Con Charger Glip|1.04||
@@ -192,6 +194,7 @@ async function flash() {
     'firmwares/us_v2_11.bin',  // Ver 2.11
     'firmwares/us_v2_12.bin',  // Ver 2.12
     'firmwares/us_v2_13.bin',  // Ver 2.13
+    'firmwares/us_v2_14.bin',  // Ver 2.14
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -236,6 +239,7 @@ async function flash() {
 <option>Ver 2.11</option>
 <option>Ver 2.12</option>
 <option>Ver 2.13</option>
+<option>Ver 2.14</option>
 </select>
 <button onclick="flash();">Flash</button>
 

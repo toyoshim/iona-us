@@ -30,6 +30,7 @@ struct settings {
   uint8_t id;
   uint8_t analog_input_count;
   uint8_t analog_input_width;
+  uint16_t analog_input_mask;
   uint8_t rotary_input_count;
   uint8_t screen_position_count;
   uint8_t screen_position_width;

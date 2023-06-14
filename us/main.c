@@ -18,7 +18,7 @@
 // #define _DBG_HUB1_ONLY
 // #define _DBG_ANALOG
 
-#define VER "2.13"
+#define VER "2.14"
 
 static const char sega_id[] =
     "SEGA ENTERPRISES,LTD.compat;MP07-IONA-US;ver" VER;
@@ -170,7 +170,7 @@ bool JVSIO_Client_receiveCommand(uint8_t node,
     case kCmdAnalogInput:
       JVSIO_Node_pushReport(kReportOk);
       for (uint8_t i = 0; i < data[1]; ++i) {
-        uint16_t value = controller_analog(i);
+        uint16_t value = controller_analog(i) & settings->analog_input_mask;
         JVSIO_Node_pushReport(value >> 8);
         JVSIO_Node_pushReport(value & 0xff);
       }

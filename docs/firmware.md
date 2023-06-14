@@ -125,6 +125,7 @@ JVS I/Oとして利用する前、特にジャンパーピンを実装した人�
 - Ver 2.11 各namcoボードを名乗った際の互換性向上
 - Ver 2.12 TSS-I/O向けのガンコンキャリブレーション機能、互換性の向上と、設定保存機能の追加
 - Ver 2.13 After Burner Climax向けにCYBER STICKをサポート!
+- Ver 2.14 レースゲーム向けにG29 Driving Force Race Wheelのサポート
 
 ## ファームウェアの互換性
 Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基本的に安定して動くはずです。
@@ -149,13 +150,14 @@ Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基�
 |ホリパッドFPSプラス for PlayStation 4|1.00|PS3モードも対応|
 |ワイヤレスコントローラー（DUALSHOCK 4 - CUH-ZCT1J）|1.02||
 |ワイヤレスコントローラー（DUALSHOCK 4 - CUH-ZCT2J）|1.03||
+|G29 Driving Force Race Wheel|2.14|PS4/PS4両モード対応|
 |ホリパッドミニ for Nintendo Switch|1.00||
 |Nintendo Switch Proコントローラー|1.04||
 |Nintendo Switch Joy-Con 充電グリップ|1.04||
 |Brook ZERO-PI Fighting Board|1.44|標準のSwitchモードで動作|
 |CYBER・アーケードスティック|1.23||
 |6B Controller (メガドライブミニ)|1.02a||
-|CYBER STICK (MEGADRIVE mini2)|2.13||
+|CYBER STICK (メガドライブミニ2)|2.13||
 |Xin-Mo Controller (*1)|1.20||
 
 (*1) パソケード フルHDテーブル筐体 PS3ドッキングモデル にて仕様されているコントローラ
@@ -191,6 +193,7 @@ async function flash() {
     'firmwares/us_v2_11.bin',  // Ver 2.11
     'firmwares/us_v2_12.bin',  // Ver 2.12
     'firmwares/us_v2_13.bin',  // Ver 2.13
+    'firmwares/us_v2_14.bin',  // Ver 2.14
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -235,6 +238,7 @@ async function flash() {
 <option>Ver 2.11</option>
 <option>Ver 2.12</option>
 <option>Ver 2.13</option>
+<option>Ver 2.14</option>
 </select>
 <button onclick="flash();">書き込み</button>
 

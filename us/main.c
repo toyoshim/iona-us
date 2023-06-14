@@ -292,12 +292,11 @@ void main() {
 #endif
 #ifdef _DBG_ANALOG
       {
-        Serial.putc = original_putc;
-        uint16_t x = controller_analog(0);
-        uint16_t y = controller_analog(1);
-        Serial.printf("%x%x,%x%x\r", (x >> 8) & 0xff, x & 0xff, (y >> 8) & 0xff,
-                      y & 0xff);
-        Serial.putc = debug_putc;
+        for (uint8_t i = 0; i < 6; ++i) {
+          uint16_t v = controller_analog(i);
+          Serial.printf("%x%x,", (v >> 8) & 0xff, v & 0xff);
+        }
+        Serial.printf("\r");
       }
 #endif
     }

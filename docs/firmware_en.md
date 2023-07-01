@@ -195,6 +195,7 @@ async function flash() {
     'firmwares/us_v2_12.bin',  // Ver 2.12
     'firmwares/us_v2_13.bin',  // Ver 2.13
     'firmwares/us_v2_14.bin',  // Ver 2.14
+    'firmwares/us_v2_14a.bin',  // Ver 2.14a
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -240,6 +241,7 @@ async function flash() {
 <option>Ver 2.12</option>
 <option>Ver 2.13</option>
 <option>Ver 2.14</option>
+<option>Ver 2.14a</option>
 </select>
 <button onclick="flash();">Flash</button>
 

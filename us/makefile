@@ -14,6 +14,11 @@ program: $(TARGET).bin
 run: program
 	$(FLASHER) -s
 
+prod:
+	ch559flasher -W ../docs/firmwares/us_v2_data1.bin
+	$(FLASHER) -w -f ../docs/firmwares/us_v2_14.bin
+	$(FLASHER) -s
+
 clean:
 	rm -rf build $(TARGET).bin
 

@@ -13,33 +13,46 @@
 #include "settings.h"
 #include "soft485.h"
 
+static bool v3 = false;
 static bool mode_in = true;
 static enum JVSIO_CommSupMode comm_mode;
 
-static void update_pulldown(void) {
+static void update_direction(void) {
   // Activate pull-down only if the serial I/O direction is input.
   bool activate = mode_in && settings_options_pulldown();
   pinMode(2, 0, activate ? OUTPUT : INPUT);
+
+  // External RS485 controller DE-/RE (for v3 board)
+  if (v3) {
+    digitalWrite(4, 1, mode_in ? LOW : HIGH);
+  }
 }
 
 static int data_available(struct JVSIO_DataClient* client) {
   client;
-  update_pulldown();
+  update_direction();
   return soft485_ready() ? 1 : 0;
 }
 
 static void data_setInput(struct JVSIO_DataClient* client) {
   client;
-  soft485_input();
+  if (v3) {
+    while (0 == (SER1_LSR & bLSR_T_ALL_EMP))
+      ;
+  } else {
+    soft485_input();
+  }
   mode_in = true;
-  update_pulldown();
+  update_direction();
 }
 
 static void data_setOutput(struct JVSIO_DataClient* client) {
   client;
   mode_in = false;
-  update_pulldown();
-  soft485_output();
+  update_direction();
+  if (!v3) {
+    soft485_output();
+  }
 }
 
 static void data_startTransaction(struct JVSIO_DataClient* client) {
@@ -53,6 +66,13 @@ static void data_endTransaction(struct JVSIO_DataClient* client) {
 static uint8_t data_read(struct JVSIO_DataClient* client) {
   client;
   return soft485_recv();
+}
+
+static void data_write_txd1(struct JVSIO_DataClient* client, uint8_t data) {
+  client;
+  while (!(SER1_LSR & bLSR_T_FIFO_EMP))
+    ;
+  SER1_FIFO = data;
 }
 
 static void data_write(struct JVSIO_DataClient* client, uint8_t data) {
@@ -121,13 +141,22 @@ static bool data_setCommSupMode(struct JVSIO_DataClient* client,
     return false;
   if (!dryrun) {
     soft485_set_recv_speed(mode);
+    if (v3) {
+      // External RS485 controller setup restore
+      update_direction();
+      pinMode(4, 1, OUTPUT);
+    }
     uint8_t led_mode = L_ON;
     switch (mode) {
       case k115200:
-        client->write = data_write;
+        if (!v3) {
+          client->write = data_write;
+        }
         break;
       case k3M:
-        client->write = data_write_3M;
+        if (!v3) {
+          client->write = data_write_3M;
+        }
         led_mode = L_BLINK_TWICE;
         break;
     }
@@ -154,17 +183,42 @@ static void data_dump(struct JVSIO_DataClient* client,
 }
 
 void data_client(struct JVSIO_DataClient* client) {
+  // Check V3 board that P4_2 is connected to GND.
+  pinMode(4, 2, INPUT_PULLUP);
+  delayMicroseconds(1000);
+  if (digitalRead(4, 2) == LOW) {
+    v3 = true;
+    pinMode(4, 2, INPUT);
+  }
+  if (v3) {
+    // Assign TXD1 to P4.4.
+    SER1_IER |= bIER_PIN_MOD0;
+    SER1_IER &= ~bIER_PIN_MOD1;
+
+    soft485_init();
+    pinMode(4, 4, OUTPUT);
+
+    // External RS485 controller setup
+    digitalWrite(4, 1, LOW);
+    pinMode(4, 1, OUTPUT);
+
+    // Pull-up for downstream JVS sense
+    // adc_init();
+    // adc_select(7);
+    pinMode(3, 0, INPUT_PULLUP);
+  } else {
+    soft485_init();
+  }
+
   client->available = data_available;
   client->setInput = data_setInput;
   client->setOutput = data_setOutput;
   client->startTransaction = data_startTransaction;
   client->endTransaction = data_endTransaction;
   client->read = data_read;
-  client->write = data_write;
+  client->write = v3 ? data_write_txd1 : data_write;
   client->setCommSupMode = data_setCommSupMode;
   client->dump = data_dump;
-
-  soft485_init();
 
   // Additional D+ pull-down that is activated only on receiving.
   digitalWrite(2, 0, LOW);
@@ -185,6 +239,7 @@ static void sense_set(struct JVSIO_SenseClient* client, bool ready) {
 static bool sense_isReady(struct JVSIO_SenseClient* client) {
   client;
   // can be true for single node.
+  // TODO: support v3 board daisy chains.
   return true;
 }
 

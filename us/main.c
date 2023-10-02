@@ -233,11 +233,11 @@ bool JVSIO_Client_receiveCommand(uint8_t node,
   return handled;
 }
 
-static void detected() {
+static void detected(void) {
   led_oneshot(L_PULSE_ONCE);
 }
 
-static uint8_t get_flags() {
+static uint8_t get_flags(void) {
 #ifdef _DBG_HUB1_ONLY
   return USE_HUB1;
 #else
@@ -245,7 +245,7 @@ static uint8_t get_flags() {
 #endif
 }
 
-void main() {
+void main(void) {
   initialize();
 
   settings_init();
@@ -263,7 +263,7 @@ void main() {
 
   Serial.printf("%s\n", ids[settings->id]);
 
-  void (*original_putc)() = Serial.putc;
+  void (*original_putc)(void) = Serial.putc;
   Serial.putc = debug_putc;
 
   for (;;) {

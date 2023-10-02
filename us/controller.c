@@ -150,7 +150,7 @@ static void update_digital_map(uint8_t* dst, uint8_t* src, bool on) {
   }
 }
 
-void controller_reset() {
+void controller_reset(void) {
   for (uint8_t p = 0; p < 2; ++p) {
     controller_reset_digital_map(p);
   }
@@ -339,12 +339,12 @@ void controller_update(const uint8_t hub_index,
   }
 }
 
-void controller_poll() {
+void controller_poll(void) {
   service_sw = settings_service_pressed();
   test_sw = settings_test_pressed();
 }
 
-uint8_t controller_head() {
+uint8_t controller_head(void) {
   return test_sw ? 0x80 : 0;
 }
 

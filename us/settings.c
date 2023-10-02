@@ -40,11 +40,11 @@ enum state { S_NORMAL = 0, S_PRE_CONFIG, S_CONFIG, S_ADJUST };
 static uint8_t state = S_NORMAL;
 static uint8_t state_val = 0;
 
-static bool test_pressed() {
+static bool test_pressed(void) {
   return digitalRead(4, 7) == LOW;
 }
 
-static bool service_pressed() {
+static bool service_pressed(void) {
   return digitalRead(4, 6) == LOW;
 }
 
@@ -60,7 +60,7 @@ static void opt_flash_write_w(uint16_t addr, uint16_t val) {
   opt_flash_write(addr, val & 0xff, val >> 8);
 }
 
-static void store_opt() {
+static void store_opt(void) {
   SAFE_MOD = 0x55;
   SAFE_MOD = 0xaa;
   GLOBAL_CFG |= bCODE_WE;
@@ -82,7 +82,7 @@ static void store_opt() {
   SAFE_MOD = 0x00;
 }
 
-static void apply() {
+static void apply(void) {
   uint16_t offset = 10;
   for (uint8_t i = 0; i < current_setting; ++i) {
     offset += 169;
@@ -151,7 +151,7 @@ static void apply() {
   controller_reset();
 }
 
-void settings_init() {
+void settings_init(void) {
   pinMode(4, 6, INPUT_PULLUP);
   pinMode(4, 7, INPUT_PULLUP);
 
@@ -178,7 +178,7 @@ void settings_init() {
   settings_led_mode(L_BLINK);
 }
 
-void settings_poll() {
+void settings_poll(void) {
   led_poll();
   if (timer3_tick_msec_between(poll_msec, poll_msec + 17)) {
     return;
@@ -272,15 +272,15 @@ void settings_poll() {
   }
 }
 
-struct settings* settings_get() {
+struct settings* settings_get(void) {
   return &settings;
 }
 
-bool settings_test_pressed() {
+bool settings_test_pressed(void) {
   return (state == S_NORMAL) && test_pressed();
 }
 
-bool settings_service_pressed() {
+bool settings_service_pressed(void) {
   return (state == S_NORMAL) && service_pressed();
 }
 
@@ -291,7 +291,7 @@ void settings_led_mode(uint8_t mode) {
   }
 }
 
-void settings_rapid_sync() {
+void settings_rapid_sync(void) {
   for (uint8_t i = 1; i < 8; ++i) {
     settings.sequence[i].bit <<= 1;
     if (0 == (settings.sequence[i].bit & settings.sequence[i].mask)) {

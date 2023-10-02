@@ -28,7 +28,7 @@ static enum JVSIO_CommSupMode comm_mode = k115200;
 static struct settings* settings = 0;
 static void (*data_write)(uint8_t data) = 0;
 
-static void update_direction() {
+static void update_direction(void) {
   // Activate pull-down only if the serial I/O direction is input.
   bool activate = mode_in && settings->data_signal_adjustment;
   pinMode(2, 0, activate ? OUTPUT : INPUT);
@@ -94,12 +94,12 @@ static void data_write_3M(uint8_t data) {
   // clang-format on
 }
 
-int JVSIO_Client_isDataAvailable() {
+int JVSIO_Client_isDataAvailable(void) {
   update_direction();
   return soft485_ready() ? 1 : 0;
 }
 
-void JVSIO_Client_willSend() {
+void JVSIO_Client_willSend(void) {
   mode_in = false;
   update_direction();
   if (!v3) {
@@ -107,7 +107,7 @@ void JVSIO_Client_willSend() {
   }
 }
 
-void JVSIO_Client_willReceive() {
+void JVSIO_Client_willReceive(void) {
   if (v3) {
     while (0 == (SER1_LSR & bLSR_T_ALL_EMP))
       ;
@@ -122,7 +122,7 @@ void JVSIO_Client_send(uint8_t data) {
   data_write(data);
 }
 
-uint8_t JVSIO_Client_receive() {
+uint8_t JVSIO_Client_receive(void) {
   return soft485_recv();
 }
 
@@ -138,7 +138,7 @@ void JVSIO_Client_dump(const char* str, uint8_t* data, uint8_t len) {
   Serial.println("");
 }
 
-bool JVSIO_Client_isSenseReady() {
+bool JVSIO_Client_isSenseReady(void) {
   if (!v3) {
     return true;
   }
@@ -214,7 +214,7 @@ void JVSIO_Client_delayMicroseconds(unsigned int usec) {
   // delayMicroseconds(usec);
 }
 
-void client_init() {
+void client_init(void) {
   settings = settings_get();
 #if !defined(FORCE_V3)
   // Check V3 board that P4_2 is connected to GND.
@@ -259,7 +259,7 @@ void client_init() {
   JVSIO_Node_init(1);
 }
 
-void client_poll() {
+void client_poll(void) {
   if (v3 && adc_peek(&sense)) {
     // Extends to 16-bit range.
     sense <<= 5;

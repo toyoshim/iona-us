@@ -55,13 +55,13 @@ struct settings {
   } sequence[8];
 };
 
-void settings_init();
-void settings_poll();
-struct settings* settings_get();
-bool settings_test_pressed();
-bool settings_service_pressed();
+void settings_init(void);
+void settings_poll(void);
+struct settings* settings_get(void);
+bool settings_test_pressed(void);
+bool settings_service_pressed(void);
 void settings_led_mode(uint8_t mode);
-void settings_rapid_sync();
+void settings_rapid_sync(void);
 uint16_t settings_adjust_x(uint16_t x);
 uint16_t settings_adjust_y(uint16_t y);
 

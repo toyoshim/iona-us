@@ -10,13 +10,13 @@
 
 #include "hid.h"
 
-void controller_reset();
+void controller_reset(void);
 void controller_update(const uint8_t hub,
                        const struct hub_info* info,
                        const uint8_t* data,
                        uint16_t size);
-void controller_poll();
-uint8_t controller_head();
+void controller_poll(void);
+uint8_t controller_head(void);
 uint8_t controller_data(uint8_t player, uint8_t index, uint8_t gpout);
 uint8_t controller_coin(uint8_t player);
 uint16_t controller_analog(uint8_t index);

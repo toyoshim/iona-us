@@ -5,7 +5,7 @@
 #ifndef __client_h__
 #define __client_h__
 
-void client_init();
-void client_poll();
+void client_init(void);
+void client_poll(void);
 
 #endif  // __client_h__

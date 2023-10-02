@@ -34,24 +34,24 @@ struct player_setting {
   uint16_t padding[2];
 };
 
-void settings_init();
-void settings_save();
-void settings_poll();
+void settings_init(void);
+void settings_save(void);
+void settings_poll(void);
 
 uint16_t settings_rapid_mask(uint8_t player);
 uint16_t* settings_button_masks(uint8_t player);
-uint8_t settings_options_id();
-bool settings_options_pulldown();
-bool settings_options_rotary();
-bool settings_options_screen_position();
-bool settings_options_analog_lever();
-bool settings_options_analog_input();
-uint8_t* settings_options_analog();
-bool settings_options_dash();
-uint8_t settings_mode();
-void settings_rapid_sync();
+uint8_t settings_options_id(void);
+bool settings_options_pulldown(void);
+bool settings_options_rotary(void);
+bool settings_options_screen_position(void);
+bool settings_options_analog_lever(void);
+bool settings_options_analog_input(void);
+uint8_t* settings_options_analog(void);
+bool settings_options_dash(void);
+uint8_t settings_mode(void);
+void settings_rapid_sync(void);
 
 void settings_led_mode(uint8_t mode);
-void settings_flip_options_pulldown();
+void settings_flip_options_pulldown(void);
 
 #endif  // __settings_h__

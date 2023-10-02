@@ -9,8 +9,8 @@
 
 #include "settings.h"
 
-//#define _DBG_HID_REPORT_DUMP
-//#define _DBG_JVS_BUTTON_DUMP
+// #define _DBG_HID_REPORT_DUMP
+// #define _DBG_JVS_BUTTON_DUMP
 
 static uint16_t raw_map[2] = {0, 0};
 static uint8_t jvs_map[5] = {0, 0, 0, 0, 0};
@@ -120,7 +120,7 @@ static void mahjong_update(const uint8_t* data) {
     coin[0]++;
 }
 
-void controller_init() {
+void controller_init(void) {
   pinMode(4, 6, INPUT_PULLUP);
   pinMode(4, 7, INPUT_PULLUP);
 }
@@ -302,7 +302,7 @@ void controller_map(uint8_t player,
   }
 }
 
-void controller_poll() {
+void controller_poll(void) {
   if (controller_button(B_SERVICE))
     jvs_map[1] |= 0x40;
   else

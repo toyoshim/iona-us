@@ -16,7 +16,7 @@
 static bool mode_in = true;
 static enum JVSIO_CommSupMode comm_mode;
 
-static void update_pulldown() {
+static void update_pulldown(void) {
   // Activate pull-down only if the serial I/O direction is input.
   bool activate = mode_in && settings_options_pulldown();
   pinMode(2, 0, activate ? OUTPUT : INPUT);

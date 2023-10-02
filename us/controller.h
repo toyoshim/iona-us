@@ -33,7 +33,7 @@ enum {
   B_SERVICE,
 };
 
-void controller_init();
+void controller_init(void);
 void controller_update(uint8_t hub,
                        const struct hub_info* info,
                        const uint8_t* data,
@@ -42,7 +42,7 @@ void controller_update(uint8_t hub,
 void controller_map(uint8_t player,
                     uint16_t rapid_mask,
                     uint16_t* button_masks);
-void controller_poll();
+void controller_poll(void);
 uint16_t controller_raw(uint8_t player);
 uint8_t controller_jvs(uint8_t index, uint8_t gpout);
 uint8_t controller_coin(uint8_t player);

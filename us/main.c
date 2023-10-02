@@ -41,7 +41,7 @@ static void debug_putc(uint8_t val) {
 }
 
 static void jvs_poll(struct JVSIO_Lib* io) {
-  void (*original_putc)() = Serial.putc;
+  void (*original_putc)(void) = Serial.putc;
   Serial.putc = debug_putc;
   uint8_t len;
   uint8_t* data = io->getNextCommand(io, &len, 0);
@@ -254,15 +254,15 @@ static void report(uint8_t hub,
   controller_update(hub, info, data, size, settings_button_masks(hub));
 }
 
-static void detected() {
+static void detected(void) {
   led_oneshot(L_PULSE_ONCE);
 }
 
-static uint8_t get_flags() {
+static uint8_t get_flags(void) {
   return USE_HUB1 | USE_HUB0;
 }
 
-void main() {
+void main(void) {
   initialize();
   controller_init();
   settings_init();

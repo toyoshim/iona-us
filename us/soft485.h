@@ -10,16 +10,16 @@
 
 #include "interrupt.h"
 
-extern void soft485_int_tmr0() __interrupt INT_NO_TMR0 __using 0;
-extern void soft485_int_uart() __interrupt INT_NO_UART1 __using 2;
+extern void soft485_int_tmr0(void) __interrupt(INT_NO_TMR0) __using(0);
+extern void soft485_int_uart(void) __interrupt(INT_NO_UART1) __using(2);
 
-void soft485_init();
+void soft485_init(void);
 void soft485_send(uint8_t val);
-bool soft485_ready();
-uint8_t soft485_recv();
+bool soft485_ready(void);
+uint8_t soft485_recv(void);
 
-void soft485_input();
-void soft485_output();
+void soft485_input(void);
+void soft485_output(void);
 
 void soft485_set_recv_speed(uint8_t mode);
 

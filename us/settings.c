@@ -32,7 +32,7 @@ struct settings {
   } common[10];  // 8 * 10
 } settings;
 
-void reset() {
+void reset(void) {
   for (uint8_t i = 0; i < 2; ++i)
     settings.player_setting[i] = 0;
   for (uint8_t i = 0; i < 10; ++i) {
@@ -51,7 +51,7 @@ void reset() {
   settings_save();
 }
 
-static void mode_layout() {
+static void mode_layout(void) {
   uint16_t buttons = controller_raw(mode_player);
   if (mode_data && !buttons) {
     if (mode_step < 12) {
@@ -68,14 +68,14 @@ static void mode_layout() {
     led_mode(L_OFF);
 }
 
-static void quit_layout() {
+static void quit_layout(void) {
   if (mode_step == 0)
     return;
   for (uint8_t i = mode_step; i < 12; ++i)
     settings.settings[settings.player_setting[mode_player]].button_masks[i] = 0;
 }
 
-static void mode_rapid() {
+static void mode_rapid(void) {
   uint16_t buttons = controller_raw(mode_player);
   if (mode_data && !buttons) {
     uint8_t setting = settings.player_setting[mode_player];
@@ -88,7 +88,7 @@ static void mode_rapid() {
     led_mode(L_OFF);
 }
 
-static void mode_speed() {
+static void mode_speed(void) {
   uint16_t buttons = ((uint16_t)controller_jvs(1 + mode_player * 2, 0) << 8) |
                      controller_jvs(1 + mode_player * 2 + 1, 0);
   uint8_t setting = settings.player_setting[mode_player];
@@ -108,7 +108,7 @@ static void mode_speed() {
   led_mode((buttons & 0x03c0) ? L_OFF : L_BLINK);
 }
 
-static void mode_select() {
+static void mode_select(void) {
   uint16_t buttons = ((uint16_t)controller_jvs(1 + mode_player * 2, 0) << 8) |
                      controller_jvs(1 + mode_player * 2 + 1, 0);
   if (buttons & 0x0200) {
@@ -135,7 +135,7 @@ static void mode_select() {
   led_mode((buttons & 0x03c0) ? L_ON : L_OFF);
 }
 
-static void mode_analog() {
+static void mode_analog(void) {
   uint8_t data = mode_data;
   mode_data = 0;
   int8_t diff = 0;
@@ -157,18 +157,18 @@ static void mode_analog() {
   }
 }
 
-static void quit_option() {
+static void quit_option(void) {
   uint16_t buttons =
       ((uint16_t)controller_jvs(1, 0) << 8) | controller_jvs(2, 0);
   settings.common[settings.player_setting[0]].options = buttons >> 2;
 }
 
-static void quit_reset() {
+static void quit_reset(void) {
   reset();
   led_oneshot(L_PULSE_THREE_TIMES);
 }
 
-static void slow_poll() {
+static void slow_poll(void) {
   bool button0 = controller_button(B_TEST);
   bool button1 = controller_button(B_SERVICE);
   bool changed = false;
@@ -294,7 +294,7 @@ static void slow_poll() {
   }
 }
 
-void settings_init() {
+void settings_init(void) {
   led_init(1, 5, LOW);
   settings_led_mode(L_BLINK);
 
@@ -309,12 +309,12 @@ void settings_init() {
   poll_msec = timer3_tick_msec();
 }
 
-void settings_save() {
+void settings_save(void) {
   // Store settings to flash
   flash_write(4, (const uint8_t*)settings, sizeof(settings));
 }
 
-void settings_poll() {
+void settings_poll(void) {
   if (!timer3_tick_msec_between(poll_msec, poll_msec + poll_interval)) {
     poll_msec = timer3_tick_msec();
     slow_poll();
@@ -338,50 +338,50 @@ uint16_t* settings_button_masks(uint8_t player) {
   return settings.settings[settings.player_setting[player]].button_masks;
 }
 
-uint8_t settings_mode() {
+uint8_t settings_mode(void) {
   return mode;
 }
 
-uint8_t settings_options_id() {
+uint8_t settings_options_id(void) {
   uint8_t options = settings.common[settings.player_setting[0]].options;
   return ((options >> 5) & 2) | (options >> 7);
 }
 
-bool settings_options_pulldown() {
+bool settings_options_pulldown(void) {
   uint8_t options = settings.common[settings.player_setting[0]].options;
   return (options & 0x20) == 0;
 }
 
-bool settings_options_rotary() {
+bool settings_options_rotary(void) {
   uint8_t options = settings.common[settings.player_setting[0]].options;
   return (options & 0x10) != 0;
 }
 
-bool settings_options_screen_position() {
+bool settings_options_screen_position(void) {
   uint8_t options = settings.common[settings.player_setting[0]].options;
   return (options & 0x08) != 0;
 }
 
-bool settings_options_analog_lever() {
+bool settings_options_analog_lever(void) {
   uint8_t options = settings.common[settings.player_setting[0]].options;
   return (options & 0x04) == 0;
 }
 
-bool settings_options_analog_input() {
+bool settings_options_analog_input(void) {
   uint8_t options = settings.common[settings.player_setting[0]].options;
   return (options & 0x02) != 0;
 }
 
-uint8_t* settings_options_analog() {
+uint8_t* settings_options_analog(void) {
   return settings.common[settings.player_setting[0]].analog;
 }
 
-bool settings_options_dash() {
+bool settings_options_dash(void) {
   uint8_t options = settings.common[settings.player_setting[0]].options;
   return (options & 0x01) == 0;
 }
 
-void settings_rapid_sync() {
+void settings_rapid_sync(void) {
   for (uint8_t i = 0; i < 2; ++i) {
     rapid_step[i] = rapid_step[i] + 1;
     if (rapid_step[i] > settings.settings[settings.player_setting[i]].speed)
@@ -395,7 +395,7 @@ void settings_led_mode(uint8_t client_mode) {
     led_mode(client_mode);
 }
 
-void settings_flip_options_pulldown() {
+void settings_flip_options_pulldown(void) {
   settings.common[settings.player_setting[0]].options ^= 0x20;
   settings_save();
 }

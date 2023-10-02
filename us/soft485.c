@@ -18,7 +18,7 @@ static volatile uint8_t rx_wr_ptr = 0;
 static volatile uint8_t rx_rd_ptr = 0;
 static uint8_t speed_mode = 0;  // 0: 115200, 1: 1M, 2: 3M
 
-void soft485_int_tmr0() __interrupt INT_NO_TMR0 __using 0 {
+void soft485_int_tmr0(void) __interrupt(INT_NO_TMR0) __using(0) {
   if (count == 20) {
     if (tx_wr_ptr == tx_rd_ptr)
       return;
@@ -41,13 +41,13 @@ void soft485_int_tmr0() __interrupt INT_NO_TMR0 __using 0 {
   count++;
 }
 
-void soft485_int_uart() __interrupt INT_NO_UART1 __using 2 {
+void soft485_int_uart(void) __interrupt(INT_NO_UART1) __using(2) {
   if (0 == (SER1_LSR & bLSR_DATA_RDY))
     return;
   fifo[rx_wr_ptr++] = SER1_FIFO;
 }
 
-void soft485_init() {
+void soft485_init(void) {
   // RXD1 connect P4.0, disable TXD1 by default
 
   SER1_LCR |= bLCR_DLAB;  // Allow SER1_DIV, SER1_DLM, and SER1_DLL use
@@ -82,19 +82,19 @@ void soft485_send(uint8_t val) {
   tx_wr_ptr = next;
 }
 
-bool soft485_ready() {
+bool soft485_ready(void) {
   if (!receiving)
     return false;
   return rx_rd_ptr != rx_wr_ptr;
 }
 
-uint8_t soft485_recv() {
+uint8_t soft485_recv(void) {
   while (!soft485_ready())
     ;
   return fifo[rx_rd_ptr++];
 }
 
-void soft485_input() {
+void soft485_input(void) {
   // Wait until data in the FIFO gets empty.
   while (tx_wr_ptr != tx_rd_ptr)
     ;
@@ -110,7 +110,7 @@ void soft485_input() {
   receiving = true;
 }
 
-void soft485_output() {
+void soft485_output(void) {
   IE_UART1 = 0;  // Disable UART1 interrupt
   SER1_FCR = 0;  // Disable FIFO
   digitalWrite(4, 0, HIGH);

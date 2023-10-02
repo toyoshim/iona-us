@@ -4,6 +4,7 @@
 
 #include "client.h"
 
+#include "adc.h"
 #include "ch559.h"
 #include "io.h"
 #include "pwm1.h"
@@ -15,6 +16,7 @@
 
 static bool v3 = false;
 static bool mode_in = true;
+static uint16_t sense = 0xffff;
 static enum JVSIO_CommSupMode comm_mode;
 
 static void update_direction(void) {
@@ -182,7 +184,7 @@ static void data_dump(struct JVSIO_DataClient* client,
   Serial.println("");
 }
 
-void data_client(struct JVSIO_DataClient* client) {
+void client_init(void) {
   // Check V3 board that P4_2 is connected to GND.
   pinMode(4, 2, INPUT_PULLUP);
   delayMicroseconds(1000);
@@ -190,6 +192,16 @@ void data_client(struct JVSIO_DataClient* client) {
     v3 = true;
     pinMode(4, 2, INPUT);
   }
+}
+
+void client_poll(void) {
+  if (v3 && adc_peek(&sense)) {
+    // Extends to 16-bit range.
+    sense <<= 5;
+  }
+}
+
+void data_client(struct JVSIO_DataClient* client) {
   if (v3) {
     // Assign TXD1 to P4.4.
     SER1_IER |= bIER_PIN_MOD0;
@@ -201,11 +213,6 @@ void data_client(struct JVSIO_DataClient* client) {
     // External RS485 controller setup
     digitalWrite(4, 1, LOW);
     pinMode(4, 1, OUTPUT);
-
-    // Pull-up for downstream JVS sense
-    // adc_init();
-    // adc_select(7);
-    pinMode(3, 0, INPUT_PULLUP);
   } else {
     soft485_init();
   }
@@ -228,6 +235,13 @@ static void sense_begin(struct JVSIO_SenseClient* client) {
   client;
   pwm1_init();
   pwm1_duty(3, 4);
+
+  if (v3) {
+    // Pull-up for downstream JVS sense
+    adc_init();
+    adc_select(7);
+    pinMode(3, 0, INPUT_PULLUP);
+  }
 }
 
 static void sense_set(struct JVSIO_SenseClient* client, bool ready) {

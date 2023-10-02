@@ -269,6 +269,7 @@ void main(void) {
   delay(30);
   Serial.println(ids[settings_options_id()]);
 
+  client_init();
   data_client(&data);
   sense_client(&sense);
   led_client(&led);
@@ -294,6 +295,7 @@ void main(void) {
     hid_poll();
     controller_poll();
     settings_poll();
+    client_poll();
     jvs_poll(io);
   }
 }

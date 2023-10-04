@@ -10,6 +10,8 @@ permalink: /firmware
 ChromeまたはWebUSBの有効になったChromium系のブラウザにてご利用下さい。
 
 ## 準備
+v1/v2ボード向けの準備です。v3ボードでは短絡できませんのでType-Aの特殊ケーブルを使ってP1ポートから接続します。
+
 下の写真で白丸で囲まれた部分にスルーホールが4つあります。
 まずは電源を入れていない状態で、黄色で結んだ対と赤で結んだ対（距離が近い対）を短絡します。
 これによりJVS端子にUSB用のデータ線（D+/D-）を接続し、コンピュータとのUSB接続を可能にします。
@@ -118,6 +120,7 @@ JVS I/Oとして利用する前、特にジャンパーピンを実装した人�
 - Ver 1.45 アナログレバー設定がマニュアルと反対になっていたのを修正、またアナログ入力を無効にするオプションを追加しました
 - Ver 1.46 exA-ArcadiaのJVS Dash（高速モード）に対応、合わせてオプションの追加とLEDの調整をしました
 - Ver 1.47 GP2040に対応
+- Ver 1.48 v3ボードを含む全てのIONA-USで動作
 - Ver 2.00 設定をウェブから行うように大改訂
 - Ver 2.01 コントローラが接続されていない時にSERVICEボタンが効かない問題を修正、Xboxコントローラのトリガー入力値が最大値に達するよう補正、Guncon3対応強化とバグ修正を行いました
 - Ver 2.02 namco TSS-I/O互換のIDを追加、入力反転機能を追加
@@ -187,6 +190,7 @@ async function flash() {
     'firmwares/us_v1_45.bin',  // Ver 1.45
     'firmwares/us_v1_46.bin',  // Ver 1.46
     'firmwares/us_v1_47.bin',  // Ver 1.47
+    'firmwares/us_v1_48.bin',  // Ver 1.48
     'firmwares/us_v2_01.bin',  // Ver 2.01
     'firmwares/us_v2_02.bin',  // Ver 2.02
     'firmwares/us_v2_10.bin',  // Ver 2.10
@@ -232,7 +236,8 @@ async function flash() {
 <option>Ver 1.44</option>
 <option>Ver 1.45</option>
 <option>Ver 1.46</option>
-<option selected>Ver 1.47</option>
+<option>Ver 1.47</option>
+<option selected>Ver 1.48</option>
 <option>Ver 2.01</option>
 <option>Ver 2.02</option>
 <option>Ver 2.10</option>

@@ -10,6 +10,8 @@ You can update your device's firmware to support more devices or fix issues here
 But as this page uses WebUSB API, you need to visit by Google Chrome or Chromium based browser that enables WebUSB API support.
 
 ## Preparation
+This section is for v1/v2 boards. V3 board doesn't have through-holes. You need to use P1 port with Type-A to A special cable.
+
 There are 4 through-hole on the IONA board as you can see in the white circle below.
 Before supplying power, you need to shorten the yellow hole pair and the red hole pair respectively.
 This allows the JVS port to use USB data line, D+ and D-, to communicate with PC over USB protocol.
@@ -119,6 +121,7 @@ It may be ok if it does not long, but it may damage the device to connect over J
 - Ver 1.45 Fixed the analog lever config polarity, and add a new setting to disable analog inputs.
 - Ver 1.46 Support exA-Arcadia's JVS Dash (high-speed mode), and adjust options and led controlls.
 - Ver 1.47 Support GP2040.
+- Ver 1.47 Works with all IONA-US boards including v3 boards.
 - Ver 2.00 Major update to modify user settings at the support web page.
 - Ver 2.01 Fix a bug that service button doesn't work if no gamepad is connected, adjust Xbox controller's trigger input range so to reach the peak, and Guncon3 support improvements with a bug fix.
 - Ver 2.02 Add namco TSS-I/O compat ID, and support button state invert feature.
@@ -188,6 +191,7 @@ async function flash() {
     'firmwares/us_v1_45.bin',  // Ver 1.45
     'firmwares/us_v1_46.bin',  // Ver 1.46
     'firmwares/us_v1_47.bin',  // Ver 1.47
+    'firmwares/us_v1_48.bin',  // Ver 1.48
     'firmwares/us_v2_01.bin',  // Ver 2.01
     'firmwares/us_v2_02.bin',  // Ver 2.02
     'firmwares/us_v2_10.bin',  // Ver 2.10
@@ -233,7 +237,8 @@ async function flash() {
 <option>Ver 1.44</option>
 <option>Ver 1.45</option>
 <option>Ver 1.46</option>
-<option selected>Ver 1.47</option>
+<option>Ver 1.47</option>
+<option selected>Ver 1.48</option>
 <option>Ver 2.01</option>
 <option>Ver 2.02</option>
 <option>Ver 2.10</option>

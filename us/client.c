@@ -17,7 +17,7 @@
 static bool v3 = false;
 static bool mode_in = true;
 static uint16_t sense = 0xffff;
-static enum JVSIO_CommSupMode comm_mode;
+static enum JVSIO_CommSupMode comm_mode = k115200;
 
 static void update_direction(void) {
   // Activate pull-down only if the serial I/O direction is input.
@@ -252,9 +252,21 @@ static void sense_set(struct JVSIO_SenseClient* client, bool ready) {
 
 static bool sense_isReady(struct JVSIO_SenseClient* client) {
   client;
-  // can be true for single node.
-  // TODO: support v3 board daisy chains.
-  return true;
+  if (!v3) {
+    return true;
+  }
+
+  client_poll();
+  // The downstream SENSE seems > 3V, maybe pull-up 5V, in disconnected state.
+  if (sense > 55000) {
+    return true;
+  }
+  // The downstream SENSE seems < 1V, in readystate.
+  if (sense < 20000) {
+    return true;
+  }
+  // Otherwise, it's still under address configuration.
+  return false;
 }
 
 static bool sense_isConnected(struct JVSIO_SenseClient* client) {

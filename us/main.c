@@ -17,6 +17,7 @@
 
 // #define _DBG_HUB1_ONLY
 // #define _DBG_ANALOG
+// #define _DBG_DIGITAL
 
 #define VER "2.14a"
 
@@ -295,6 +296,27 @@ void main(void) {
         for (uint8_t i = 0; i < 6; ++i) {
           uint16_t v = controller_analog(i);
           Serial.printf("%x%x,", (v >> 8) & 0xff, v & 0xff);
+        }
+        Serial.printf("\r");
+      }
+#endif
+#ifdef _DBG_DIGITAL
+      {
+        static bool init = false;
+        if (!init) {
+          Serial.printf(
+              "Ts T1 T2 T3 -- -- -- -- St Sv Up Dw Lf Rt B1 B2 B3 B4 B5 B6 B7 "
+              "B8 "
+              "B9 B10");
+          Serial.printf("\n");
+          init = true;
+        }
+        for (uint8_t i = 0; i < 3; ++i) {
+          uint8_t v =
+              (i == 0) ? controller_head() : controller_data(1, i - 1, 0);
+          for (uint8_t b = 0x80; b != 0; b >>= 1) {
+            Serial.printf("%d  ", (v & b) ? 1 : 0);
+          }
         }
         Serial.printf("\r");
       }

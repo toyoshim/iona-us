@@ -129,6 +129,7 @@ JVS I/Oとして利用する前、特にジャンパーピンを実装した人�
 - Ver 2.12 TSS-I/O向けのガンコンキャリブレーション機能、互換性の向上と、設定保存機能の追加
 - Ver 2.13 After Burner Climax向けにCYBER STICKをサポート!
 - Ver 2.14 レースゲーム向けにG29 Driving Force Race Wheelのサポート
+- Ver 2.15 8BitDo SNK NEOGEOコントローラをサポート
 
 ## ファームウェアの互換性
 Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基本的に安定して動くはずです。
@@ -144,6 +145,7 @@ Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基�
 |(XInput規格コントローラ)|1.00|1.47以降推奨|
 |GP2040 (*2)|1.47|Xbox 360互換モードで確認|
 |(Xbox Oneシリーズ規格コントローラ)|1.00|1.02a以降推奨|
+|8BitDo SNK NEOGEOコントローラ|2.15||
 |Brook XB Fighting Board|1.44|標準のX-Oneモードで動作、X-360モード指定でも動作可能|
 |Brook Universal Fighting Board|1.47|PS4モードで動作|
 |Brook PS4+ Fighting Board|1.47|PS4モードで動作|
@@ -198,7 +200,7 @@ async function flash() {
     'firmwares/us_v2_12.bin',  // Ver 2.12
     'firmwares/us_v2_13.bin',  // Ver 2.13
     'firmwares/us_v2_14.bin',  // Ver 2.14
-    'firmwares/us_v2_14a.bin',  // Ver 2.14a
+    'firmwares/us_v2_15.bin',  // Ver 2.15
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -245,7 +247,7 @@ async function flash() {
 <option>Ver 2.12</option>
 <option>Ver 2.13</option>
 <option>Ver 2.14</option>
-<option>Ver 2.14a</option>
+<option>Ver 2.15</option>
 </select>
 <button onclick="flash();">書き込み</button>
 

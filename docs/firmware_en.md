@@ -130,6 +130,7 @@ It may be ok if it does not long, but it may damage the device to connect over J
 - Ver 2.12 Zapper calibration and better compatibility for TSS-I/O, and persistent settings.
 - Ver 2.13 CYBER STICK support for After Burner Climax!
 - Ver 2.14 G29 Driving Force Race Wheel support for racing games.
+- Ver 2.15 Support 8BitDo SNK NEOGEO controller.
 
 ## Firmware Compatibility
 All controllers that conform Xbox 360, or Xbox One series protocols are expected to work fine.
@@ -145,6 +146,7 @@ Also, the internal format to hold the user settings is changed at firmware Ver 1
 |(XInput compatible controllers)|1.00|1.47 and later are recommended|
 |GP2040 (*2)|1.47|Confirmed with Xbox 360 compatible mode|
 |(Xbox One series protocol controllers)|1.00|1.02a and later are recommended|
+|8BitDo SNK NEOGEO controller|2.15||
 |Brook XB Fighting Board|1.44|Work with the default X-One mode, and manual X-360 mode|
 |Brook Universal Fighting Board|1.47|Work with the default PS4 mode|
 |Brook PS4+ Fighting Board|1.47|Work with the default PS4 mode|
@@ -199,7 +201,7 @@ async function flash() {
     'firmwares/us_v2_12.bin',  // Ver 2.12
     'firmwares/us_v2_13.bin',  // Ver 2.13
     'firmwares/us_v2_14.bin',  // Ver 2.14
-    'firmwares/us_v2_14a.bin',  // Ver 2.14a
+    'firmwares/us_v2_15.bin',  // Ver 2.15
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -246,7 +248,7 @@ async function flash() {
 <option>Ver 2.12</option>
 <option>Ver 2.13</option>
 <option>Ver 2.14</option>
-<option>Ver 2.14a</option>
+<option>Ver 2.15</option>
 </select>
 <button onclick="flash();">Flash</button>
 

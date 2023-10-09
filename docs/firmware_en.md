@@ -121,7 +121,7 @@ It may be ok if it does not long, but it may damage the device to connect over J
 - Ver 1.45 Fixed the analog lever config polarity, and add a new setting to disable analog inputs.
 - Ver 1.46 Support exA-Arcadia's JVS Dash (high-speed mode), and adjust options and led controlls.
 - Ver 1.47 Support GP2040.
-- Ver 1.47 Works with all IONA-US boards including v3 boards.
+- Ver 1.48 Works with all IONA-US boards including v3 boards.
 - Ver 2.00 Major update to modify user settings at the support web page.
 - Ver 2.01 Fix a bug that service button doesn't work if no gamepad is connected, adjust Xbox controller's trigger input range so to reach the peak, and Guncon3 support improvements with a bug fix.
 - Ver 2.02 Add namco TSS-I/O compat ID, and support button state invert feature.

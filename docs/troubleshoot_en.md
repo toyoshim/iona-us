@@ -14,7 +14,9 @@ permalink: /troubleshoot_en
    3. Did you fail firmware update?
       - You can retry firmware updates even if the written firmware is broken.
       Follow the steps described in the [Firmware Update](firmware_en) page.
-   4. Other cases.
+   4. Continue blinking 3 times
+      - This is a caution that you didn't store layout settings for v2 firmware.
+   5. Other cases.
       - The device may get broken during or after shipping.
       Feel free to contact the author.
 
@@ -30,6 +32,7 @@ permalink: /troubleshoot_en
       Some system board has a compatibility issue, and works with one of these modes.
       You can flip the mode by making it power-on while pressing the TEST button.
    4. Other cases.
+      - Do you use a firmware version that supports your PCB version?
       - May be a compatibility issue for IONA-US and the arcade system board.
       - Try with the JVS signal level adjustment disabled in the option mode config.
       It may be resolved by a firmware update if you report the issue.

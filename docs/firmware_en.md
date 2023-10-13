@@ -131,6 +131,7 @@ It may be ok if it does not long, but it may damage the device to connect over J
 - Ver 2.13 CYBER STICK support for After Burner Climax!
 - Ver 2.14 G29 Driving Force Race Wheel support for racing games.
 - Ver 2.15 Support 8BitDo SNK NEOGEO controller.
+- Ver 2.16 Bug fix on wrong RESET response that fixes compatibility issue with exA 1.6.0+.
 
 ## Firmware Compatibility
 All controllers that conform Xbox 360, or Xbox One series protocols are expected to work fine.
@@ -202,6 +203,7 @@ async function flash() {
     'firmwares/us_v2_13.bin',  // Ver 2.13
     'firmwares/us_v2_14.bin',  // Ver 2.14
     'firmwares/us_v2_15.bin',  // Ver 2.15
+    'firmwares/us_v2_16.bin',  // Ver 2.16
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -240,7 +242,7 @@ async function flash() {
 <option>Ver 1.45</option>
 <option>Ver 1.46</option>
 <option>Ver 1.47</option>
-<option selected>Ver 1.48</option>
+<option>Ver 1.48</option>
 <option>Ver 2.01</option>
 <option>Ver 2.02</option>
 <option>Ver 2.10</option>
@@ -249,6 +251,7 @@ async function flash() {
 <option>Ver 2.13</option>
 <option>Ver 2.14</option>
 <option>Ver 2.15</option>
+<option selected>Ver 2.16</option>
 </select>
 <button onclick="flash();">Flash</button>
 

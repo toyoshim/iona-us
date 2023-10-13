@@ -130,6 +130,7 @@ JVS I/Oとして利用する前、特にジャンパーピンを実装した人�
 - Ver 2.13 After Burner Climax向けにCYBER STICKをサポート!
 - Ver 2.14 レースゲーム向けにG29 Driving Force Race Wheelのサポート
 - Ver 2.15 8BitDo SNK NEOGEOコントローラをサポート
+- Ver 2.16 RESET応答のバグ修正（exA 1.6.0以降で動作しなかった問題の解決）
 
 ## ファームウェアの互換性
 Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基本的に安定して動くはずです。
@@ -201,6 +202,7 @@ async function flash() {
     'firmwares/us_v2_13.bin',  // Ver 2.13
     'firmwares/us_v2_14.bin',  // Ver 2.14
     'firmwares/us_v2_15.bin',  // Ver 2.15
+    'firmwares/us_v2_16.bin',  // Ver 2.16
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -239,7 +241,7 @@ async function flash() {
 <option>Ver 1.45</option>
 <option>Ver 1.46</option>
 <option>Ver 1.47</option>
-<option selected>Ver 1.48</option>
+<option>Ver 1.48</option>
 <option>Ver 2.01</option>
 <option>Ver 2.02</option>
 <option>Ver 2.10</option>
@@ -248,6 +250,7 @@ async function flash() {
 <option>Ver 2.13</option>
 <option>Ver 2.14</option>
 <option>Ver 2.15</option>
+<option selected>Ver 2.16</option>
 </select>
 <button onclick="flash();">書き込み</button>
 

@@ -138,3 +138,114 @@ async function connect() {
   document.getElementById('info').innerText = info.join('\n');
 }
 </script>
+
+## さらに詳細な報告
+Chrome越しで取得できる情報は限られているため、場合によっては充分なデバイス情報が得られません。
+上記の方法でうまくいかず、さらなる調査に協力に頂ける場合、以下のIONA-USを使ったログ収集にご協力ください。
+
+### ステップ1: 調査用ファームウェアの書き込み
+ログ収集用の特殊なファームウェアを用います。そのため、以下の点にご注意ください。
+- IONA-US上の設定データは全て削除され、自動で復元される事はありません。
+- ログ収集後に再び[ファーム更新](firmware)ページからIONA-USのファームウェアを書き戻す必要があります。
+- ログには、IONA-USとゲームパッド上でやり取りされたUSBプロトコル上の生パケットデータが含まれ、協力時にはこれらのデータを提出して頂く必要があります。
+- ご提供頂いたデータをもとに、IONAのファームウェアを修正することにご同意ください。
+- 同データを用いたテストケースが追加される事もあり、その場合はデータがGitHub上に公開されることにご同意ください。
+
+[ファーム更新](firmware)ページの情報を参考にしてIONA-USをPCと接続してください。
+P2側のUSBポートには何も接続しない状態で操作をしてください。
+
+<script src="https://toyoshim.github.io/CH559Flasher.js/CH559Flasher.js"></script>
+<script>
+async function flash() {
+  const progressWrite = document.getElementById('flash_progress_write');
+  const progressVerify = document.getElementById('flash_progress_verify');
+  const error = document.getElementById('flash_error');
+  progressWrite.value = 0;
+  progressVerify.value = 0;
+  error.innerText = '';
+  const flasher = new CH559Flasher();
+  await flasher.connect();
+  if (flasher.error) {
+    error.innerText = '接続に失敗しました: ' + flasher.error;
+    return;
+  }
+  await flasher.erase();
+  const response = await fetch('firmwares/logger.bin');
+  if (response.ok) {
+    const bin = await response.arrayBuffer();
+    await flasher.write(bin, rate => progressWrite.value = rate);
+    await flasher.verify(bin, rate => progressVerify.value = rate);
+    error.innerText = flasher.error ? flasher.error : '成功';
+  } else {
+    error.innerText = 'ファームウェアが見つかりません';
+  }
+  await flasher.boot();
+}
+</script>
+<button onclick="flash();">上記の条件に同意して書き込み</button>
+
+| | |
+|-|-|
+|書き込み|0% <progress id="flash_progress_write" max=1 value=0></progress> 100%|
+|検証|0% <progress id="flash_progress_verify" max=1 value=0></progress> 100%|
+
+結果
+<pre id="flash_error"></pre>
+
+### ステップ2: 目的のデバイスの情報取得
+ここまで正常に進んだ場合、LEDが点滅しているはずです。
+LEDの点滅が確認できたら、目的のデバイスをP2側のUSBポートに挿してください。
+ログのバッファが埋め尽くされるとLEDが点灯したままになりますが、点滅したままでも充分なログが取得できている可能性が高いので心配不要です。
+
+ログの取得は一瞬ですので、すぐに次の作業に移れます。
+ここでSERVICEボタンを押してください。
+LEDが消灯すれば成功です。
+ログデータを保存し、PCとの通信ができる状態になったので、次のステップに進み、ログを吸い出します。
+
+### ステップ3: ログを読み出す
+下のボタンを押すと再びデバイス選択ダイアログが出るので、最初のステップと同じデバイスを選択してください。
+
+<button onclick="read();">ログを読み出す</button>
+
+<script>
+async function read() {
+  const progressRead = document.getElementById('progress_read');
+  const error = document.getElementById('read_error');
+  progressRead.value = 0;
+  error.innerText = '';
+
+  const flasher = new CH559Flasher();
+  await flasher.connect();
+  if (flasher.error) {
+    error.innerText = '接続に失敗しました: ' + flasher.error;
+    return;
+  }
+  const log = new Uint8Array(1024);
+  for (let i = 0; i < 1024; i += 32) {
+    let buffer = await flasher.readDataInRange(0xf000 + i, 32);
+    if (!buffer) {
+      setStatus('読み出しに失敗しました: ' + flasher.error);
+      return;
+    }
+    let b8 = new Uint8Array(buffer)
+    for (let j = 0; j < 32; ++j) {
+      log[i + j] = b8[j];
+      progressRead.value = (i + j) / 1023;
+    }
+  }
+  const a = document.createElement('a');
+  const blob = new Blob([log], { type: 'octet/stream' });
+  const url = window.URL.createObjectURL(blob);
+  a.href = url;
+  a.download = 'iona-usb-log.bin';
+  a.click();
+}
+</script>
+
+| | |
+|-|-|
+|読み出し|0% <progress id="progress_read" max=1 value=0></progress> 100%|
+
+結果
+<pre id="read_error"></pre>
+

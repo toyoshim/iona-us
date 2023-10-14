@@ -136,3 +136,121 @@ async function connect() {
   document.getElementById('info').innerText = info.join('\n');
 }
 </script>
+
+## Adavanced Report
+As information that can be obtained via Chrome is really relimited,
+we cannot get enough hints to support the device.
+If information obtained above wasn't enough, and you are happy to help me,
+please follow this step to gather information via IONA-US itself.
+
+### Step 1; Flash debug firmware for the investigation
+We use a dedicated firmware that gather detailed USB transaction logs.
+You need to understand following risks.
+- All user data on IONA-US will disapper, and will not be restored automatically.
+- You need to flash IONA-US firmware at [Firmware Update](firmware_en) page once all are done.
+- Obtained log contains raw USB protocol transactions that are communicated between IONA-US and your target device, and you need to agree on providing it as a file.
+- You also need to agree that we will use the data to develop IONA's firmware.
+- You also need to agree that we will use the data in our unit tests, and the the test code will be published at GitHub with your device data.
+
+Connect IONA-US to your PC by following the instruction at [Firmware Update)(firmware_en) page.
+You should not connect anything to the IONA's P2 USB port at this point.
+
+<script src="https://toyoshim.github.io/CH559Flasher.js/CH559Flasher.js"></script>
+<script>
+async function flash() {
+  const progressWrite = document.getElementById('flash_progress_write');
+  const progressVerify = document.getElementById('flash_progress_verify');
+  const error = document.getElementById('flash_error');
+  progressWrite.value = 0;
+  progressVerify.value = 0;
+  error.innerText = '';
+  const flasher = new CH559Flasher();
+  await flasher.connect();
+  if (flasher.error) {
+    error.innerText = 'Connection failed: ' + flasher.error;
+    return;
+  }
+  await flasher.erase();
+  const response = await fetch('firmwares/logger.bin');
+  if (response.ok) {
+    const bin = await response.arrayBuffer();
+    await flasher.write(bin, rate => progressWrite.value = rate);
+    await flasher.verify(bin, rate => progressVerify.value = rate);
+    error.innerText = flasher.error ? flasher.error : 'Succeeded';
+  } else {
+    error.innerText = 'Cannot find the logging firmware';
+  }
+  await flasher.boot();
+}
+</script>
+<button onclick="flash();">Agreed and flush the debug firmware</button>
+
+| | |
+|-|-|
+|Write|0% <progress id="flash_progress_write" max=1 value=0></progress> 100%|
+|Verify|0% <progress id="flash_progress_verify" max=1 value=0></progress> 100%|
+
+Result
+<pre id="flash_error"></pre>
+
+### Step 2: Logging target device information
+If everything went well, you will see the LED is blinking.
+Once you ensure the LED blinking, connect your target device to the IONA's P2 USB port.
+You may see the LED is turned OFF if the all logging buffer is fullfilled.
+Even if it's still blinking, we may have enough logging data. So, never mind.
+
+It will be finished immediately, and you can go to the next step now.
+Press 'SERVICE' button here.
+It will make the LED turned off.
+This indicates the log data is stored to the persistent area,
+and the device is ready to upload the data to your PC.
+You can obtain the log at the next step.
+
+### Step 3: Obtain the log
+Press the button below, and you will see the device selection dialog.
+Please choose the device you chose at the first step.
+
+<button onclick="read();">Obtain the log</button>
+
+<script>
+async function read() {
+  const progressRead = document.getElementById('progress_read');
+  const error = document.getElementById('read_error');
+  progressRead.value = 0;
+  error.innerText = '';
+
+  const flasher = new CH559Flasher();
+  await flasher.connect();
+  if (flasher.error) {
+    error.innerText = 'Connection failed: ' + flasher.error;
+    return;
+  }
+  const log = new Uint8Array(1024);
+  for (let i = 0; i < 1024; i += 32) {
+    let buffer = await flasher.readDataInRange(0xf000 + i, 32);
+    if (!buffer) {
+      setStatus('Read failed: ' + flasher.error);
+      return;
+    }
+    let b8 = new Uint8Array(buffer)
+    for (let j = 0; j < 32; ++j) {
+      log[i + j] = b8[j];
+      progressRead.value = (i + j) / 1023;
+    }
+  }
+  const a = document.createElement('a');
+  const blob = new Blob([log], { type: 'octet/stream' });
+  const url = window.URL.createObjectURL(blob);
+  a.href = url;
+  a.download = 'iona-usb-log.bin';
+  a.click();
+}
+</script>
+
+| | |
+|-|-|
+|Read|0% <progress id="progress_read" max=1 value=0></progress> 100%|
+
+Result
+<pre id="read_error"></pre>
+

@@ -132,6 +132,7 @@ It may be ok if it does not long, but it may damage the device to connect over J
 - Ver 2.14 G29 Driving Force Race Wheel support for racing games.
 - Ver 2.15 Support 8BitDo SNK NEOGEO controller.
 - Ver 2.16 Bug fix on wrong RESET response that fixes compatibility issue with exA 1.6.0+.
+- Ver 2.17 Support DUALSHOCK3.
 
 ## Firmware Compatibility
 All controllers that conform Xbox 360, or Xbox One series protocols are expected to work fine.
@@ -154,6 +155,7 @@ Also, the internal format to hold the user settings is changed at firmware Ver 1
 |(Keyboard supporting boot mode)|1.20|Supported by NAOMI Mahjong mode|
 |REAL ARCADE PRO V3.SA|1.47||
 |Guncon3|2.01||
+|DUALSHOCK 3|2.17|Need to press PS button after the connection|
 |Horipad FPS plus for PlayStation 4|1.00|PS3 mode also works|
 |Wireless Controller（DUALSHOCK 4 - CUH-ZCT1J）|1.02||
 |Wireless Controller（DUALSHOCK 4 - CUH-ZCT2J）|1.03||
@@ -204,6 +206,7 @@ async function flash() {
     'firmwares/us_v2_14.bin',  // Ver 2.14
     'firmwares/us_v2_15.bin',  // Ver 2.15
     'firmwares/us_v2_16.bin',  // Ver 2.16
+    'firmwares/us_v2_17.bin',  // Ver 2.17
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -251,7 +254,8 @@ async function flash() {
 <option>Ver 2.13</option>
 <option>Ver 2.14</option>
 <option>Ver 2.15</option>
-<option selected>Ver 2.16</option>
+<option>Ver 2.16</option>
+<option selected>Ver 2.17</option>
 </select>
 <button onclick="flash();">Flash</button>
 

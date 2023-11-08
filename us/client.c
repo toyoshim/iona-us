@@ -6,6 +6,7 @@
 
 #include "adc.h"
 #include "ch559.h"
+#include "gpio.h"
 #include "io.h"
 #include "jvsio_client.h"
 #include "jvsio_node.h"

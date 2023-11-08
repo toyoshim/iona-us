@@ -4,6 +4,7 @@
 
 #include "ch559.h"
 #include "flash.h"
+#include "gpio.h"
 #include "hid.h"
 #include "led.h"
 #include "serial.h"

@@ -5,6 +5,7 @@
 #include "settings.h"
 
 #include "ch559.h"
+#include "gpio.h"
 #include "io.h"
 #include "timer3.h"
 

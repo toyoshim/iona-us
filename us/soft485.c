@@ -5,6 +5,7 @@
 #include "soft485.h"
 
 #include "ch559.h"
+#include "gpio.h"
 #include "io.h"
 
 static bool receiving = true;

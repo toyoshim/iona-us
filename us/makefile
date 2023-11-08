@@ -5,13 +5,13 @@ CC          = sdcc
 FLASHER     = ../CH55x_python_flasher/chflasher.py
 TARGET      = iona
 OBJS  	    = main.rel client.rel controller.rel settings.rel soft485.rel \
-  adc.rel ch559.rel hid.rel hid_dualshock3.rel hid_guncon3.rel \
-	hid_keyboard.rel hid_switch.rel hid_xbox.rel led.rel pwm1.rel serial.rel \
-	timer3.rel usb_host.rel jvsio_node.rel
+  adc.rel ch559.rel gpio.rel hid.rel hid_dualshock3.rel hid_guncon3.rel \
+	hid_keyboard.rel hid_mouse.rel hid_switch.rel hid_xbox.rel led.rel pwm1.rel \
+	serial.rel timer3.rel usb_host.rel jvsio_node.rel
 LOGGER      = logger
-LOGGER_OBJS = logger.rel ch559.rel flash.rel hid.rel hid_dualshock3.rel \
-  hid_guncon3.rel hid_keyboard.rel hid_switch.rel hid_xbox.rel led.rel \
-	serial.rel timer3.rel usb_host_debug.rel
+LOGGER_OBJS = logger.rel ch559.rel flash.rel gpio.rel hid.rel \
+  hid_dualshock3.rel hid_guncon3.rel hid_keyboard.rel hid_mouse.rel \
+	hid_switch.rel hid_xbox.rel led.rel serial.rel timer3.rel usb_host_debug.rel
 
 .PHONY: all clean program run clean build prod
 

@@ -207,6 +207,60 @@ LEDが消灯すれば成功です。
 
 <button onclick="read();">ログを読み出す</button>
 
+<style>
+.type {
+  background-color: #466;
+  padding: 4pt 8pt;
+  border-radius: 8pt;
+  margin: 32pt;
+}
+.type_error {
+  background-color: #c66;
+  color: #222;
+  padding: 4pt 8pt;
+  border-radius: 8pt;
+  margin: 32pt;
+}
+.ep {
+  display: inline;
+  background-color: #686;
+  padding: 1pt 4pt;
+  border-radius: 3pt;
+  margin-top: 10pt;
+  margin-left: 50pt;
+  border: 4pt;
+  font-family: monospace;
+}
+.pid {
+  display: inline;
+  background-color: #668;
+  padding: 1pt 4pt;
+  border-radius: 3pt;
+  margin-top: 10pt;
+  margin-left: 5pt;
+  border: 4pt;
+  font-family: monospace;
+}
+.size {
+  display: inline;
+  background-color: #868;
+  padding: 1pt 4pt;
+  border-radius: 3pt;
+  margin-top: 10pt;
+  margin-left: 5pt;
+  border: 4pt;
+  font-family: monospace;
+}
+.data {
+  background-color: #866;
+  padding: 1pt 4pt;
+  border-radius: 3pt;
+  margin: 5pt 50pt;
+  border: 4pt;
+  font-family: monospace;
+}
+</style>
+
 <script>
 async function read() {
   const progressRead = document.getElementById('progress_read');
@@ -249,3 +303,158 @@ async function read() {
 結果
 <pre id="read_error"></pre>
 
+<button onclick="analyze();">ログを解析する</button>
+<div id="dump"></div>
+
+<script>
+function createDiv(text, className) {
+  const div = document.createElement('div');
+  if (text) {
+    div.innerText = text;
+  }
+  if (className) {
+    div.className = className;
+  }
+  return div;
+}
+
+function dumpLog(text) {
+  const dump = document.getElementById('dump');
+  if (!dump.firstChild) {
+    dump.appendChild(createDiv());
+  }
+  dump.firstChild.innerText = text;
+}
+
+function dumpObject(object) {
+  const dump = document.getElementById('dump');
+  if (!dump.firstChild) {
+    dump.appendChild(createDiv());
+  }
+  dump.firstChild.appendChild(object);
+}
+
+function octetToHex(octet) {
+  const hex = '0' + octet.toString(16);
+  return hex.substring(hex.length - 2);
+}
+
+function epToString(ep) {
+  return 'EP:0x' + octetToHex(ep);
+}
+
+function pidToString(pid) {
+  switch (pid) {
+    case 0x01:
+      return 'PID:OUT';
+    case 0x02:
+      return 'PID:ACK';
+    case 0x03:
+      return 'PID:DATA0';
+    case 0x09:
+      return 'PID:IN';
+    case 0x0a:
+      return 'PID:NAK';
+    case 0x0b:
+      return 'PID:DATA1';
+    case 0x0d:
+      return 'PID:SETUP';
+    case 0x0e:
+      return 'PID:STALL';
+    default:
+      return 'PID:0x' + octetToHex(pid);
+  }
+}
+
+function sizeToString(size) {
+  return 'SIZE:0x' + octetToHex(size);
+}
+
+function dataToString(data) {
+  let string = '';
+  for (let i in data) {
+    if (i != 0) {
+      string += ', ';
+    }
+    string += '0x' + octetToHex(data[i]);
+  }
+  return string;
+}
+
+function dumpSend(ep, pid, data) {
+  const root = createDiv('HOST to DEVICE', 'type');
+  root.appendChild(document.createElement('br'));
+  root.appendChild(createDiv(epToString(ep), 'ep'));
+  root.appendChild(createDiv(pidToString(pid), 'pid'));
+  root.appendChild(createDiv(sizeToString(data.length), 'size'));
+  if (data.length) {
+    root.appendChild(createDiv(dataToString(data), 'data'));
+  }
+  dumpObject(root);
+}
+
+function dumpRecv(ep, pid, data) {
+  const root = createDiv('DEVICE to HOST', 'type');
+  root.appendChild(document.createElement('br'));
+  root.appendChild(createDiv(epToString(ep), 'ep'));
+  root.appendChild(createDiv(pidToString(pid), 'pid'));
+  root.appendChild(createDiv(sizeToString(data.length), 'size'));
+  if (data.length) {
+    root.appendChild(createDiv(dataToString(data), 'data'));
+  }
+  dumpObject(root);
+}
+
+function dumpStall() {
+  dumpObject(createDiv('STALL', 'type_error'));
+}
+
+function dumpNak() {
+  dumpObject(createDiv('NAK', 'type_error'));
+}
+
+async function analyze() {
+  const handle = (await window.showOpenFilePicker({
+    types: [
+      {
+        description: 'IONA USB Protocol Dump File',
+      }
+    ]
+  }))[0];
+  const dump = document.getElementById('dump');
+  if (dump.firstChild) {
+    dump.removeChild(dump.firstChild);
+  }
+  const file = await handle.getFile();
+  const data = new Uint8Array(await file.arrayBuffer());
+  if (data[0] != 'I'.charCodeAt(0) ||
+      data[1] != 'O'.charCodeAt(0) ||
+      data[2] != 'N'.charCodeAt(0) ||
+      data[3] != 'L'.charCodeAt(0)) {
+    dumpLog('IONAのログファイルではありません。');
+    return;
+  }
+  for (let i = 4; i < data.length; ++i) {
+    switch (data[i]) {
+      case 1:
+        dumpSend(data[i + 1], data[i + 2],
+            data.subarray(i + 4, i + 4 + data[i + 3]));
+        i += data[i + 3] + 3;
+        break;
+      case 2:
+        dumpRecv(data[i + 1], data[i + 2],
+            data.subarray(i + 4, i + 4 + data[i + 3]));
+        i += data[i + 3] + 3;
+        break;
+      case 3:
+        dumpStall();
+        break;
+      case 4:
+        dumpNak();
+        break;
+      default:
+        return;
+    }
+  }
+}
+</script>

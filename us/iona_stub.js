@@ -59,6 +59,11 @@ export class IONA {
     this.exports.iona_usb_host_check_hid_report_desc(this.communication_buffer_address);
   }
 
+  checkHidReport(buffer) {
+    this.storeData(buffer);
+    this.exports.iona_usb_host_check_hid_report(this.communication_buffer_address, buffer.byteLength);
+  }
+
   createPseudoDeviceDescriptor(pid, vid) {
     const desc = new Uint8Array(18);
     desc[0] = 0x12;  // bLength

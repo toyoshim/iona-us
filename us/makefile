@@ -18,8 +18,8 @@ LOGGER      = logger
 LOGGER_OBJS = logger.rel ch559.rel flash.rel gpio.rel hid.rel \
   hid_dualshock3.rel hid_guncon3.rel hid_keyboard.rel hid_mouse.rel \
 	hid_switch.rel hid_xbox.rel led.rel serial.rel timer3.rel usb_host_debug.rel
-WASM_OBJS		= wasm.o hid.o hid_dualshock3.o hid_guncon3.o hid_keyboard.o \
-	hid_mouse.o hid_switch.o hid_xbox.o serial.o
+WASM_OBJS		= wasm.o controller.o hid.o hid_dualshock3.o hid_guncon3.o \
+	hid_keyboard.o hid_mouse.o hid_switch.o hid_xbox.o serial.o
 
 .PHONY: all clean program run clean build prod wasm serv
 

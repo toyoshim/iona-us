@@ -170,6 +170,11 @@ EMSCRIPTEN_KEEPALIVE void iona_init(void) {
   for (int i = 0; i < 12; ++i) {
     settings.rapid_fire[0][i] = 0;
   }
+  settings.sequence[0].on = true;
+  settings.sequence[0].invert = false;
+  settings.sequence[0].pattern = 0xff;
+  settings.sequence[0].bit = 1;
+  settings.sequence[0].mask = 0xff;
 
   hid.report = controller_update;
   hid.detected = detected;

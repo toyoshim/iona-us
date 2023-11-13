@@ -3,6 +3,7 @@
 // in the LICENSE file.
 
 export class HID {
+  type = 'hid';
   iona = null;
   device = null;
   report = null;
@@ -16,7 +17,7 @@ export class HID {
   }
 
   getDeviceDescriptor() {
-    return this.iona.createPseudoConfigurationDescriptor(
+    return this.iona.createPseudoDeviceDescriptor(
       this.device.productId, this.device.vendorId);
   }
 
@@ -29,7 +30,7 @@ export class HID {
     return (new Uint8Array(this.report)).buffer;
   }
 
-  async listen(callback) {
+  listen(callback) {
     this.device.addEventListener('inputreport', e => {
       callback(e.data.buffer);
     });

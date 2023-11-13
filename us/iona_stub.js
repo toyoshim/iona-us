@@ -7,6 +7,8 @@ export class IONA {
     env: {
       emscripten_memcpy_js: () => console.log('emscripten_memcpy_js'),
       timer3_tick_raw: null,
+      iona_usb_out: null,
+      iona_usb_in: null,
     },
     wasi_snapshot_preview1: {
       fd_write: null,
@@ -18,9 +20,12 @@ export class IONA {
   communication_buffer_address = 0;
   wasm = null;
   exports = null;
+  intf = {};
 
   constructor() {
     this.imports.env.timer3_tick_raw = this.timer3_tick_raw.bind(this);
+    this.imports.env.iona_usb_out = this.usb_out.bind(this);
+    this.imports.env.iona_usb_in = this.usb_in.bind(this);
     this.imports.wasi_snapshot_preview1.fd_write = this.fd_write.bind(this);
   }
 
@@ -37,6 +42,10 @@ export class IONA {
     }).bind(this));
   }
 
+  setInterface(intf) {
+    this.intf = intf;
+  }
+
   storeData(buffer) {
     const u8 = new Uint8Array(buffer);
     for (let i = 0; i < u8.byteLength; ++i) {
@@ -44,14 +53,25 @@ export class IONA {
     }
   }
 
+  loadData(address, size) {
+    const u8 = new Uint8Array(size);
+    for (let i = 0; i < size; ++i) {
+      u8[i] = this.u8[address + i];
+    }
+    return u8.buffer;
+  }
+
   checkDeviceDescriptor(buffer) {
     this.storeData(buffer);
     this.exports.iona_usb_host_check_device_desc(this.communication_buffer_address);
   }
 
-  checkConfigurationDescriptor(buffer) {
+  async checkConfigurationDescriptor(buffer) {
     this.storeData(buffer);
-    this.exports.iona_usb_host_check_configuration_desc(this.communication_buffer_address);
+    const intf = this.exports.iona_usb_host_check_configuration_desc(this.communication_buffer_address);
+    if (this.intf.select) {
+      await this.intf.select(intf);
+    }
   }
 
   checkHidReportDescriptor(buffer) {
@@ -62,6 +82,17 @@ export class IONA {
   checkHidReport(buffer) {
     this.storeData(buffer);
     this.exports.iona_usb_host_check_hid_report(this.communication_buffer_address, buffer.byteLength);
+  }
+
+  checkStatus() {
+    return {
+      ready: this.exports.iona_is_device_ready(),
+      type: this.exports.iona_get_device_type(),
+    };
+  }
+
+  poll() {
+    this.exports.iona_poll();
   }
 
   createPseudoDeviceDescriptor(pid, vid) {
@@ -144,5 +175,26 @@ export class IONA {
     this.u32[pnum >> 2] = n;
     console.log(chars.join(''));
     return 0;
+  }
+
+  usb_out(ep, data, size) {
+    if (!this.intf.out) {
+      return false;
+    }
+    this.intf.out(ep, this.loadData(data, size)).then(() => {
+      this.exports.iona_transaction_complete(0);
+    });
+    return true;
+  }
+
+  usb_in(ep, size) {
+    if (!this.intf.in) {
+      return false;
+    }
+    this.intf.in(1, size).then(buffer => {
+      this.storeData(buffer);
+      this.exports.iona_transaction_complete(buffer.byteLength);
+    });
+    return true;
   }
 }

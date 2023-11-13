@@ -95,6 +95,26 @@ export class IONA {
     this.exports.iona_poll();
   }
 
+  state() {
+    const digitals = this.exports.iona_get_digital_states();
+    const buttons = [];
+    for (let bit = 0x0200; bit != 0; bit >>= 1) {
+      buttons.push((digitals & bit) != 0);
+    }
+    const analogs = [];
+    for (let i = 0; i < 6; ++i) {
+      analogs.push(this.exports.iona_get_analog_state(i));
+    }
+    return {
+      up: (digitals & 0x2000) != 0,
+      down: (digitals & 0x1000) != 0,
+      left: (digitals & 0x0800) != 0,
+      right: (digitals & 0x0400) != 0,
+      buttons: buttons,
+      analogs: analogs,
+    };
+  }
+
   createPseudoDeviceDescriptor(pid, vid) {
     const desc = new Uint8Array(18);
     desc[0] = 0x12;  // bLength

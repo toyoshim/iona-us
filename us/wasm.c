@@ -114,7 +114,11 @@ iona_usb_host_check_configuration_desc(const uint8_t* desc) {
     error();
     return 0;
   }
-  return usb_host->check_configuration_desc(0, desc);
+  uint8_t intf = usb_host->check_configuration_desc(0, desc);
+  if (intf == 255) {
+    intf = 0;
+  }
+  return intf;
 }
 
 EMSCRIPTEN_KEEPALIVE void iona_usb_host_check_hid_report_desc(

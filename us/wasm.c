@@ -156,6 +156,14 @@ EMSCRIPTEN_KEEPALIVE uint8_t iona_get_device_type(void) {
   return hid_get_info(0)->type;
 }
 
+EMSCRIPTEN_KEEPALIVE uint16_t iona_get_digital_states(void) {
+  return (controller_data(0, 0, 0) << 8) | controller_data(0, 1, 0);
+}
+
+EMSCRIPTEN_KEEPALIVE uint16_t iona_get_analog_state(uint8_t index) {
+  return controller_analog(index);
+}
+
 EMSCRIPTEN_KEEPALIVE void iona_init(void) {
   serial_init();
 

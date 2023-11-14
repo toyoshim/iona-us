@@ -85,34 +85,36 @@ export class IONA {
   }
 
   checkStatus() {
-    return {
+    const result = {
       ready: this.exports.iona_is_device_ready(),
       type: this.exports.iona_get_device_type(),
     };
+    if (result.ready) {
+      const digitals = this.exports.iona_get_digital_states();
+      const buttons = [];
+      for (let bit = 0x0200; bit != 2; bit >>= 1) {
+        buttons.push((digitals & bit) != 0);
+      }
+      buttons.push((digitals & 0x4000) != 0);
+      buttons.push((digitals & 0x8000) != 0);
+      buttons.push((digitals & 0x0002) != 0);
+      buttons.push((digitals & 0x0001) != 0);
+      const analogs = [];
+      for (let i = 0; i < 6; ++i) {
+        analogs.push(this.exports.iona_get_analog_state(i));
+      }
+      result.up = (digitals & 0x2000) != 0;
+      result.down = (digitals & 0x1000) != 0;
+      result.left = (digitals & 0x0800) != 0;
+      result.right = (digitals & 0x0400) != 0;
+      result.buttons = buttons;
+      result.analogs = analogs;
+    }
+    return result;
   }
 
   poll() {
     this.exports.iona_poll();
-  }
-
-  state() {
-    const digitals = this.exports.iona_get_digital_states();
-    const buttons = [];
-    for (let bit = 0x0200; bit != 0; bit >>= 1) {
-      buttons.push((digitals & bit) != 0);
-    }
-    const analogs = [];
-    for (let i = 0; i < 6; ++i) {
-      analogs.push(this.exports.iona_get_analog_state(i));
-    }
-    return {
-      up: (digitals & 0x2000) != 0,
-      down: (digitals & 0x1000) != 0,
-      left: (digitals & 0x0800) != 0,
-      right: (digitals & 0x0400) != 0,
-      buttons: buttons,
-      analogs: analogs,
-    };
   }
 
   createPseudoDeviceDescriptor(pid, vid) {

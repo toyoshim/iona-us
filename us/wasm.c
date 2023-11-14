@@ -161,7 +161,7 @@ EMSCRIPTEN_KEEPALIVE uint8_t iona_get_device_type(void) {
 }
 
 EMSCRIPTEN_KEEPALIVE uint16_t iona_get_digital_states(void) {
-  return (controller_data(0, 0, 0) << 8) | controller_data(0, 1, 0);
+  return (controller_data(1, 0, 0) << 8) | controller_data(1, 1, 0);
 }
 
 EMSCRIPTEN_KEEPALIVE uint16_t iona_get_analog_state(uint8_t index) {
@@ -176,8 +176,16 @@ EMSCRIPTEN_KEEPALIVE void iona_init(void) {
     settings.analog_index[0][i] = i;
   }
   for (int i = 0; i < 16; ++i) {
-    settings.digital_map[0][i].data[0] = 0x20 >> i;
-    settings.digital_map[0][i].data[1] = 0x2000 >> i;
+    int shift = i + 2;
+    if (i == 12) {
+      shift = 1;
+    } else if (i == 13) {
+      shift = 0;
+    } else if (i >= 14) {
+      shift = i;
+    }
+    settings.digital_map[0][i].data[2] = 0x80 >> shift;
+    settings.digital_map[0][i].data[3] = 0x8000 >> shift;
   }
   for (int i = 0; i < 12; ++i) {
     settings.rapid_fire[0][i] = 0;

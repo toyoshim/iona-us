@@ -381,6 +381,74 @@ function dataToString(data) {
   return string;
 }
 
+function decodeSetup(data) {
+  const setup = {
+    bmRequestType: data[0],
+    bRequest: data[1],
+    wValue: data[2] | (data[3] << 8),
+    wIndex: data[4] | (data[5] << 8),
+    wLength: data[6] | (data[7] << 8),
+  };
+  setup.direction = (data[0] & 0x80) ? 'Device to Host' : 'Host to Device';
+  const type = [
+    'Standard', 'Class', 'Vendor', 'Reserved',
+  ];
+  setup.type = type[(data[0] & 0x60) >> 5];
+  const receipt = [
+    'Device', 'Interface', 'Endpoint', 'Other'
+  ];
+  const receiptId = data[0] & 0x1f;
+  setup.receipt = (receiptId < 4) ? receipt[receiptId] : 'Reserved';
+  const request = [
+    'Get Status', 'Clear Feature', '0x02 unknown', 'Set Feature',
+    '0x04 unknown', 'Set Address', 'Get Descriptor', 'Set Descriptor',
+    'Get Configuration', 'Set Configuration', 'Get Interface', 'Set Interface',
+    'Sync Frame',
+  ];
+  if (setup.receipt == 'Device') {
+    setup.request =
+       (setup.bRequest < 0x0d) ? request[setup.bRequest] : 'Unknown';
+  }
+  if (setup.request == 'Get Descriptor') {
+    switch (data[3]) {
+      case 0x01:
+        setup.descriptor = 'Device Descriptor';
+        break;
+      case 0x02:
+        setup.descriptor = 'Configuration Descriptor';
+        break;
+      case 0x03:
+        setup.descriptor = 'String Descriptor';
+        break;
+      case 0x04:
+        setup.descriptor = 'Interface Descriptor';
+        break;
+      case 0x05:
+        setup.descriptor = 'Endpoint Descriptor';
+        break;
+      case 0x06:
+        setup.descriptor = 'Device Qualifier Descriptor';
+        break;
+      case 0x0b:
+        setup.descriptor = 'Interface Association Descriptor';
+        break;
+      case 0x21:
+        setup.descriptor = 'HID Descriptor';
+        break;
+      case 0x22:
+        setup.descriptor = 'HID Report Descriptor';
+        break;
+      case 0x23:
+        setup.descriptor = 'HUB Descriptor';
+        break;
+      default:
+        setup.descriptor = 'Unknown Descriptor';
+        break;
+    }
+  }
+  return setup;
+}
+
 function dumpSend(ep, pid, data) {
   const root = createDiv('HOST to DEVICE', 'type');
   root.appendChild(document.createElement('br'));
@@ -389,6 +457,9 @@ function dumpSend(ep, pid, data) {
   root.appendChild(createDiv(sizeToString(data.length), 'size'));
   if (data.length) {
     root.appendChild(createDiv(dataToString(data), 'data'));
+    if (pid == 0x0d) {
+      console.log(decodeSetup(data));
+    }
   }
   dumpObject(root);
 }

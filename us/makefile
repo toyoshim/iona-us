@@ -8,7 +8,6 @@ WLFLAGS			=	\
 	-s NO_EXIT_RUNTIME=1 \
 	-s WARN_ON_UNDEFINED_SYMBOLS=0
 CC          = sdcc
-FLASHER     = ../CH55x_python_flasher/chflasher.py
 TARGET      = iona
 OBJS  	    = main.rel client.rel controller.rel settings.rel soft485.rel \
   adc.rel ch559.rel gpio.rel hid.rel hid_dualshock3.rel hid_guncon3.rel \
@@ -26,18 +25,16 @@ WASM_OBJS		= wasm.o controller.o hid.o hid_dualshock3.o hid_guncon3.o \
 all: build $(TARGET).bin $(LOGGER).bin
 
 program: $(TARGET).bin
-	$(FLASHER) -w -f $(TARGET).bin
+	ch559flasher -w $(TARGET).bin
 
 run: program
-	$(FLASHER) -s
+	ch559flasher -b
 
 prod:
-	ch559flasher -W ../docs/firmwares/us_v2_data1.bin
-	$(FLASHER) -w -f ../docs/firmwares/us_v2_17.bin
-	$(FLASHER) -s
+	ch559flasher -W ../docs/firmwares/us_v2_data1.bin -w ../docs/firmwares/us_v2_17.bin -b
 
 logger: $(LOGGER).bin
-	$(FLASHER) -w -f $(LOGGER).bin
+	ch559flasher -w $(LOGGER).bin
 
 wasm: iona.html
 

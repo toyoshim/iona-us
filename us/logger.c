@@ -62,8 +62,8 @@ void usb_host_log_nak(void) {
   log_putc(4);
 }
 
-static void update(const uint8_t hub,
-                   const struct hub_info* info,
+static void update(uint8_t hub,
+                   const struct hid_info* info,
                    const uint8_t* data,
                    uint16_t size) {
   hub;

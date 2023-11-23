@@ -4,6 +4,3 @@
 [submodule "chlib"]
 	path = chlib
 	url = https://github.com/toyoshim/chlib.git
-[submodule "CH55x_python_flasher"]
-	path = CH55x_python_flasher
-	url = https://github.com/toyoshim/CH55x_python_flasher.git

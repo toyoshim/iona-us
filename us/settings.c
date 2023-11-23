@@ -85,7 +85,7 @@ static void store_opt(void) {
 
 static void apply(void) {
   uint16_t offset = 10;
-  for (uint8_t i = 0; i < current_setting; ++i) {
+  for (uint8_t id = 0; id < current_setting; ++id) {
     offset += 169;
   }
   const uint8_t core0 = flash[offset++];

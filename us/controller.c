@@ -40,7 +40,7 @@ static bool button_check(uint16_t index, const uint8_t* data) {
   return data[byte] & (1 << bit);
 }
 
-uint16_t analog_check(const struct hub_info* info,
+uint16_t analog_check(const struct hid_info* info,
                       const uint8_t* data,
                       uint8_t index) {
   if (info->axis[index] == 0xffff) {
@@ -165,8 +165,8 @@ void controller_reset(void) {
   }
 }
 
-void controller_update(const uint8_t hub_index,
-                       const struct hub_info* info,
+void controller_update(uint8_t hub_index,
+                       const struct hid_info* info,
                        const uint8_t* data,
                        uint16_t size) {
 #ifdef _DBG_HUB1_ONLY

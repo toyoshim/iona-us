@@ -5,9 +5,9 @@
 #include "ch559.h"
 #include "flash.h"
 #include "gpio.h"
-#include "hid.h"
 #include "led.h"
 #include "serial.h"
+#include "usb/hid/hid.h"
 
 #define LOG_SIZE 1024
 uint8_t log[LOG_SIZE];
@@ -84,7 +84,7 @@ void main(void) {
   initialize();
 
   led_init(1, 5, LOW);
-  flash_init(*(uint32_t*)"IONL");
+  flash_init(*(uint32_t*)"IONL", true);
 
   log_init();
 

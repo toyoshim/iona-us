@@ -51,7 +51,13 @@ build:
 build/%.rel: %.c ../jvsio/*.h ../chlib/src/*.h *.h
 	$(CC) -c $(CFLAGS) -I../ -o $@ $<
 
-build/%.rel: ../chlib/src/%.c ../chlib/src/*.h
+build/%.rel: ../chlib/src/%.c ../chlib/src/*.h ../chlib/src/usb/*.h ../chlib/src/usb/hid/*.h
+	$(CC) -c $(CFLAGS) -o $@ $<
+
+build/%.rel: ../chlib/src/usb/%.c ../chlib/src/*.h ../chlib/src/usb/*.h ../chlib/src/usb/hid/*.h
+	$(CC) -c $(CFLAGS) -o $@ $<
+
+build/%.rel: ../chlib/src/usb/hid/%.c ../chlib/src/*.h ../chlib/src/usb/*.h ../chlib/src/usb/hid/*.h
 	$(CC) -c $(CFLAGS) -o $@ $<
 
 build/%.o: %.c ../jvsio/*.h ../chlib/src/*.h *.h
@@ -60,7 +66,7 @@ build/%.o: %.c ../jvsio/*.h ../chlib/src/*.h *.h
 build/%.o: ../chlib/src/%.c ../chlib/src/*.h
 	emcc -c $(WCFLAGS) -o $@ $<
 
-build/usb_host_debug.rel: ../chlib/src/usb_host.c ../chlib/src/*.h
+build/usb_host_debug.rel: ../chlib/src/usb/usb_host.c ../chlib/src/*.h ../chlib/src/usb/*.h ../chlib/src/usb/hid/*.h
 	$(CC) -c $(CFLAGS) -D_USB_HOST_DBG_LOG -o $@ $<
 
 build/jvsio_node.rel: ../jvsio/jvsio_node.c ../jvsio/*.h *.h

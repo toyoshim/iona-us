@@ -3,12 +3,12 @@
 // in the LICENSE file.
 
 #include "ch559.h"
-#include "hid.h"
 #include "jvsio_client.h"
 #include "jvsio_common.h"
 #include "jvsio_node.h"
 #include "led.h"
 #include "serial.h"
+#include "usb/hid/hid.h"
 
 #include "client.h"
 #include "controller.h"

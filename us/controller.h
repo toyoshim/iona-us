@@ -8,7 +8,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "hid.h"
+#include "usb/hid/hid.h"
 
 void controller_reset(void);
 void controller_update(uint8_t hub,

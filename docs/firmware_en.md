@@ -133,6 +133,7 @@ It may be ok if it does not long, but it may damage the device to connect over J
 - Ver 2.15 Support 8BitDo SNK NEOGEO controller.
 - Ver 2.16 Bug fix on wrong RESET response that fixes compatibility issue with exA 1.6.0+.
 - Ver 2.17 Support DUALSHOCK3.
+- Ver 2.18 Support HORI FLIGHTSTICK for PlayStation 4, and adjust bus RESET.
 
 ## Firmware Compatibility
 All controllers that conform Xbox 360, or Xbox One series protocols are expected to work fine.
@@ -160,6 +161,7 @@ Also, the internal format to hold the user settings is changed at firmware Ver 1
 |Wireless Controller（DUALSHOCK 4 - CUH-ZCT1J）|1.02||
 |Wireless Controller（DUALSHOCK 4 - CUH-ZCT2J）|1.03||
 |G29 Driving Force Race Wheel|2.14|Both PS4/PS4 modes|
+|HORI FLIGHTSTICK for PlayStation4|2.18||
 |Horipad mini for Nintendo Switch|1.00||
 |Nintendo Switch Pro Controller|1.04||
 |Nintendo Switch Joy-Con Charger Glip|1.04||
@@ -207,6 +209,7 @@ async function flash() {
     'firmwares/us_v2_15.bin',  // Ver 2.15
     'firmwares/us_v2_16.bin',  // Ver 2.16
     'firmwares/us_v2_17.bin',  // Ver 2.17
+    'firmwares/us_v2_18.bin',  // Ver 2.18
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -255,7 +258,8 @@ async function flash() {
 <option>Ver 2.14</option>
 <option>Ver 2.15</option>
 <option>Ver 2.16</option>
-<option selected>Ver 2.17</option>
+<option>Ver 2.17</option>
+<option selected>Ver 2.18</option>
 </select>
 <button onclick="flash();">Flash</button>
 

@@ -132,6 +132,7 @@ JVS I/Oとして利用する前、特にジャンパーピンを実装した人�
 - Ver 2.15 8BitDo SNK NEOGEOコントローラをサポート
 - Ver 2.16 RESET応答のバグ修正（exA 1.6.0以降で動作しなかった問題の解決）
 - Ver 2.17 DUALSHOCK3をサポート
+- Ver 2.18 HORI FLIGHTSTICK for PlayStation 4をサポート、バスリセットの調整
 
 ## ファームウェアの互換性
 Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基本的に安定して動くはずです。
@@ -159,6 +160,7 @@ Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基�
 |ワイヤレスコントローラー（DUALSHOCK 4 - CUH-ZCT1J）|1.02||
 |ワイヤレスコントローラー（DUALSHOCK 4 - CUH-ZCT2J）|1.03||
 |G29 Driving Force Race Wheel|2.14|PS4/PS4両モード対応|
+|HORI FLIGHTSTICK for PlayStation4|2.18||
 |ホリパッドミニ for Nintendo Switch|1.00||
 |Nintendo Switch Proコントローラー|1.04||
 |Nintendo Switch Joy-Con 充電グリップ|1.04||
@@ -206,6 +208,7 @@ async function flash() {
     'firmwares/us_v2_15.bin',  // Ver 2.15
     'firmwares/us_v2_16.bin',  // Ver 2.16
     'firmwares/us_v2_17.bin',  // Ver 2.17
+    'firmwares/us_v2_18.bin',  // Ver 2.18
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -254,7 +257,8 @@ async function flash() {
 <option>Ver 2.14</option>
 <option>Ver 2.15</option>
 <option>Ver 2.16</option>
-<option selected>Ver 2.17</option>
+<option>Ver 2.17</option>
+<option selected>Ver 2.18</option>
 </select>
 <button onclick="flash();">書き込み</button>
 

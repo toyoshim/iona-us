@@ -154,7 +154,8 @@ Also, the internal format to hold the user settings is changed at firmware Ver 1
 |Brook Universal Fighting Board|1.47|Work with the default PS4 mode|
 |Brook PS4+ Fighting Board|1.47|Work with the default PS4 mode|
 |(Keyboard supporting boot mode)|1.20|Supported by NAOMI Mahjong mode|
-|REAL ARCADE PRO V3.SA|1.47||
+|REAL ARCADE PRO V3.SA|1.47|Later model (v1.2PCB) works only on 2.19+|
+|REAL ARCADE PRO.H HAYABUSA|2.19||
 |Guncon3|2.01||
 |DUALSHOCK 3|2.17|Need to press PS button after the connection|
 |Horipad FPS plus for PlayStation 4|1.00|PS3 mode also works|
@@ -210,6 +211,7 @@ async function flash() {
     'firmwares/us_v2_16.bin',  // Ver 2.16
     'firmwares/us_v2_17.bin',  // Ver 2.17
     'firmwares/us_v2_18.bin',  // Ver 2.18
+    'firmwares/us_v2_19.bin',  // Ver 2.19
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -259,7 +261,8 @@ async function flash() {
 <option>Ver 2.15</option>
 <option>Ver 2.16</option>
 <option>Ver 2.17</option>
-<option selected>Ver 2.18</option>
+<option>Ver 2.18</option>
+<option selected>Ver 2.19</option>
 </select>
 <button onclick="flash();">Flash</button>
 

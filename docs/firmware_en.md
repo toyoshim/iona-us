@@ -9,7 +9,7 @@ permalink: /firmware_en
 You can update your device's firmware to support more devices or fix issues here.
 But as this page uses WebUSB API, you need to visit by Google Chrome or Chromium based browser that enables WebUSB API support.
 
-## Preparation
+## Preparation (for older v1/v2 boards)
 This section is for v1/v2 boards. V3 board doesn't have through-holes. You need to use P1 port with Type-A to A special cable.
 
 There are 4 through-hole on the IONA board as you can see in the white circle below.
@@ -137,6 +137,7 @@ It may be ok if it does not long, but it may damage the device to connect over J
 - Ver 2.19 Support Real Arcade Pro.N HAYABUSA, V3.SA later model, and adjust bus RESET again.
 
 ## Firmware Compatibility
+For v3 based PCBs, only v1.48 and v2.11+ work. For v1/v2 based PCBs, all firmwares work.
 All controllers that conform Xbox 360, or Xbox One series protocols are expected to work fine.
 Other USB HID devices support might get to be broken unexpectedly on supporting other new devices.
 We know HID descriptors on following devices, and have some automated unit tests. So, it's expected to keep better compatibility. We can add more automated tests when you report device information.
@@ -174,13 +175,14 @@ Also, the internal format to hold the user settings is changed at firmware Ver 1
 |Xin-Mo Controller (*1)|1.20||
 
 (*1) Controller used by the Pasocade full HD table cab. PS3 dock model
+
 (*2) Raspberry Pi Pico based open source firmware; https://gp2040.info/
 
 ---
 ## Firmware Update
 This is the real UI to update firmware. Flash button will actually flash the chosen firmware.
 
-Now 2.0x series are experimental versions, and requires up-to-date settings to be soted at the [setting](setting_en) page.
+When you update your firmware from v1 series to v2 series, you need to update the setting from the [setting](setting_en) page.
 The latest 1.4x series, selected by default, is expected to be the latest stable version.
 
 <script src="https://toyoshim.github.io/CH559Flasher.js/CH559Flasher.js"></script>

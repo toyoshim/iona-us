@@ -133,6 +133,7 @@ JVS I/Oとして利用する前、特にジャンパーピンを実装した人�
 - Ver 2.16 RESET応答のバグ修正（exA 1.6.0以降で動作しなかった問題の解決）
 - Ver 2.17 DUALSHOCK3をサポート
 - Ver 2.18 HORI FLIGHTSTICK for PlayStation 4をサポート、バスリセットの調整
+- Ver 2.19 Real Arcade Pro.N HAYABUSAと後期V3.SAをサポート、バスリセット再調整
 
 ## ファームウェアの互換性
 Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基本的に安定して動くはずです。
@@ -153,7 +154,8 @@ Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基�
 |Brook Universal Fighting Board|1.47|PS4モードで動作|
 |Brook PS4+ Fighting Board|1.47|PS4モードで動作|
 |(Bootモード対応キーボード)|1.20|NAOMI麻雀モードに対応|
-|REAL ARCADE PRO V3.SA|1.47||
+|REAL ARCADE PRO V3.SA|1.47|後期モデル（v1.2基板）は2.19から動作|
+|REAL ARCADE PRO.N HAYABUSA|2.19||
 |ガンコン3|2.01||
 |DUALSHOCK 3|2.17|接続後にPSボタンを押す必要あり|
 |ホリパッドFPSプラス for PlayStation 4|1.00|PS3モードも対応|

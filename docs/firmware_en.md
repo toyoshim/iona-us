@@ -134,6 +134,7 @@ It may be ok if it does not long, but it may damage the device to connect over J
 - Ver 2.16 Bug fix on wrong RESET response that fixes compatibility issue with exA 1.6.0+.
 - Ver 2.17 Support DUALSHOCK3.
 - Ver 2.18 Support HORI FLIGHTSTICK for PlayStation 4, and adjust bus RESET.
+- Ver 2.19 Support Real Arcade Pro.N HAYABUSA, V3.SA later model, and adjust bus RESET again.
 
 ## Firmware Compatibility
 All controllers that conform Xbox 360, or Xbox One series protocols are expected to work fine.

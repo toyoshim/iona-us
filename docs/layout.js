@@ -143,6 +143,8 @@ function applyData(data) {
         check('p' + p + buttonMap[i] + '_p' + targetP + '6', d2 & 0x10);
         check('p' + p + buttonMap[i] + '_p' + targetP + '7', d2 & 0x08);
         check('p' + p + buttonMap[i] + '_p' + targetP + '8', d2 & 0x04);
+        check('p' + p + buttonMap[i] + '_p' + targetP + '9', d2 & 0x02);
+        check('p' + p + buttonMap[i] + '_p' + targetP + 'a', d2 & 0x01);
       }
     }
   }
@@ -331,6 +333,8 @@ function storeTo(data) {
         d2 |= isChecked('p' + p + buttonMap[i] + '_p' + targetP + '6') ? 0x10 : 0;
         d2 |= isChecked('p' + p + buttonMap[i] + '_p' + targetP + '7') ? 0x08 : 0;
         d2 |= isChecked('p' + p + buttonMap[i] + '_p' + targetP + '8') ? 0x04 : 0;
+        d2 |= isChecked('p' + p + buttonMap[i] + '_p' + targetP + '9') ? 0x02 : 0;
+        d2 |= isChecked('p' + p + buttonMap[i] + '_p' + targetP + 'a') ? 0x01 : 0;
         data[offset++] = d1;
         data[offset++] = d2;
       }

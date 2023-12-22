@@ -10,7 +10,11 @@ You can update your device's firmware to support more devices or fix issues here
 But as this page uses WebUSB API, you need to visit by Google Chrome or Chromium based browser that enables WebUSB API support.
 
 ## Preparation (for older v1/v2 boards)
-This section is for v1/v2 boards. V3 board doesn't have through-holes. You need to use P1 port with Type-A to A special cable.
+The latest v3 board doesn't support this hack and in any versions of PCBs,
+recommended easiest way is to use a non-standard USB Type-A to Type-A cable
+and connect P1 USB port to your PC.
+If you still want to connect your v1 or v2 board to your PC with a standard USB
+cable, you will need following additional works to make it work.
 
 There are 4 through-hole on the IONA board as you can see in the white circle below.
 Before supplying power, you need to shorten the yellow hole pair and the red hole pair respectively.
@@ -36,18 +40,23 @@ As it needs soldering, it isn't a good way for end users.
 ![Tweezers](fw_pinset.jpg)
 ![Jumpper](fw_jump.jpg)
 
+In any case, you need to restore the original state when you don't connect it to your PC.
+
 ## Connect to PC
-First, you need to keep the SERVICE button on the board pressed, then start supplying the power.
+If you chosen the v1/v2 board mods above, you need to keep the SERVICE button on the board pressed, then start supplying the power.
 If the SERVICE button is correctly kept pressed until it boots, LED will not be on.
 This is the signal that IONA boots to the firmware update mode.
 If LED blinks, IONA runs in a normal mode, and you need to power off, and retry.
 
-Alternatively, you can use a special USB cable from Type A to A.
-You can connect your PC and 1P connector by such cable with pressing SERVICE to enter the firmware update mode.
-You should not connect power supply and don't need jumpers.
-
 Once it boots to the firmware update mode, connect IONA to your PC over USB via JVS port.
 You should not connect a gamepad to the P1 USB port. It conflicts with the USB connection to the PC host, and makes communication unstable.
+
+If you chosen the recommended approach, using the special Type-A to A cable, you don't need a dedicated power supply.
+You can connect your PC and 1P connector by such cable with pressing SERVICE to enter the firmware update mode.
+
+Android Chrome also works. You will need an Android device that supports OTG.
+You will need an USB OTG adopter and also Type A to A cable again.
+General C to A connector won't work as both ends will work as an USB device.
 
 ## WinUSB Settings (only for the first time on Windows)
 When you connect IONA to your PC first time, it appears as an unknown device in the device manager.

@@ -135,6 +135,7 @@ It may be ok if it does not long, but it may damage the device to connect over J
 - Ver 2.17 Support DUALSHOCK3.
 - Ver 2.18 Support HORI FLIGHTSTICK for PlayStation 4, and adjust bus RESET.
 - Ver 2.19 Support Real Arcade Pro.N HAYABUSA, V3.SA later model, and adjust bus RESET again.
+- Ver 2.20 Support GT Force Pro, and introduce experimental shift gear emulation.
 
 ## Firmware Compatibility
 For v3 based PCBs, only v1.48 and v2.11+ work. For v1/v2 based PCBs, all firmwares work.
@@ -163,7 +164,8 @@ Also, the internal format to hold the user settings is changed at firmware Ver 1
 |Horipad FPS plus for PlayStation 4|1.00|PS3 mode also works|
 |Wireless Controller（DUALSHOCK 4 - CUH-ZCT1J）|1.02||
 |Wireless Controller（DUALSHOCK 4 - CUH-ZCT2J）|1.03||
-|G29 Driving Force Race Wheel|2.14|Both PS4/PS4 modes|
+|GT Force Pro|2.20||
+|G29 Driving Force Race Wheel|2.14|Both PS3/PS4 modes|
 |HORI FLIGHTSTICK for PlayStation4|2.18||
 |Horipad mini for Nintendo Switch|1.00||
 |Nintendo Switch Pro Controller|1.04||
@@ -215,6 +217,7 @@ async function flash() {
     'firmwares/us_v2_17.bin',  // Ver 2.17
     'firmwares/us_v2_18.bin',  // Ver 2.18
     'firmwares/us_v2_19.bin',  // Ver 2.19
+    'firmwares/us_v2_20.bin',  // Ver 2.20
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -265,7 +268,8 @@ async function flash() {
 <option>Ver 2.16</option>
 <option>Ver 2.17</option>
 <option>Ver 2.18</option>
-<option selected>Ver 2.19</option>
+<option>Ver 2.19</option>
+<option selected>Ver 2.20</option>
 </select>
 <button onclick="flash();">Flash</button>
 

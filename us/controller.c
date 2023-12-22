@@ -24,6 +24,8 @@ static uint8_t digital_map[2][4];
 static uint16_t analog[8];
 static uint16_t rotary[2];
 static uint16_t screen[4];
+static uint8_t gear_sequence[2];
+static uint8_t gear[2];
 
 enum {
   MODE_NORMAL,
@@ -153,6 +155,8 @@ static void update_digital_map(uint8_t* dst, uint8_t* src, bool on) {
 void controller_reset(void) {
   for (uint8_t p = 0; p < 2; ++p) {
     controller_reset_digital_map(p);
+    gear_sequence[p] = 0;
+    gear[p] = 0;
   }
   for (uint8_t i = 0; i < 8; ++i) {
     analog[i] = 0;
@@ -331,6 +335,49 @@ void controller_update(uint8_t hub_index,
                        (settings->sequence[rapid_fire].on &&
                         button_check(info->button[i], data)) ^
                            settings->sequence[rapid_fire].invert);
+  }
+  if (settings->gear_sequence_support[hub]) {
+    uint8_t current_gear = 0;
+    for (uint8_t i = 0; i < 12; ++i) {
+      if (settings->gear_control[hub][i] == 0) {
+        continue;
+      }
+      if (button_check(info->button[i], data)) {
+        current_gear = settings->gear_control[hub][i];
+      }
+    }
+    if (gear[hub] != current_gear) {
+      gear[hub] = current_gear;
+      if (current_gear == 1) {
+        if (gear_sequence[hub] < 5) {
+          gear_sequence[hub]++;
+        }
+      } else if (current_gear == 2) {
+        if (gear_sequence[hub] > 0) {
+          gear_sequence[hub]--;
+        }
+      }
+    }
+    switch (gear_sequence[hub]) {
+      case 0:
+        digital_map[hub][1] |= 0xa0;  // 1010_0000
+        break;
+      case 1:
+        digital_map[hub][1] |= 0x60;  // 0110_0000
+        break;
+      case 2:
+        digital_map[hub][1] |= 0x80;  // 1000_0000
+        break;
+      case 3:
+        digital_map[hub][1] |= 0x40;  // 0100_0000
+        break;
+      case 4:
+        digital_map[hub][1] |= 0x90;  // 1001_0000
+        break;
+      case 5:
+        digital_map[hub][1] |= 0x50;  // 0101_0000
+        break;
+    }
   }
 
   coin_sw[hub] = (coin_sw[hub] << 1) | ((digital_map[hub][0] >> 6) & 1);

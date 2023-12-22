@@ -53,6 +53,8 @@ struct settings {
     bool invert;
     bool on;
   } sequence[8];
+  bool gear_sequence_support[2];
+  uint8_t gear_control[2][12];
 };
 
 void settings_init(void);

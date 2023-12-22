@@ -19,7 +19,7 @@
 // #define _DBG_ANALOG
 // #define _DBG_DIGITAL
 
-#define VER "2.19"
+#define VER "2.20"
 
 static const char sega_id[] =
     "SEGA ENTERPRISES,LTD.compat;MP07-IONA-US;ver" VER;
@@ -306,14 +306,12 @@ void main(void) {
         if (!init) {
           Serial.printf(
               "Ts T1 T2 T3 -- -- -- -- St Sv Up Dw Lf Rt B1 B2 B3 B4 B5 B6 B7 "
-              "B8 "
-              "B9 B10");
-          Serial.printf("\n");
+              "B8 B9 B10\n");
           init = true;
         }
         for (uint8_t i = 0; i < 3; ++i) {
           uint8_t v =
-              (i == 0) ? controller_head() : controller_data(1, i - 1, 0);
+              (i == 0) ? controller_head() : controller_data(0, i - 1, 0);
           for (uint8_t b = 0x80; b != 0; b >>= 1) {
             Serial.printf("%d  ", (v & b) ? 1 : 0);
           }

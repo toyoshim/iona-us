@@ -130,10 +130,20 @@ static void apply(void) {
   }
 
   for (uint8_t p = 0; p < 2; ++p) {
+    settings.gear_sequence_support[p] = false;
     for (uint8_t i = 0; i < 6; ++i) {
       const uint8_t data = flash[offset++];
-      settings.rapid_fire[p][i * 2 + 0] = (data >> 4) & 7;
-      settings.rapid_fire[p][i * 2 + 1] = data & 7;
+      uint8_t set1 = (data >> 4) & 15;
+      uint8_t set2 = data & 15;
+      settings.rapid_fire[p][i * 2 + 0] = (set1 < 8) ? set1 : 0;
+      settings.rapid_fire[p][i * 2 + 1] = (set2 < 8) ? set2 : 0;
+      settings.gear_control[p][i * 2 + 0] =
+          (set1 == 8 || set1 == 9) ? (set1 - 7) : 0;
+      settings.gear_control[p][i * 2 + 1] =
+          (set2 == 8 || set2 == 9) ? (set2 - 7) : 0;
+      if (set1 == 8 || set1 == 9 || set2 == 8 || set2 == 9) {
+        settings.gear_sequence_support[p] = true;
+      }
     }
   }
   settings.sequence[0].pattern = 0xff;

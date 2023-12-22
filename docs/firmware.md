@@ -134,6 +134,7 @@ JVS I/Oとして利用する前、特にジャンパーピンを実装した人�
 - Ver 2.17 DUALSHOCK3をサポート
 - Ver 2.18 HORI FLIGHTSTICK for PlayStation 4をサポート、バスリセットの調整
 - Ver 2.19 Real Arcade Pro.N HAYABUSAと後期V3.SAをサポート、バスリセット再調整
+- Ver 2.20 GT Force Proをサポート、シフトギアエミュレーションの試験実装
 
 ## ファームウェアの互換性
 V3系基板は、v1.48とv2.11以降のファームウェアのみ動作します。v1/v2系基板は全てのファームウェアが動作します。
@@ -162,7 +163,8 @@ Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基�
 |ホリパッドFPSプラス for PlayStation 4|1.00|PS3モードも対応|
 |ワイヤレスコントローラー（DUALSHOCK 4 - CUH-ZCT1J）|1.02||
 |ワイヤレスコントローラー（DUALSHOCK 4 - CUH-ZCT2J）|1.03||
-|G29 Driving Force Race Wheel|2.14|PS4/PS4両モード対応|
+|GT Force Pro|2.20||
+|G29 Driving Force Race Wheel|2.14|PS3/PS4両モード対応|
 |HORI FLIGHTSTICK for PlayStation4|2.18||
 |ホリパッドミニ for Nintendo Switch|1.00||
 |Nintendo Switch Proコントローラー|1.04||
@@ -213,6 +215,7 @@ async function flash() {
     'firmwares/us_v2_17.bin',  // Ver 2.17
     'firmwares/us_v2_18.bin',  // Ver 2.18
     'firmwares/us_v2_19.bin',  // Ver 2.19
+    'firmwares/us_v2_20.bin',  // Ver 2.20
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -263,7 +266,8 @@ async function flash() {
 <option>Ver 2.16</option>
 <option>Ver 2.17</option>
 <option>Ver 2.18</option>
-<option selected>Ver 2.19</option>
+<option>Ver 2.19</option>
+<option selected>Ver 2.20</option>
 </select>
 <button onclick="flash();">書き込み</button>
 

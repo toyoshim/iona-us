@@ -55,20 +55,20 @@ uint16_t analog_check(const struct hid_info* info,
       v = 0xff - v;
     }
     return v << 8;
-  } else if (info->axis_size[index] == 12) {
+  } else if (info->axis_size[index] == 10 || info->axis_size[index] == 12) {
     uint8_t byte_index = info->axis[index] >> 3;
     uint16_t l = data[byte_index + 0];
     uint16_t h = data[byte_index + 1];
-    uint16_t v = ((info->axis[index] & 7) == 0) ? (((h << 8) & 0x0f00) | l)
-                                                : ((h << 4) | (l >> 4));
+    uint16_t v = (((h << 8) | l) >> (info->axis[index] & 7))
+                 << (16 - info->axis_size[index]);
     v <<= info->axis_shift[index];
     if (info->axis_sign[index]) {
-      v += 0x0800;
+      v += 0x8000;
     }
     if (info->axis_polarity[index]) {
-      v = 0x0fff - v;
+      v = 0xffff - v;
     }
-    return v << 4;
+    return v;
   } else if (info->axis_size[index] == 16) {
     uint8_t byte = info->axis[index] >> 3;
     uint16_t v = data[byte] | ((uint16_t)data[byte + 1] << 8);

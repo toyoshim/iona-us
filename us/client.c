@@ -8,7 +8,6 @@
 #include "ch559.h"
 #include "gpio.h"
 #include "io.h"
-#include "jvsio_client.h"
 #include "jvsio_node.h"
 #include "pwm1.h"
 
@@ -16,6 +15,7 @@
 #include "settings.h"
 #include "soft485.h"
 
+// For V3 prototype board.
 // #define FORCE_V3
 
 #if defined(FORCE_V3)
@@ -265,4 +265,8 @@ void client_poll(void) {
     // Extends to 16-bit range.
     sense <<= 5;
   }
+}
+
+enum JVSIO_CommSupMode client_get_current_speed(void) {
+  return comm_mode;
 }

@@ -8,6 +8,7 @@
 #include "jvsio_node.h"
 #include "led.h"
 #include "serial.h"
+#include "timer3.h"
 #include "usb/hid/hid.h"
 
 #include "client.h"
@@ -19,7 +20,7 @@
 // #define _DBG_ANALOG
 // #define _DBG_DIGITAL
 
-#define VER "2.20"
+#define VER "2.21"
 
 static const char sega_id[] =
     "SEGA ENTERPRISES,LTD.compat;MP07-IONA-US;ver" VER;
@@ -149,7 +150,11 @@ bool JVSIO_Client_receiveCommand(uint8_t node,
     } break;
     case kCmdSwInput:
       JVSIO_Node_pushReport(kReportOk);
-      settings_rapid_sync();
+      if (client_get_current_speed() == k115200) {
+        // Normal JVS keeps calling this per frame, and we can run autofire
+        // logic synchronized with the frame rate here. JVS Dash would not.
+        settings_rapid_sync();
+      }
       JVSIO_Node_pushReport(controller_head());
       for (uint8_t player = 0; player < data[1]; ++player) {
         for (uint8_t i = 0; i < data[2]; ++i) {
@@ -267,9 +272,18 @@ void main(void) {
   void (*original_putc)(void) = Serial.putc;
   Serial.putc = debug_putc;
 
+  uint16_t rapid_fire_msec = timer3_tick_msec();
+
   for (;;) {
     JVSIO_Node_run(true);
     if (!JVSIO_Node_isBusy()) {
+      if (!timer3_tick_msec_between(rapid_fire_msec, rapid_fire_msec + 16)) {
+        rapid_fire_msec = timer3_tick_msec();
+        if (client_get_current_speed() != k115200) {
+          // JVS Dash relies on timer to run autofire logic.
+          settings_rapid_sync();
+        }
+      }
       // Serial.putc = original_putc;
       hid_poll();
       settings_poll();

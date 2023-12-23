@@ -54,19 +54,7 @@ JVSデータ信号レベル補正はLOW信号の電圧が高めのnamco系基板
 レバー（デジタル）の0と1を選ぶことで、アナログスティックを上下、左右のレバーに割り当てられます。ここで割り当てたレバー操作も、後段のボタン配置により展開されます。
 アナログはレースゲームのハンドルやペダル、ロータリーはDJコントローラやパドル、画面座標入力はガンコントローラなどがアサインされますが、実際の使われ方はゲームによって様々です。
 
-||入力|出力タイプ|出力番号|
-||P1 アナログ 1 (LX)|<select id="a11t"><option>なし</option><option>レバー（デジタル）</option><option>アナログ入力</option><option>ロータリー入力</option><option>画面座標入力</option></select>|<select id="a11i"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select>
-||P1 アナログ 2 (LY)|<select id="a12t"><option>なし</option><option>レバー（デジタル）</option><option>アナログ入力</option><option>ロータリー入力</option><option>画面座標入力</option></select>|<select id="a12i"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select>
-||P1 アナログ 3 (RX)|<select id="a13t"><option>なし</option><option>レバー（デジタル）</option><option>アナログ入力</option><option>ロータリー入力</option><option>画面座標入力</option></select>|<select id="a13i"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select>
-||P1 アナログ 4 (RY)|<select id="a14t"><option>なし</option><option>レバー（デジタル）</option><option>アナログ入力</option><option>ロータリー入力</option><option>画面座標入力</option></select>|<select id="a14i"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select>
-||P1 アナログ 5 (LT)|<select id="a15t"><option>なし</option><option>レバー（デジタル）</option><option>アナログ入力</option><option>ロータリー入力</option><option>画面座標入力</option></select>|<select id="a15i"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select>
-||P1 アナログ 6 (RT)|<select id="a16t"><option>なし</option><option>レバー（デジタル）</option><option>アナログ入力</option><option>ロータリー入力</option><option>画面座標入力</option></select>|<select id="a16i"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select>
-||P2 アナログ 1 (LX)|<select id="a21t"><option>なし</option><option>レバー（デジタル）</option><option>アナログ入力</option><option>ロータリー入力</option><option>画面座標入力</option></select>|<select id="a21i"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select>
-||P2 アナログ 2 (LY)|<select id="a22t"><option>なし</option><option>レバー（デジタル）</option><option>アナログ入力</option><option>ロータリー入力</option><option>画面座標入力</option></select>|<select id="a22i"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select>
-||P2 アナログ 3 (RX)|<select id="a23t"><option>なし</option><option>レバー（デジタル）</option><option>アナログ入力</option><option>ロータリー入力</option><option>画面座標入力</option></select>|<select id="a23i"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select>
-||P2 アナログ 4 (RY)|<select id="a24t"><option>なし</option><option>レバー（デジタル）</option><option>アナログ入力</option><option>ロータリー入力</option><option>画面座標入力</option></select>|<select id="a24i"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select>
-||P2 アナログ 5 (LT)|<select id="a25t"><option>なし</option><option>レバー（デジタル）</option><option>アナログ入力</option><option>ロータリー入力</option><option>画面座標入力</option></select>|<select id="a25i"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select>
-||P2 アナログ 6 (RT)|<select id="a26t"><option>なし</option><option>レバー（デジタル）</option><option>アナログ入力</option><option>ロータリー入力</option><option>画面座標入力</option></select>|<select id="a26i"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select>
+<table id="analog_map"></table>
 
 #### 連射設定
 連射のパタンを7種類設定できます。次のセクションで各ボタンごとに連射を使わないか、ここで定義されたパタンのどれかをアサインするか選べまます。
@@ -75,14 +63,7 @@ JVSデータ信号レベル補正はLOW信号の電圧が高めのnamco系基板
 全てチェックすれば実質連射はオフになり、１つ飛ばしでチェックすれば30連射になります。
 反転を有効にすると、最終的な入力状態が反転して出力されます。
 
-||連射設定|シーケンス|周期|反転|
-||パタン1|<input type="checkbox" id="p11"><input type="checkbox" id="p12"><input type="checkbox" id="p13"><input type="checkbox" id="p14"><input type="checkbox" id="p15"><input type="checkbox" id="p16"><input type="checkbox" id="p17"><input type="checkbox" id="p18">|<select id="rm1"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>|<input type="checkbox" id="inv1">
-||パタン2|<input type="checkbox" id="p21"><input type="checkbox" id="p22"><input type="checkbox" id="p23"><input type="checkbox" id="p24"><input type="checkbox" id="p25"><input type="checkbox" id="p26"><input type="checkbox" id="p27"><input type="checkbox" id="p28">|<select id="rm2"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>|<input type="checkbox" id="inv2">
-||パタン3|<input type="checkbox" id="p31"><input type="checkbox" id="p32"><input type="checkbox" id="p33"><input type="checkbox" id="p34"><input type="checkbox" id="p35"><input type="checkbox" id="p36"><input type="checkbox" id="p37"><input type="checkbox" id="p38">|<select id="rm3"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>|<input type="checkbox" id="inv3">
-||パタン4|<input type="checkbox" id="p41"><input type="checkbox" id="p42"><input type="checkbox" id="p43"><input type="checkbox" id="p44"><input type="checkbox" id="p45"><input type="checkbox" id="p46"><input type="checkbox" id="p47"><input type="checkbox" id="p48">|<select id="rm4"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>|<input type="checkbox" id="inv4">
-||パタン5|<input type="checkbox" id="p51"><input type="checkbox" id="p52"><input type="checkbox" id="p53"><input type="checkbox" id="p54"><input type="checkbox" id="p55"><input type="checkbox" id="p56"><input type="checkbox" id="p57"><input type="checkbox" id="p58">|<select id="rm5"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>|<input type="checkbox" id="inv5">
-||パタン6|<input type="checkbox" id="p61"><input type="checkbox" id="p62"><input type="checkbox" id="p63"><input type="checkbox" id="p64"><input type="checkbox" id="p65"><input type="checkbox" id="p66"><input type="checkbox" id="p67"><input type="checkbox" id="p68">|<select id="rm6"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>|<input type="checkbox" id="inv6">
-||パタン7|<input type="checkbox" id="p71"><input type="checkbox" id="p72"><input type="checkbox" id="p73"><input type="checkbox" id="p74"><input type="checkbox" id="p75"><input type="checkbox" id="p76"><input type="checkbox" id="p77"><input type="checkbox" id="p78">|<select id="rm7"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>|<input type="checkbox" id="inv7">
+<table id="rapid_fire_map"></table>
 
 #### ボタン配置
 P1、P2それぞれの上下左右入力とボタン入力に対し、押された際にゲーム側に押されたと通達するボタンを指定します。任意の組み合わせで指定でき、P1側の入力をP2側の入力として配置することもできます。
@@ -141,8 +122,26 @@ window.uiMessages = {
   saved: '保存しました',
   unknownContinue: '接続しましたが、対応するバージョンのIONA-USの設定データが確認できません。このまま継続して最新データで上書きしますか？',
   unknownFileFormat: '未知のファイルフォーマットです',
+
+  layoutAnalogInput: '入力',
+  layoutAnalogOutputType: '出力タイプ',
+  layoutAnalogOutputNumber: '出力番号',
+  layoutAnalogInvert: '反転',
+  layoutAnalogAnalog: 'アナログ',
+  layoutAnalogOutputTypeNone: 'なし',
+  layoutAnalogOutputTypeLever: 'レバー（デジタル）',
+  layoutAnalogOutputTypeAnalog: 'アナログ入力',
+  layoutAnalogOutputTypeRotary: 'ロータリー入力',
+  layoutAnalogOutputTypeScreenPosition: '画面座標入力',
+
+  layoutRapidFireSet: '連射設定',
+  layoutRapidFireSequence: 'シーケンス',
+  layoutRapidFireCycle: '周期',
+  layoutRapidFireInvert: '反転',
+  layoutRapidFireSetPrefix: 'パタン'
 };
 </script>
+<script src="layout_map.js"></script>
 <script src="layout.js"></script>
 <script src="layout_presets.js"></script>
 

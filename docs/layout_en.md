@@ -59,19 +59,7 @@ Lever (Digital) maps the input to digital lever, 0 is for up and down, 1 is for 
 Racing game may use analog inputs as wheels or padals.
 Some games may use rotary inputs as DJ controllers or paddles, screen position inputs as zapper controllers, and so on. Each game may be creative here to have their own maps.
 
-||Controller Input|Assign Direction|Assign Index|
-||P1 Analog 1 (LX)|<select id="a11t"><option>None</option><option>Lever (Digital)</option><option>Analog Input</option><option>Rotary Input</option><option>Screen Position Input</option></select>|<select id="a11i"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select>
-||P1 Analog 2 (LY)|<select id="a12t"><option>None</option><option>Lever (Digital)</option><option>Analog Input</option><option>Rotary Input</option><option>Screen Position Input</option></select>|<select id="a12i"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select>
-||P1 Analog 3 (RX)|<select id="a13t"><option>None</option><option>Lever (Digital)</option><option>Analog Input</option><option>Rotary Input</option><option>Screen Position Input</option></select>|<select id="a13i"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select>
-||P1 Analog 4 (RY)|<select id="a14t"><option>None</option><option>Lever (Digital)</option><option>Analog Input</option><option>Rotary Input</option><option>Screen Position Input</option></select>|<select id="a14i"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select>
-||P1 Analog 5 (LT)|<select id="a15t"><option>None</option><option>Lever (Digital)</option><option>Analog Input</option><option>Rotary Input</option><option>Screen Position Input</option></select>|<select id="a15i"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select>
-||P1 Analog 6 (RT)|<select id="a16t"><option>None</option><option>Lever (Digital)</option><option>Analog Input</option><option>Rotary Input</option><option>Screen Position Input</option></select>|<select id="a16i"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select>
-||P2 Analog 1 (LX)|<select id="a21t"><option>None</option><option>Lever (Digital)</option><option>Analog Input</option><option>Rotary Input</option><option>Screen Position Input</option></select>|<select id="a21i"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select>
-||P2 Analog 2 (LY)|<select id="a22t"><option>None</option><option>Lever (Digital)</option><option>Analog Input</option><option>Rotary Input</option><option>Screen Position Input</option></select>|<select id="a22i"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select>
-||P2 Analog 3 (RX)|<select id="a23t"><option>None</option><option>Lever (Digital)</option><option>Analog Input</option><option>Rotary Input</option><option>Screen Position Input</option></select>|<select id="a23i"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select>
-||P2 Analog 4 (RY)|<select id="a24t"><option>None</option><option>Lever (Digital)</option><option>Analog Input</option><option>Rotary Input</option><option>Screen Position Input</option></select>|<select id="a24i"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select>
-||P2 Analog 5 (LT)|<select id="a25t"><option>None</option><option>Lever (Digital)</option><option>Analog Input</option><option>Rotary Input</option><option>Screen Position Input</option></select>|<select id="a25i"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select>
-||P2 Analog 6 (RT)|<select id="a26t"><option>None</option><option>Lever (Digital)</option><option>Analog Input</option><option>Rotary Input</option><option>Screen Position Input</option></select>|<select id="a26i"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select>
+<table id="analog_map"></table>
 
 #### Rapid Fire
 You can edit 7 kinds of rapid fire patterns. You can find None or one of these 7 patterns in the following section to select a pattern for each button.
@@ -80,14 +68,7 @@ Each sequence will be looped within the loop length.
 If you check all boxes, all controlls are pass through, that means no rapid fires. If you check and uncheck step by step, it will fire 30 times per second.
 If Invert flag is set, the button state is the report will be inverted.
 
-||Sequence Set|Sequence Patterns|Length|Invert|
-||Set 1|<input type="checkbox" id="p11"><input type="checkbox" id="p12"><input type="checkbox" id="p13"><input type="checkbox" id="p14"><input type="checkbox" id="p15"><input type="checkbox" id="p16"><input type="checkbox" id="p17"><input type="checkbox" id="p18">|<select id="rm1"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>|<input type="checkbox" id="inv1">
-||Set 2|<input type="checkbox" id="p21"><input type="checkbox" id="p22"><input type="checkbox" id="p23"><input type="checkbox" id="p24"><input type="checkbox" id="p25"><input type="checkbox" id="p26"><input type="checkbox" id="p27"><input type="checkbox" id="p28">|<select id="rm2"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>|<input type="checkbox" id="inv2">
-||Set 3|<input type="checkbox" id="p31"><input type="checkbox" id="p32"><input type="checkbox" id="p33"><input type="checkbox" id="p34"><input type="checkbox" id="p35"><input type="checkbox" id="p36"><input type="checkbox" id="p37"><input type="checkbox" id="p38">|<select id="rm3"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>|<input type="checkbox" id="inv3">
-||Set 4|<input type="checkbox" id="p41"><input type="checkbox" id="p42"><input type="checkbox" id="p43"><input type="checkbox" id="p44"><input type="checkbox" id="p45"><input type="checkbox" id="p46"><input type="checkbox" id="p47"><input type="checkbox" id="p48">|<select id="rm4"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>|<input type="checkbox" id="inv4">
-||Set 5|<input type="checkbox" id="p51"><input type="checkbox" id="p52"><input type="checkbox" id="p53"><input type="checkbox" id="p54"><input type="checkbox" id="p55"><input type="checkbox" id="p56"><input type="checkbox" id="p57"><input type="checkbox" id="p58">|<select id="rm5"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>|<input type="checkbox" id="inv5">
-||Set 6|<input type="checkbox" id="p61"><input type="checkbox" id="p62"><input type="checkbox" id="p63"><input type="checkbox" id="p64"><input type="checkbox" id="p65"><input type="checkbox" id="p66"><input type="checkbox" id="p67"><input type="checkbox" id="p68">|<select id="rm6"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>|<input type="checkbox" id="inv6">
-||Set 7|<input type="checkbox" id="p71"><input type="checkbox" id="p72"><input type="checkbox" id="p73"><input type="checkbox" id="p74"><input type="checkbox" id="p75"><input type="checkbox" id="p76"><input type="checkbox" id="p77"><input type="checkbox" id="p78">|<select id="rm7"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>|<input type="checkbox" id="inv7">
+<table id="rapid_fire_map"></table>
 
 #### Button Map
 You can edit button assignments per each digital button for P1 and P2 controller as each button can fire any combination of JVS P1 and P2 outputs.
@@ -147,8 +128,26 @@ window.uiMessages = {
   saved: 'Saved',
   unknownContinue: 'Connected, but cannot confirm known versions of IONA-US setting data. Do you agree to override it with the latest setting data?',
   unknownFileFormat: 'Unknown file format.',
+
+  layoutAnalogInput: 'Controller Input',
+  layoutAnalogOutputType: 'Assign Direction',
+  layoutAnalogOutputNumber: 'Assign Index',
+  layoutAnalogInvert: 'Invert',
+  layoutAnalogAnalog: 'Analog',
+  layoutAnalogOutputTypeNone: 'None',
+  layoutAnalogOutputTypeLever: 'Lever (Digital)',
+  layoutAnalogOutputTypeAnalog: 'Analog Input',
+  layoutAnalogOutputTypeRotary: 'Rotary Input',
+  layoutAnalogOutputTypeScreenPosition: 'Screen Position Input',
+
+  layoutRapidFireSet: 'Sequence Set',
+  layoutRapidFireSequence: 'Sequence Patterns',
+  layoutRapidFireCycle: 'Length',
+  layoutRapidFireInvert: 'Invert',
+  layoutRapidFireSetPrefix: 'Set'
 };
 </script>
+<script src="layout_map.js"></script>
 <script src="layout.js"></script>
 <script src="layout_presets.js"></script>
 

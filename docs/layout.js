@@ -1,5 +1,4 @@
 // TODO
-// - Import / Export
 // - Rapid fire template
 // - Analog Polarity
 function setStatus(status) {

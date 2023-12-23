@@ -141,6 +141,7 @@ JVS I/Oとして利用する前、特にジャンパーピンを実装した人�
 - Ver 2.19 Real Arcade Pro.N HAYABUSAと後期V3.SAをサポート、バスリセット再調整
 - Ver 2.20 GT Force Proをサポート、シフトギアエミュレーションの試験実装
 - Ver 2.21 JVS Dashモード時に連射がまともに機能していなかったのを修正
+- Ver 2.22 アナログ入力の値を反転する設定機能を追加
 
 ## ファームウェアの互換性
 V3系基板は、v1.48とv2.11以降のファームウェアのみ動作します。v1/v2系基板は全てのファームウェアが動作します。
@@ -223,6 +224,7 @@ async function flash() {
     'firmwares/us_v2_19.bin',  // Ver 2.19
     'firmwares/us_v2_20.bin',  // Ver 2.20
     'firmwares/us_v2_21.bin',  // Ver 2.21
+    'firmwares/us_v2_22.bin',  // Ver 2.22
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -275,7 +277,8 @@ async function flash() {
 <option>Ver 2.18</option>
 <option>Ver 2.19</option>
 <option>Ver 2.20</option>
-<option selected>Ver 2.21</option>
+<option>Ver 2.21</option>
+<option selected>Ver 2.22</option>
 </select>
 <button onclick="flash();">書き込み</button>
 

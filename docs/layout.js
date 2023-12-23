@@ -1,6 +1,5 @@
 // TODO
 // - Rapid fire template
-// - Analog Polarity
 function setStatus(status) {
   document.getElementById('status').innerText = status;
 }
@@ -112,9 +111,10 @@ function applyData(data) {
       const map = data[offset++];
       const type = (map >> 4) & 7;
       const index = map & 7;
-      // TODO: handle polarity.
+      const polarity = (map & 0x08) != 0;
       select('a' + p + i + 't', type);
       select('a' + p + i + 'i', index);
+      check('a' + p + i + 'r', polarity);
     }
   }
 
@@ -304,8 +304,8 @@ function storeTo(data) {
     for (let i of [1, 2, 3, 4, 5, 6]) {
       const type = getSelect('a' + p + i + 't') & 7;
       const index = getSelect('a' + p + i + 'i') & 7;
-      // TODO: handle polarity.
-      data[offset++] = (type << 4) | index;
+      const polarity = isChecked('a' + p + i + 'r') ? 0x08 : 0;
+      data[offset++] = (type << 4) | polarity | index;
     }
   }
 

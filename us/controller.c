@@ -44,7 +44,8 @@ static bool button_check(uint16_t index, const uint8_t* data) {
 
 uint16_t analog_check(const struct hid_info* info,
                       const uint8_t* data,
-                      uint8_t index) {
+                      uint8_t index,
+                      bool polarity) {
   if (info->axis[index] == 0xffff) {
     // return 0x8000;
   } else if (info->axis_size[index] == 8) {
@@ -53,7 +54,7 @@ uint16_t analog_check(const struct hid_info* info,
     if (info->axis_sign[index]) {
       v += 0x80;
     }
-    if (info->axis_polarity[index]) {
+    if (info->axis_polarity[index] ^ polarity) {
       v = 0xff - v;
     }
     return v << 8;
@@ -67,7 +68,7 @@ uint16_t analog_check(const struct hid_info* info,
     if (info->axis_sign[index]) {
       v += 0x8000;
     }
-    if (info->axis_polarity[index]) {
+    if (info->axis_polarity[index] ^ polarity) {
       v = 0xffff - v;
     }
     return v;
@@ -78,7 +79,7 @@ uint16_t analog_check(const struct hid_info* info,
     if (info->axis_sign[index]) {
       v += 0x8000;
     }
-    if (info->axis_polarity[index]) {
+    if (info->axis_polarity[index] ^ polarity) {
       v = 0xffff - v;
     }
     return v;
@@ -246,7 +247,8 @@ void controller_update(uint8_t hub_index,
       continue;
     }
     uint8_t index = settings->analog_index[hub][i];
-    uint16_t value = analog_check(info, data, i);
+    uint16_t value =
+        analog_check(info, data, i, settings->analog_polarity[hub][i]);
     switch (type) {
       case AT_DIGITAL:
         switch (index) {

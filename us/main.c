@@ -20,7 +20,7 @@
 // #define _DBG_ANALOG
 // #define _DBG_DIGITAL
 
-#define VER "2.21"
+#define VER "2.22"
 
 static const char sega_id[] =
     "SEGA ENTERPRISES,LTD.compat;MP07-IONA-US;ver" VER;
@@ -269,8 +269,10 @@ void main(void) {
 
   Serial.printf("%s\n", ids[settings->id]);
 
+#if !defined(_DBG_ANALOG) && !defined(_DBG_DIGITAL)
   void (*original_putc)(void) = Serial.putc;
   Serial.putc = debug_putc;
+#endif
 
   uint16_t rapid_fire_msec = timer3_tick_msec();
 

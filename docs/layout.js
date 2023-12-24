@@ -259,14 +259,23 @@ function writeAsPreset() {
   console.log(']);');
 }
 
+function storeHeader(data) {
+  data[0] = 'I'.charCodeAt(0);
+  data[1] = 'O'.charCodeAt(0);
+  data[2] = 'N'.charCodeAt(0);
+  data[3] = 'C'.charCodeAt(0);
+  data[4] = 1;
+  for (let i = 5; i < 10; ++i) {
+    data[i] = 0;
+  }
+}
+
 function storeToFile() {
   if (isModified() && !window.confirm(uiMessages.modifiedOnStore)) {
     return;
   }
   const data = new Uint8Array(10 + 169);
-  for (let i = 0; i < 10; ++i) {
-    data[i] = userData[i];
-  }
+  storeHeader(data);
   storeTo(data.subarray(10, 10 + 169));
   const a = document.createElement('a');
   const blob = new Blob([data], { type: 'octet/stream' });
@@ -473,12 +482,8 @@ document.getElementById('button').addEventListener('click', async e => {
       return;
     }
     // Clear data to continue.
-    userData[0] = 'I'.charCodeAt(0);
-    userData[1] = 'O'.charCodeAt(0);
-    userData[2] = 'N'.charCodeAt(0);
-    userData[3] = 'C'.charCodeAt(0);
-    userData[4] = 1;
-    for (let i = 5; i < 1024; ++i) {
+    storeHeader(userData);
+    for (let i = 10; i < 1024; ++i) {
       userData[i] = 0;
     }
     for (let i = 0; i < 6; ++i) {

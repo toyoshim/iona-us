@@ -5,6 +5,8 @@ permalink: /
 ---
 English version is [here](en)
 
+[v3.11 簡易版 PDF](papers/us_v3_11j.pdf)
+
 ---
 # 取扱説明書
 ---

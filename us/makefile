@@ -31,7 +31,7 @@ run: program
 	ch559flasher -b
 
 prod:
-	ch559flasher -W ../docs/firmwares/us_v2_data1.bin -w ../docs/firmwares/us_v2_17.bin -b
+	ch559flasher -W ../docs/firmwares/us_v2_data1.bin -w ../docs/firmwares/us_v2_22.bin -b
 
 logger: $(LOGGER).bin
 	ch559flasher -w $(LOGGER).bin

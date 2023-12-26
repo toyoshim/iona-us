@@ -54,11 +54,8 @@ You should not connect a gamepad to the P1 USB port. It conflicts with the USB c
 If you chosen the recommended approach, using the special Type-A to A cable, you don't need a dedicated power supply.
 You can connect your PC and 1P connector by such cable with pressing SERVICE to enter the firmware update mode.
 
-Android Chrome also works. You will need an Android device that supports OTG.
-You will need an USB OTG adopter and also Type A to A cable again.
-General C to A connector won't work as both ends will work as an USB device.
-
-## WinUSB Settings (only for the first time on Windows)
+## Platform Specific Preparations
+### WinUSB Settings (only for the first time on Windows)
 When you connect IONA to your PC first time, it appears as an unknown device in the device manager.
 If there are multiple unknown devices, IONA is the one that shows `USB\VID_4348&PID_55E0\...` at the property in details tab.
 You need to install the system provinding default driver called as WinUSB for the device.
@@ -74,13 +71,13 @@ As this firmware update mode is provided by the chip vendor, I have no other ide
 
 You may want to use [Zadig](https://zadig.akeo.ie/) that manages WinUSB drivers and so on for you. It will make the installation process easy and quick, and potentially it can workaround the compatibility issue by choosing a suitable version of drivers.
 
-### USB OTG settings (for Android)
+### USB OTG Settings (for Android)
 If you cannot solve the compability issue on Windows, or you don't have a PC, but have an Android phone, Android Chrome is available.
 Your phone needs to support USB OTG mode to work as a USB host,
 and also you need an OTG connector that convert the phone's USB port to a USB Type A female converter. You need to use A to A cable behind the converter.
 Even if you have a direct cable from e.g. C to A, it will not work as the phone runs in a device mode rather than host mode unless you use a right connector that activate the host mode.
 
-### udev settings (for Linux)
+### udev Settings (for Linux)
 Most Linux system uses udev to manage hot-plugged USB device access permissions.
 If the system has `/etc/udev/` directory, you can copy [this](https://github.com/toyoshim/iona-us/blob/main/docs/linux/99-ch559-bootloader.rules) file as `/etc/udev/rules.d/99-ch559-bootloader.rules`, then connect IONA again.
 

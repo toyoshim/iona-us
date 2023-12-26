@@ -72,6 +72,23 @@ As this firmware update mode is provided by the chip vendor, I have no other ide
 
 ![Device Manager](fw_devman.png)
 
+You may want to use [Zadig](https://zadig.akeo.ie/) that manages WinUSB drivers and so on for you. It will make the installation process easy and quick, and potentially it can workaround the compatibility issue by choosing a suitable version of drivers.
+
+### USB OTG settings (for Android)
+If you cannot solve the compability issue on Windows, or you don't have a PC, but have an Android phone, Android Chrome is available.
+Your phone needs to support USB OTG mode to work as a USB host,
+and also you need an OTG connector that convert the phone's USB port to a USB Type A female converter. You need to use A to A cable behind the converter.
+Even if you have a direct cable from e.g. C to A, it will not work as the phone runs in a device mode rather than host mode unless you use a right connector that activate the host mode.
+
+### udev settings (for Linux)
+Most Linux system uses udev to manage hot-plugged USB device access permissions.
+If the system has `/etc/udev/` directory, you can copy [this](https://github.com/toyoshim/iona-us/blob/main/docs/linux/99-ch559-bootloader.rules) file as `/etc/udev/rules.d/99-ch559-bootloader.rules`, then connect IONA again.
+
+Or you can directry edit and place following content there.
+```
+ATTRS{idVendor}=="4348", ATTRS{idProduct}=="55e0", MODE="0666"
+```
+
 ## Firmware Selection
 You can pick up any firmware version you install.
 When you push the flash button after selecting the firmware version, you will see a prompt as below.

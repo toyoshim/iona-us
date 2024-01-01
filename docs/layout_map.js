@@ -57,6 +57,13 @@ function createCheckboxPair(i, o) {
   return span;
 }
 
+function createButtonLabel(label, testClass) {
+  const span = document.createElement('span');
+  span.className = 'test_' + testClass;
+  span.appendChild(document.createTextNode(label));
+  return span;
+}
+
 const analog_map = document.getElementById('analog_map');
 const analog_thead = document.createElement('thead');
 analog_thead.appendChild(createTr(true, [
@@ -109,6 +116,7 @@ rapid_fire_map.appendChild(rapid_fire_tbody);
 
 const button_map = document.getElementById('button_map');
 const buttons = ['↑', '↓', '←', '→', '□', '✕', '○', '△', 'L1', 'R1', 'L2', 'R2', 'Share', 'Option', 'L3', 'R3'];
+const classes = ['up', 'down', 'left', 'right', 'b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8', 'b9', 'b10', 'b11', 'b12'];
 const buttonIds = ['u', 'd', 'l', 'r', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c'];
 for (let player = 0; player < 2; ++player) {
   const button_thead = document.createElement('thead');
@@ -126,7 +134,7 @@ for (let player = 0; player < 2; ++player) {
   for (let button = 0; button < 16; ++button) {
     const prefix = 'p' + players[player] + buttonIds[button];
     button_tbody.appendChild(createTr(false, [
-      'P' + players[player] + ' ' + buttons[button],
+      createButtonLabel('P' + players[player] + ' ' + buttons[button], classes[button]),
       createPair('P1', 'P2'),
       createCheckboxPair(prefix, 's'),
       createCheckboxPair(prefix, 'c'),

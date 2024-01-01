@@ -28,8 +28,8 @@ v2系ファームウェアに対応した設定ページを実験的に公開し
 - 全ての変更が確定したら「変更を保存する」ボタンでデバイスに保存されます。
 
 | | | |
-|-|-|-:|
-|<select id="select"><option>設定 1</option><option>設定 2</option><option>設定 3</option><option>設定 4</option><option>設定 5</option><option>設定 6</option></select><br><button id="store">変更を確定</button>|<button id="storeToFile">ファイルに保存</button><br><button id="loadFromFile">ファイルから読込</button>|他の設定からコピー<select id="copy"><option>-</option><option>設定 1</option><option>設定 2</option><option>設定 3</option><option>設定 4</option><option>設定 5</option><option>設定 6</option></select><br>プリセットからコピー<select id="preset"><option>-</option></select>|
+|-|-|-|
+|<select id="select"><option>設定 1</option><option>設定 2</option><option>設定 3</option><option>設定 4</option><option>設定 5</option><option>設定 6</option></select><br><button id="store">変更を確定</button>|<button id="storeToFile">ファイルに保存</button><br><button id="loadFromFile">ファイルから読込</button>|他の設定からコピー<br><select id="copy"><option>-</option><option>設定 1</option><option>設定 2</option><option>設定 3</option><option>設定 4</option><option>設定 5</option><option>設定 6</option></select><br>プリセットからコピー<br><select id="preset"><option>-</option></select>
 
 #### 基本設定
 宣言するデバイス名やサポートする機能をカスタマイズします。

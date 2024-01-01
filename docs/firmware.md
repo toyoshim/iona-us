@@ -191,6 +191,7 @@ Xbox 360、Xbox Oneシリーズの規格に対応したコントローラは基�
 |G29 Driving Force Race Wheel|2.14|PS3/PS4両モード対応|
 |HORI FLIGHTSTICK for PlayStation4|2.18||
 |ホリパッドミニ for Nintendo Switch|1.00||
+|マリオカートレーシングホイール for Nintendo Switch|2.19||
 |Nintendo Switch Proコントローラー|1.04||
 |Nintendo Switch Joy-Con 充電グリップ|1.04||
 |Brook ZERO-PI Fighting Board|1.44|標準のSwitchモードで動作|

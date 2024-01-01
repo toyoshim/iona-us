@@ -193,6 +193,7 @@ Also, the internal format to hold the user settings is changed at firmware Ver 1
 |G29 Driving Force Race Wheel|2.14|Both PS3/PS4 modes|
 |HORI FLIGHTSTICK for PlayStation4|2.18||
 |Horipad mini for Nintendo Switch|1.00||
+|MARIKART Racing Wheel for Nintendo Switch|2.18||
 |Nintendo Switch Pro Controller|1.04||
 |Nintendo Switch Joy-Con Charger Glip|1.04||
 |Brook ZERO-PI Fighting Board|1.44|Work with the default Switch mode|

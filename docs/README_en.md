@@ -66,7 +66,7 @@ To enter the setting selection mode, press TEST and SERVICE for about 1 second.
 Click TEST to take the next setting, and click SERVICE to decide the current setting and get back to the normal mode.
 You can know the setting id as the LED blinks N times on deciding the Nth set.
 
-If you see continuous 3times LED blinks, setting data will not be initialized, or broken. Please initialize it at [setting](setting_en) page.
+If the LED continues to blink 3 times, setting data needs initialization, or got broken. You can visit [setting](setting_en) page and connect the device to override existing broken data with fresh settings. You will need this when you upgrade the firmware from v1.xx to v2.xx.
 
 ### Zapper Calibratrion Mode
 There are some titles that uses TSS-I/O mode and they don't provide zapper calibration.
@@ -75,6 +75,7 @@ Pressing TEST and SERVICE for 3 seconmds to see the LED gets off, and blinks aga
 Now the device is in calbration mode.
 You can shoot 4 corners on your monitor in your favorite order to complete the calibration.
 Settings such as currently selected configuration, or calibration data are stored persistently.
+As they are stored in an isolated space, they would not be initialized on updating layout settings via the web page, but will be initialized only when you update or rewrite the firmware.
 
 ## Features (Firmware v1.xx)
 ### Custom Button Layout

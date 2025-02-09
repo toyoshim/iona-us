@@ -42,8 +42,9 @@ As it needs soldering, it isn't a good way for end users.
 
 In any case, you need to restore the original state when you don't connect it to your PC.
 
-## Connect to PC
-If you chosen the v1/v2 board mods above, you need to keep the SERVICE button on the board pressed, then start supplying the power.
+## Connect to PC (for all boards)
+### v1/v2 board with mods above
+You need to keep the SERVICE button on the board pressed, then start supplying the power.
 If the SERVICE button is correctly kept pressed until it boots, LED will not be on.
 This is the signal that IONA boots to the firmware update mode.
 If LED blinks, IONA runs in a normal mode, and you need to power off, and retry.
@@ -51,6 +52,7 @@ If LED blinks, IONA runs in a normal mode, and you need to power off, and retry.
 Once it boots to the firmware update mode, connect IONA to your PC over USB via JVS port.
 You should not connect a gamepad to the P1 USB port. It conflicts with the USB connection to the PC host, and makes communication unstable.
 
+### v1/v2/v3 boards with non-standard Type-A cable
 If you chosen the recommended approach, using the special Type-A to A cable, you don't need a dedicated power supply.
 You can connect your PC and 1P connector by such cable with pressing SERVICE to enter the firmware update mode.
 

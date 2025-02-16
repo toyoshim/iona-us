@@ -6,7 +6,7 @@ permalink: /setting_en
 # Layout Settings
 This setting page is still under experiument for v2 series firmwares.
 It may still contain bugs. Bug reports, feature requests are welcomed.
-Also, if you send a layout for a game that requires a special configuration,
+Also, if you [send](https://github.com/toyoshim/iona-us/issues/78) a layout for a game that requires a special configuration,
 I'm happy to add it to the presets in this page.
 
 ---

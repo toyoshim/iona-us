@@ -1,0 +1,17 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start Jekyll",
+      "type": "shell",
+      "command": "bundle exec jekyll serve --host localhost --port 4000",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "options": {
+        "cwd": "${workspaceFolder}/docs"
+      }
+    }
+  ]
+}

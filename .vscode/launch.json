@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "jvsio test",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceFolder}/jvsio/test/node_test",
+      "args": [
+        //"--gtest_filter=ClientTest.PartialCommandSpeculative"
+      ],
+      "cwd": "${workspaceFolder}/jvsio/test",
+    }
+  ]
+}

@@ -74,6 +74,8 @@ P1、P2それぞれの上下左右入力とボタン入力に対し、押され�
 <script src="https://toyoshim.github.io/CH559Flasher.js/CH559Flasher.js"></script>
 <script>
 window.uiMessages = {
+  lang: 'ja',
+
   abort: '中断しました',
   connected: '接続しました（ブートローダー： ', 
   connectedInformation: ' / 設定フォーマット: v',

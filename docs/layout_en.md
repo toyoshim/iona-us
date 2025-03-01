@@ -80,6 +80,8 @@ Each button can have a rapid fire setting.
 <script src="https://toyoshim.github.io/CH559Flasher.js/CH559Flasher.js"></script>
 <script>
 window.uiMessages = {
+  lang: 'en',
+
   abort: 'Aborted',
   connected: 'Connected (Bootloader: ', 
   connectedInformation: ' / Setting format: v',

@@ -46,9 +46,22 @@ appendPreset('SEGA Basic', [
   0x07, 0x05,
   0xaa, 0x07,
   0xcc, 0x07,
-]);
+], {
+  'en': `By Toyoshima
 
-appendPreset('SEGA Virtual-On', [
+Standard Arcade Layout with 1 lever and 8 buttons at max.
+Expected to be compatible with SEGA I/O and will work well with titles for naomi.
+Most JVS boards will work with this layout.
+JVS-Dash support is enabled for exA-Arcadia.`,
+  'ja': `提供：とよしま
+
+1レバーと最大8ボタンを備えた標準的なアーケードのレイアウト。
+SEGA I/Oと互換性があり、naomi向けのタイトルに適した設定です。
+多くのJVSボードで動作します。
+exA-Arcadia向けのJVS-Dashサポートが有効になっています。`,
+});
+
+appendPreset('SEGA Virtual-On / Gamepad', [
   // Core : JVS Dash support
   0x00, 0x00, 0x04,
   // Analog Map: Left X-Axis => Lever X, Left Y-Axis => Lever Y
@@ -96,7 +109,24 @@ appendPreset('SEGA Virtual-On', [
   0x07, 0x05,
   0xaa, 0x07,
   0xcc, 0x07,
-]);
+], {
+  'en': `By Toyoshima
+Board: naomi
+Company: SEGA
+Title: Virtual-On
+Controller: Gamepad
+
+Special layout for Virtual-On.
+Assigns the left and right analog sticks of a standard gamepad to two levers.`,
+  'ja': `提供：とよしま
+基板：naomi
+ゲームメーカー：SEGA
+ゲーム名：Virtual-On
+コントローラー：ゲームパッド
+
+Virtual-On向けの特殊レイアウト。
+標準的なゲームパッドの左右のアナログスティックを2つのレバーに割り当てています。`,
+});
 
 appendPreset('naomi / Guncon3', [
   // Core
@@ -146,7 +176,20 @@ appendPreset('naomi / Guncon3', [
   0x07, 0x05,
   0xaa, 0x07,
   0xcc, 0x07,
-]);
+], {
+  'en': `By Toyoshima
+Board: naomi
+Conpany: SEGA, etc.
+Controller: Guncon3
+
+Layout for Guncon3, suitable for many shooting games on naomi.`,
+  'ja': `提供：とよしま
+基板：naomi
+ゲームメーカー：SEGA 他
+コントローラー：ガンコン3
+
+naomiの多くのガンシューティングに適したガンコン3用レイアウト。`,
+});
 
 appendPreset('NinjaAssault / Guncon3', [
   // Core
@@ -196,7 +239,22 @@ appendPreset('NinjaAssault / Guncon3', [
   0x07, 0x05,
   0xaa, 0x07,
   0xcc, 0x07,
-]);
+], {
+  'en': `By Toyoshima
+Board: naomi
+Company: namco
+Title: Ninja Assault
+Controller: Guncon3
+
+Layout for Guncon3, suitable for Ninja Assault.`,
+  'ja': `提供：とよしま
+基板：naomi
+ゲームメーカー：namco
+ゲーム名：Ninja Assault
+コントローラー：ガンコン3
+
+Ninja Assault向けのガンコン3用レイアウト。`,
+});
 
 appendPreset('Cobra The Arcade / Guncon3', [
   // Core
@@ -246,7 +304,26 @@ appendPreset('Cobra The Arcade / Guncon3', [
   0x07, 0x05,
   0xaa, 0x07,
   0xcc, 0x07,
-]);
+], {
+  'en': `By uyo-U4
+Board: namco System256
+Company: namco
+Title: Cobra The Arcade
+Controller: Guncon3
+
+The pedal is assigned to B1 and designed to be pressed with the thumb. You can change the position as you want during setup.
+The coin is C2 on the side, and the test menu is assigned within reach of the thumb.
+Do not adjust the gun on the IONA side, adjust the gun in the game in its initial state.`,
+  'ja': `提供：uyo-U4
+基板：namco System256
+ゲームメーカー：namco
+ゲーム名：コブラ・ザ・アーケード
+コントローラー：ガンコン３
+
+ペダルはB1を親指で押す形となっています。この辺りは設定時に好みの位置に変更しても良いです。
+コインは横のC2、テストメニュー関係は親指の範囲にしてあります。
+IONA側のガンアジャストはせず、初期状態でゲーム内ガンアジャストをしてください。`,
+});
 
 appendPreset('The House Of The Head 2 / Gamepad', [
   // Core
@@ -296,9 +373,28 @@ appendPreset('The House Of The Head 2 / Gamepad', [
   0x07, 0x05,
   0xaa, 0x07,
   0xcc, 0x07,
-]);
+], {
+  'en': `By pizzzza19
+Board: naomi
+Company: SEGA
+Title: The House Of The Dead 2
+Controller: Gamepad
 
-appendPreset('AfterBurnerClimax / Cyber', [
+Shoot with the R2 trigger to reproduce the feeling of a guncon.
+Using IONA's rapid fire function, you can also reproduce the machine gun (rapid fire) by holding R1 down.
+This is considered a cheat (bonus) as it is not available on the actual machine.
+The crosshair (gun coordinates) is displayed only when you shoot due to the specifications of the board. When you release the analog stick, the coordinates automatically return to the center. `,
+  'ja': `提供：pizzzza19
+基板：naomi
+ゲームメーカー：SEGA
+ゲーム名：The House Of The Dead 2
+コントローラー：ゲームパッド
+
+R2トリガーで撃つのでガンコンのフィーリングを再現しました。IONAの連射機能を使ってR1長押しでマシンガン（連射）も再現しています。実機には無いのであくまでチート扱い（オマケ）です。
+基板の仕様でクロスヘアー（銃座標）は撃った瞬間のみ表示されます。アナログスティックを離すと座標は自動的に中心部に戻ります。`,
+});
+
+appendPreset('AfterBurnerClimax / Cyberstick', [
   // Core
   0x08, 0x00, 0x04,
   // Analog Map
@@ -346,7 +442,22 @@ appendPreset('AfterBurnerClimax / Cyber', [
   0x07, 0x05,
   0xaa, 0x07,
   0xcc, 0x07,
-]);
+], {
+  'en': `By Toyoshima
+Board: LINDBERGH,
+Company: SEGA,
+Title: After Burner Climax,
+Controller: Cyberstick
+
+Layout for Cyberstick, suitable for After Burner Climax.`,
+  'ja': `提供：とよしま
+基板：LINDBERGH
+ゲームメーカー：SEGA
+ゲーム名：After Burner Climax
+コントローラー：サイバースティック
+
+After Burner Climax向けのサイバースティック用レイアウト。`,
+});
 
 appendPreset('Monkey Ball / Gamepad', [
   // Core
@@ -396,7 +507,26 @@ appendPreset('Monkey Ball / Gamepad', [
   0x07, 0x05,
   0xaa, 0x07,
   0xcc, 0x07,
-]);
+], {
+  'en': `By DC-SWiRL
+Board: naomi
+Company: SEGA
+Title: Super Monkey Ball
+Controller: Gamepad
+
+Left analog stick is solely responsible for general gameplay.
+* Initially I had assignments for P1 LX [Index 0] and P1 LY [Index 1] but controls were reversed/incorrect. This lead to the final configuration of P1 LX [Index 1] and P1 LY [Index 0] which works as intended.
+* Select and Start handle Coin/Start.`,
+  'ja': `提供：DC-SWiRL
+基板：naomi
+ゲームメーカー：SEGA
+ゲーム名：スーパーモンキーボール
+コントローラー：ゲームパッド
+
+* 左アナログスティックのみでゲームプレイを行います。
+  - 最初はP1 LX [Index 0] と P1 LY [Index 1] に割り当てていましたが、コントロールが逆/不正確でした。これにより、意図した通りに機能する P1 LX [Index 1] と P1 LY [Index 0] の最終構成になりました。
+* 選択とスタートはコイン/スタートを処理します。`,
+});
 
 appendPreset('Initial D 4-5 / G29', [
   // Core
@@ -446,7 +576,22 @@ appendPreset('Initial D 4-5 / G29', [
   0x07, 0x05,
   0xaa, 0x07,
   0xcc, 0x07,
-]);
+], {
+  'en': `By Toyoshima
+Board: LINDBERGH,
+Company: SEGA,
+Title: Initial D 4-5,
+Controller: G29
+
+Layout for G29, suitable for Initial D 4-5.`,
+  'ja': `提供：とよしま
+基板：LINDBERGH
+ゲームメーカー：SEGA
+ゲーム名：頭文字D 4-5
+コントローラー：G29
+
+Initial D 4-5向けのG29用レイアウト。`,
+});
 
 appendPreset('Initial D 4-5 / GT Force', [
   // Core
@@ -496,7 +641,22 @@ appendPreset('Initial D 4-5 / GT Force', [
   0x07, 0x05,
   0xaa, 0x07,
   0xcc, 0x07,
-]);
+], {
+  'en': `By Toyoshima
+Board: LINDBERGH,
+Company: SEGA,
+Title: Initial D 4-5,
+Controller: GT Force
+
+Layout for GT Force, suitable for Initial D 4-5.`,
+  'ja': `提供：とよしま
+基板：LINDBERGH
+ゲームメーカー：SEGA
+ゲーム名：頭文字D 4-5
+コントローラー：GT Force
+
+Initial D 4-5向けのGT Force用レイアウト。`,
+});
 
 appendPreset('Initial D 4-5 / MARIOKART Racing Wheel', [
   // Core
@@ -546,7 +706,22 @@ appendPreset('Initial D 4-5 / MARIOKART Racing Wheel', [
   0x07, 0x05,
   0xaa, 0x07,
   0xcc, 0x07,
-]);
+], {
+  'en': `By Toyoshima
+Board: LINDBERGH,
+Company: SEGA,
+Title: Initial D 4-5,
+Controller: MARIOKART Racing Wheel
+
+Layout for MARIOKART Racing Wheel, suitable for Initial D 4-5.`,
+  'ja': `提供：とよしま
+基板：LINDBERGH
+ゲームメーカー：SEGA
+ゲーム名：頭文字D 4-5
+コントローラー：マリオカート レーシング ホイール
+
+Initial D 4-5向けのマリオカート レーシング ホイール用レイアウト。`,
+});
 
 appendPreset('Wangan Midnight / GT Force', [
   // Core
@@ -596,7 +771,22 @@ appendPreset('Wangan Midnight / GT Force', [
   0x07, 0x05,
   0xaa, 0x07,
   0xcc, 0x07,
-]);
+], {
+  'en': `By Toyoshima
+Board: LINDBERGH,
+Company: namco,
+Title: Wangan Midnight,
+Controller: GT Force
+
+Layout for GT Force, suitable for Wangan Midnight.`,
+  'ja': `提供：とよしま
+基板：LINDBERGH
+ゲームメーカー：ナムコ
+ゲーム名：湾岸ミッドナイト
+コントローラー：GT Force
+
+湾岸ミッドナイト向けのGT Force用レイアウト。`,
+});
 
 appendPreset('OutRun2SP / G29', [
   // Core
@@ -646,7 +836,22 @@ appendPreset('OutRun2SP / G29', [
   0x07, 0x05,
   0xaa, 0x07,
   0xcc, 0x07,
-]);
+], {
+  'en': `By Toyoshima
+Board: LINDBERGH,
+Company: SEGA,
+Title: OutRun2SP,
+Controller: G29
+
+Layout for G29, suitable for OutRun2SP.`,
+  'ja': `提供：とよしま
+基板：LINDBERGH
+ゲームメーカー：SEGA
+ゲーム名：アウトラン2SP
+コントローラー：G29
+
+アウトラン2SP向けのG29用レイアウト。`,
+});
 
 appendPreset('OutRun2SP / GT Force', [
   // Core
@@ -696,7 +901,22 @@ appendPreset('OutRun2SP / GT Force', [
   0x07, 0x05,
   0xaa, 0x07,
   0xcc, 0x07,
-]);
+], {
+  'en': `By Toyoshima
+Board: LINDBERGH,
+Company: SEGA,
+Title: OutRun2SP,
+Controller: GT Force
+
+Layout for GT Force, suitable for OutRun2SP.`,
+  'ja': `提供：とよしま
+基板：LINDBERGH
+ゲームメーカー：SEGA
+ゲーム名：アウトラン2SP
+コントローラー：GT Force
+
+アウトラン2SP向けのGT Force用レイアウト。`,
+});
 
 appendPreset('OutRun2SP / MARIOKART Racing Wheel', [
   // Core
@@ -746,7 +966,22 @@ appendPreset('OutRun2SP / MARIOKART Racing Wheel', [
   0x07, 0x05,
   0xaa, 0x07,
   0xcc, 0x07,
-]);
+], {
+  'en': `By Toyoshima
+Board: LINDBERGH,
+Company: SEGA,
+Title: OutRun2SP,
+Controller: MARIOKART Racing Wheel
+
+Layout for MARIOKART Racing Wheel, suitable for OutRun2SP.`,
+  'ja': `提供：とよしま
+基板：LINDBERGH
+ゲームメーカー：SEGA
+ゲーム名：アウトラン2SP
+コントローラー：マリオカート レーシング ホイール
+
+アウトラン2SP向けのマリオカート レーシング ホイール用レイアウト。`,
+});
 
 appendPreset('Mario Kart Arcade GP2 / Gamepad', [
   // Core
@@ -796,7 +1031,69 @@ appendPreset('Mario Kart Arcade GP2 / Gamepad', [
   0x07, 0x05,
   0xaa, 0x07,
   0xcc, 0x07,
-]);
+], {
+  'en': `By KronosMK7
+Board: Triforce
+Company: NAMCO BANDAI Games Inc.
+Title: Mario Kart Arcade GP2
+Controller: Gamepad
+
+-- Button Layout --
+○=Item Button
+×=Battle Cancel Button(Red Button on the right)
+SHARE=Credit
+L Stick=Steering Wheel
+L2=Brake
+R2=Accelerator
+D-Pad ↑↓=Cursor for Test Menu※
+
+※It is a part that is not usually used, but it works only in the test menu, and it seems that there is no harm even if you touch it during the game
+
+Regarding the point of setting the analog input width to 16bit. Even if it is set to automatic, there is not much difference, but in the case of NAOMI system, the stick operation may behave unnaturally occasionally, so it is changed under the correction based on the instructions of Toyoshima-san
+
+-- Notes for use --
+To prevent trouble, please check whether the following settings are set from the Triforce test menu (※Not necessary for the first generation)
+SYSTEM MENU
+↓
+ENTER GAME TEST
+↓
+GAME OPTIONS
+↓
+ITEM BUTTON→BLUE&RED(Initial setting)
+
+When using an item, you usually fire it with the item button or the battle cancel button, but if you set it to RED here, you may experience a phenomenon where you can only fire it with the battle cancel
+button during`,
+  'ja': `提供：KronosMK7
+基板：Triforce
+ゲームメーカー：NAMCO BANDAI Games Inc.
+ゲーム名：マリオカートアーケードグランプリ2
+コントローラー：ゲームパッド
+
+〜〜ボタン配列〜〜
+○=アイテムボタン
+×=対戦キャンセルボタン(右側にある赤いボタン)
+SHARE=クレジット
+Lスティック=ハンドル
+L2=ブレーキ
+R2=アクセル
+十字キー↑↓=テストメニュー用カーソル※
+
+※普段は使わない箇所ですが、テストメニューのみ動作し、ゲーム中に触れても害は無いみたいなのでおまけで設けてます
+
+アナログ入力幅を16bitにしてる点に関して。自動にしてても大した差は有りませんが、NAOMI系統だとスティック操作が偶に不自然な挙動をする事がありますので、とよしまさんのご指示の元補正の意味を兼ねて変更しています
+
+ーー使用する際の注意点ーー
+トラブル防止の為、トライフォース側のテストメニューから以下の設定になっているか確認してください(※初代の場合は項目無いので不要)
+SYSTEM MENU
+↓
+ENTER GAME TEST
+↓
+GAME OPTIONS
+↓
+ITEM BUTTON→BLUE&RED(初期設定)
+
+アイテム使用する時通常はアイテムボタン又は対戦キャンセルボタンで発射しますが、例えばここをREDにしているとレース中対戦キャンセルボタンでしか発射出来ない現象が発生しますので原則上記で固定にしてください(詳しくはマリオカートアーケードグランプリ2 取扱説明書49P参照)`,
+});
 
 appendPreset('Crazy Taxi / Gamepad', [
   // Core
@@ -846,6 +1143,33 @@ appendPreset('Crazy Taxi / Gamepad', [
   0x07, 0x05,
   0xaa, 0x07,
   0xcc, 0x07,
-]);
+], {
+  'en': `By DC-SWiRL
+Board: naomi
+Company: SEGA
+Title: Crazy Taxi
+Controller: Gamepad
+
+Layout is very similar to previous console releases.
+* Left analog stick steers Left and Right.
+* Left trigger Brake.
+* Right trigger Accelerate.
+* X/O buttons handle Reverse/Drive.
+  - Reverse/Drive are ↓ and ↑ on I/O configuration, so buttons can be altered to your comfort/playstyle (i.e. O/X, □/△, etc.)
+* Select and Start handle Coin/Start.`,
+  'ja': `提供：DC-SWiRL
+基板：naomi
+ゲームメーカー：SEGA
+ゲーム名：クレイジータクシー
+コントローラー：ゲームパッド
+
+従来の家庭用ゲーム機版と非常に似たレイアウト。
+* 左アナログスティックで左右を操作します。
+* 左トリガーでブレーキ。
+* 右トリガーでアクセル。
+* X/Oボタンでリバース/ドライブを操作します。
+  - リバース/ドライブはI/O設定で↓と↑になっているため、ボタンは好みで変えてください (例：O/X、□/△など)。
+* セレクトとスタートでコイン/スタートを操作します。`,
+});
 
 applyPreset(0);

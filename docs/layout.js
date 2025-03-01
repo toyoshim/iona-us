@@ -367,11 +367,13 @@ function storeTo(data) {
 const presets = [];
 const userData = new Uint8Array(1024);
 
-function appendPreset(name, data) {
+function appendPreset(name, data, description) {
   console.assert(data.length == 169);
   const select = document.getElementById('preset');
   const option = document.createElement('option');
   option.innerText = name;
+  option.title =
+    description ? (description[uiMessages.lang] || description.en) : name;
   select.appendChild(option);
   presets.push(data);
 }

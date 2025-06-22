@@ -201,7 +201,8 @@ void controller_update(uint8_t hub_index,
 #endif  // _DBG_HID_REPORT_DUMP
 #ifdef _DBG_HID_DECODE_DUMP
   for (uint8_t i = 0; i < 6; ++i) {
-    uint16_t value = analog_check(info, data, i);
+    uint16_t value = analog_check(
+        info, data, i, settings_get()->analog_polarity[hub][i]);
     Serial.printf("analog %d: %x%x\n", i, value >> 8, value & 0xff);
   }
   Serial.printf("digital: ");

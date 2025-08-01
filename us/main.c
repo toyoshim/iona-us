@@ -49,6 +49,18 @@ static void debug_putc(uint8_t val) {
   val;
 }
 
+static void detected(void) {
+  led_oneshot(L_PULSE_ONCE);
+}
+
+static uint8_t get_flags(void) {
+#ifdef _DBG_HUB1_ONLY
+  return USE_HUB1;
+#else
+  return USE_HUB1 | USE_HUB0;
+#endif
+}
+
 bool JVSIO_Client_receiveCommand(uint8_t node,
                                  uint8_t* data,
                                  uint8_t len,
@@ -72,90 +84,85 @@ bool JVSIO_Client_receiveCommand(uint8_t node,
       JVSIO_Node_pushReport(kReportOk);
       {
         const char* id = ids[settings->id];
-        for (uint8_t i = 0; id[i]; ++i) {
+        for (uint8_t i = 0; id[i]; ++i)
           JVSIO_Node_pushReport(id[i]);
-        }
       }
       JVSIO_Node_pushReport(0x00);
       break;
     case kCmdFunctionCheck: {
       JVSIO_Node_pushReport(kReportOk);
-
       JVSIO_Node_pushReport(0x01);  // sw
+
       uint8_t players = 2;
       uint8_t gpouts = 18;
       if (settings->id == IT_NAMCO_NAJV) {
-        JVSIO_Node_pushReport(0x01);  // players
-        JVSIO_Node_pushReport(0x18);  // buttons
-        JVSIO_Node_pushReport(0x00);
+        players = 1;
         gpouts = 18;
-        players = 1;
+        JVSIO_Node_pushReport(0x01);
+        JVSIO_Node_pushReport(0x18);
       } else if (settings->id == IT_NAMCO_TSS) {
-        JVSIO_Node_pushReport(0x01);  // players
-        JVSIO_Node_pushReport(0x0c);  // buttons
-        JVSIO_Node_pushReport(0x00);
-        gpouts = 3;
         players = 1;
+        gpouts = 3;
+        JVSIO_Node_pushReport(0x01);
+        JVSIO_Node_pushReport(0x0c);
       } else {
         JVSIO_Node_pushReport(0x02);  // players
         JVSIO_Node_pushReport(0x10);  // buttons
-        JVSIO_Node_pushReport(0x00);
       }
+      JVSIO_Node_pushReport(0x00);
 
-      JVSIO_Node_pushReport(0x02);     // coin
-      JVSIO_Node_pushReport(players);  // slots
+      JVSIO_Node_pushReport(0x02);  // coin slots
+      JVSIO_Node_pushReport(players);
       JVSIO_Node_pushReport(0x00);
       JVSIO_Node_pushReport(0x00);
 
       if (settings->analog_input_count) {
-        JVSIO_Node_pushReport(0x03);  // analog inputs
+        JVSIO_Node_pushReport(0x03);
         JVSIO_Node_pushReport(settings->analog_input_count);
         JVSIO_Node_pushReport(settings->analog_input_width);
         JVSIO_Node_pushReport(0x00);
       }
 
       if (settings->rotary_input_count) {
-        JVSIO_Node_pushReport(0x04);  // rotary inputs
+        JVSIO_Node_pushReport(0x04);
         JVSIO_Node_pushReport(settings->rotary_input_count);
         JVSIO_Node_pushReport(0x00);
         JVSIO_Node_pushReport(0x00);
       }
 
       if (settings->screen_position_count) {
-        JVSIO_Node_pushReport(0x06);  // screen position inputs
+        JVSIO_Node_pushReport(0x06);
         JVSIO_Node_pushReport(settings->screen_position_width);
         JVSIO_Node_pushReport(settings->screen_position_width);
         JVSIO_Node_pushReport(settings->screen_position_count);
       }
 
-      JVSIO_Node_pushReport(0x12);    // general purpose driver
-      JVSIO_Node_pushReport(gpouts);  // slots
+      JVSIO_Node_pushReport(0x12);
+      JVSIO_Node_pushReport(gpouts);
       JVSIO_Node_pushReport(0x00);
       JVSIO_Node_pushReport(0x00);
 
       if (settings->analog_output) {
-        JVSIO_Node_pushReport(0x13);  // analog output
+        JVSIO_Node_pushReport(0x13);
         JVSIO_Node_pushReport(settings->analog_output);
         JVSIO_Node_pushReport(0x00);
         JVSIO_Node_pushReport(0x00);
       }
 
       if (settings->character_display_width) {
-        JVSIO_Node_pushReport(0x14);  // character output
+        JVSIO_Node_pushReport(0x14);
         JVSIO_Node_pushReport(settings->character_display_width);
         JVSIO_Node_pushReport(settings->character_display_height);
-        JVSIO_Node_pushReport(0x00);  // code
+        JVSIO_Node_pushReport(0x00);
       }
 
       JVSIO_Node_pushReport(0x00);
     } break;
     case kCmdSwInput:
       JVSIO_Node_pushReport(kReportOk);
-      if (client_get_current_speed() == k115200) {
-        // Normal JVS keeps calling this per frame, and we can run autofire
-        // logic synchronized with the frame rate here. JVS Dash would not.
+      if (client_get_current_speed() == k115200)
         settings_rapid_sync();
-      }
+
       JVSIO_Node_pushReport(controller_head());
       for (uint8_t player = 0; player < data[1]; ++player) {
         for (uint8_t i = 0; i < data[2]; ++i) {
@@ -190,31 +197,23 @@ bool JVSIO_Client_receiveCommand(uint8_t node,
         JVSIO_Node_pushReport(value & 0xff);
       }
       break;
-    case kCmdScreenPositionInput:
+    case kCmdScreenPositionInput: {
       JVSIO_Node_pushReport(kReportOk);
-      {
-        uint8_t index = data[1] - 1;
-        uint16_t x = controller_screen(index, 0) >>
-                     (16 - settings->screen_position_width);
-        uint16_t y = controller_screen(index, 1) >>
-                     (16 - settings->screen_position_width);
-        if (settings->id == IT_NAMCO_NAJV || settings->id == IT_NAMCO_TSS) {
-          x = settings_adjust_x(x);
-          y = settings_adjust_y(y);
-        }
-        JVSIO_Node_pushReport(x >> 8);
-        JVSIO_Node_pushReport(x & 0xff);
-        JVSIO_Node_pushReport(y >> 8);
-        JVSIO_Node_pushReport(y & 0xff);
+      uint8_t index = data[1] - 1;
+      uint16_t x = controller_screen(index, 0) >> (16 - settings->screen_position_width);
+      uint16_t y = controller_screen(index, 1) >> (16 - settings->screen_position_width);
+      if (settings->id == IT_NAMCO_NAJV || settings->id == IT_NAMCO_TSS) {
+        x = settings_adjust_x(x);
+        y = settings_adjust_y(y);
       }
-      break;
+      JVSIO_Node_pushReport(x >> 8);
+      JVSIO_Node_pushReport(x & 0xff);
+      JVSIO_Node_pushReport(y >> 8);
+      JVSIO_Node_pushReport(y & 0xff);
+    } break;
     case kCmdCoinSub:
     case kCmdCoinAdd:
-      // Coin slot index should start with 1, but some PCB seem to expect
-      // starting with 0. Following code detects the slot index 0 and sets the
-      // bias to 1 so that it offsets.
-      if (data[1] == 0)
-        coin_index_bias = 1;
+      if (data[1] == 0) coin_index_bias = 1;
       if (*data == kCmdCoinSub)
         controller_coin_sub(data[1] + coin_index_bias - 1, data[3]);
       else
@@ -232,24 +231,14 @@ bool JVSIO_Client_receiveCommand(uint8_t node,
     default:
       handled = false;
   }
+
   if (commit) {
     reserved_coin_index_bias = coin_index_bias;
     reserved_coin[0] = controller_coin(0);
     reserved_coin[1] = controller_coin(1);
   }
+
   return handled;
-}
-
-static void detected(void) {
-  led_oneshot(L_PULSE_ONCE);
-}
-
-static uint8_t get_flags(void) {
-#ifdef _DBG_HUB1_ONLY
-  return USE_HUB1;
-#else
-  return USE_HUB1 | USE_HUB0;
-#endif
 }
 
 void main(void) {
@@ -263,7 +252,7 @@ void main(void) {
   client_init();
 
   struct hid hid;
-  hid.report = controller_update;
+  hid.report = controller_update;  // uses hub_index == player
   hid.detected = detected;
   hid.get_flags = get_flags;
   hid_init(&hid);
@@ -282,60 +271,12 @@ void main(void) {
     if (!JVSIO_Node_isBusy()) {
       if (!timer3_tick_msec_between(rapid_fire_msec, rapid_fire_msec + 16)) {
         rapid_fire_msec = timer3_tick_msec();
-        if (client_get_current_speed() != k115200) {
-          // JVS Dash relies on timer to run autofire logic.
+        if (client_get_current_speed() != k115200)
           settings_rapid_sync();
-        }
       }
-      // Serial.putc = original_putc;
       hid_poll();
       settings_poll();
       controller_poll();
-      // Serial.putc = debug_putc;
-#ifdef _DBG_NAMCO_TSS
-      {
-        Serial.putc = original_putc;
-        uint16_t x =
-            controller_screen(0, 0) >> (16 - settings->screen_position_width);
-        uint16_t y =
-            controller_screen(0, 1) >> (16 - settings->screen_position_width);
-        if (settings->id == IT_NAMCO_NAJV || settings->id == IT_NAMCO_TSS) {
-          x = settings_adjust_x(x);
-          y = settings_adjust_y(y);
-        }
-        Serial.printf("%x%x,%x%x\r", (x >> 8) & 0xff, x & 0xff, (y >> 8) & 0xff,
-                      y & 0xff);
-        Serial.putc = debug_putc;
-      }
-#endif
-#ifdef _DBG_ANALOG
-      {
-        for (uint8_t i = 0; i < 6; ++i) {
-          uint16_t v = controller_analog(i);
-          Serial.printf("%x%x,", (v >> 8) & 0xff, v & 0xff);
-        }
-        Serial.printf("\r");
-      }
-#endif
-#ifdef _DBG_DIGITAL
-      {
-        static bool init = false;
-        if (!init) {
-          Serial.printf(
-              "Ts T1 T2 T3 -- -- -- -- St Sv Up Dw Lf Rt B1 B2 B3 B4 B5 B6 B7 "
-              "B8 B9 B10\n");
-          init = true;
-        }
-        for (uint8_t i = 0; i < 3; ++i) {
-          uint8_t v =
-              (i == 0) ? controller_head() : controller_data(0, i - 1, 0);
-          for (uint8_t b = 0x80; b != 0; b >>= 1) {
-            Serial.printf("%d  ", (v & b) ? 1 : 0);
-          }
-        }
-        Serial.printf("\r");
-      }
-#endif
     }
     client_poll();
   }

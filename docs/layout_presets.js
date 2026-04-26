@@ -325,7 +325,7 @@ Do not adjust the gun on the IONA side, adjust the gun in the game in its initia
 IONA側のガンアジャストはせず、初期状態でゲーム内ガンアジャストをしてください。`,
 });
 
-appendPreset('The House Of The Head 2 / Gamepad', [
+appendPreset('The House Of The Dead 2 / Gamepad', [
   // Core
   0x08, 0x00, 0x04,
   // Analog Map

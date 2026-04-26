@@ -163,6 +163,7 @@ It may be ok if it does not long, but it may damage the device to connect over J
 - Ver 2.20 Support GT Force Pro, and introduce experimental shift gear emulation.
 - Ver 2.21 Bug fix to run rapid-fires at correct speed even in JVS Dash mode.
 - Ver 2.22 Support analog polarity in the settings.
+- Ver 2.23 Update the shift gear emupation to support neutral.
 
 ## Firmware Compatibility
 For v3 based PCBs, only v1.48 and v2.11+ work. For v1/v2 based PCBs, all firmwares work.
@@ -248,6 +249,7 @@ async function flash() {
     'firmwares/us_v2_20.bin',  // Ver 2.20
     'firmwares/us_v2_21.bin',  // Ver 2.21
     'firmwares/us_v2_22.bin',  // Ver 2.22
+    'firmwares/us_v2_23.bin',  // Ver 2.23
   ];
   const progressWrite = document.getElementById('progress_write');
   const progressVerify = document.getElementById('progress_verify');
@@ -301,7 +303,8 @@ async function flash() {
 <option>Ver 2.19</option>
 <option>Ver 2.20</option>
 <option>Ver 2.21</option>
-<option selected>Ver 2.22</option>
+<option>Ver 2.22</option>
+<option selected>Ver 2.23</option>
 </select>
 <button onclick="flash();">Flash</button>
 

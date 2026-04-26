@@ -21,7 +21,7 @@
 // #define _DBG_ANALOG
 // #define _DBG_DIGITAL
 
-#define VER "2.22+"
+#define VER "2.23"
 
 static const char sega_id[] =
     "SEGA ENTERPRISES,LTD.compat;MP07-IONA-US;ver" VER;
